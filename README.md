@@ -13,7 +13,9 @@ Workflow
   countries that have at least 100 cases of COVID-19, and at least
   10 cases in the last week. Note that this means the number of
   countries for which forecasts are produced could vary every
-  week. The data will be available in the github repo by Friday 5 PM.
+  week. The data will be available in the github repo by Friday 5
+  PM. In addition to the case numbers, we will also provide a serial
+  interval distribution, which we strongly recommend is used by all teams.
 - Each team them produces forecasts of daily incidence, and estimates
   of effective reproduction number and makes them available in a
   standard format (to be specified).
@@ -23,6 +25,6 @@ Workflow
 
 
 Data Formats
- - Input Data
+ - Input Data: 
  - Output Data
   
