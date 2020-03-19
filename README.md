@@ -16,11 +16,11 @@ Workflow
   week. The data will be available in the github repo by Friday 5
   PM. In addition to the case numbers, we will also provide a serial
   interval distribution, which we strongly recommend is used by all teams.
-- Each team them produces forecasts of daily incidence, and estimates
+- Each team produces forecasts of daily incidence, and estimates
   of effective reproduction number and makes them available in a
-  standard format (to be specified).
-- The centralised team (Pierre and Sangeeta) then feed these into
-  visualisations. They also use agreed upon model averaging methods to
+  standard format (to be specified) by <>.
+- The centralised team (Pierre and Sangeeta) will feed these into
+  visualisations. They will also use agreed upon model averaging methods to
   produce ensemble forecasts that also feed into visualisation.
 
 
