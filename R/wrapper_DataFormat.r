@@ -79,6 +79,6 @@ data <- list(date_week_finishing = date_week_finishing,
              si_mean = si_mean,
              si_std = si_std)
 
-saveRDS(data, file = paste0('data_',date_week_finishing,'.rds'))
+saveRDS(data, file = paste0('../Team.input/data_',date_week_finishing,'.rds'))
 
 
