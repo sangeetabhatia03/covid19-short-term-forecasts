@@ -7,7 +7,7 @@ date: "2019-07"
 ```{r options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE}
 library(knitr)
 require(png)
-library(EpiEstim)
+library(epitrix)
 
 opts_chunk$set(collapse = TRUE)
 
@@ -29,7 +29,7 @@ date_week_finishing <-  as.Date('08/03/2020',format = '%d/%m/%Y')
 
 ## Data from here:
 ## https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide 
-ts <- read.csv("COVID-19-geographic-disbtribution-worldwide-2020-03-17.csv", stringsAsFactors=F)
+ts <- read.csv("../data/COVID-19-geographic-disbtribution-worldwide-2020-03-17.csv", stringsAsFactors=F)
 
 # serial interval - see https://www.medrxiv.org/content/10.1101/2020.03.10.20033852v1.full.pdf
 shape <- 3.16

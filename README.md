@@ -26,5 +26,13 @@ Workflow
 
 Data Formats
  - Input Data: 
+   In the 'data' folder, a file will be released each week named data_'date'.rds'. The ddate corresponds to     the last Sunday included in the data.
+   Reading the file (e.g. 'd <-readRDS('../data/data_2020-03-08.rds')') will create a list including:
+   * The last date in the dataset 'date_week_finishing';
+   * The thresholds used to select countries with active local transmission, i.e. currently at least 100 cases reported in last 4 weeks (Threshold_criterion_4weeks) and at least 10 cases reported in the last week        (Threshold_criterion_7days)'.
+   * A dataframe (I_active_transmission) containing the dates and reported incidence for each country with        active trasnmssion.
+   * A vector 'Country' listing the names of the countries with active transmission.
+   * Two variables specifying the mean and standard deviation of the serial interval to be used (subject to       change follwing Neil advice).
+   
  - Output Data
   
