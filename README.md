@@ -26,13 +26,23 @@ Workflow
 
 Data Formats
  - Input Data: 
-   In the 'data' folder, a file will be released each week named data_'date'.rds'. The ddate corresponds to     the last Sunday included in the data.
+   In the 'Team.input' folder, a file will be released each week named data_'date'.rds'. The ddate corresponds to     the last Sunday included in the data.
    Reading the file (e.g. 'd <-readRDS('../data/data_2020-03-08.rds')') will create a list including:
    * The last date in the dataset 'date_week_finishing';
    * The thresholds used to select countries with active local transmission, i.e. currently at least 100 cases reported in last 4 weeks (Threshold_criterion_4weeks) and at least 10 cases reported in the last week        (Threshold_criterion_7days)'.
    * A dataframe (I_active_transmission) containing the dates and reported incidence for each country with        active trasnmssion.
    * A vector 'Country' listing the names of the countries with active transmission.
-   * Two variables specifying the mean and standard deviation of the serial interval to be used (subject to       change follwing Neil advice).
+   * Two variables specifying the mean and standard deviation of the serial interval to be used (subject to       change follwing Neil's advice).
+   A new input file (.rds) will be made available by monday morning of each week.
    
- - Output Data
+ - Output Data:
+   This is to be submitted by each team by noon on the monday of each week.
+   
+   The file should be submitted directly to the 'Team.output' folder or emailed to both pierre and Sangeeta and have a standard form, 'beng a list saved as .rds (named: 'team name'_Std_results_results_week_end_'date_week_finishing'.rds)  and containing:
+   * The input data frame I_active_transmission mentionned above.
+   * The vector 'Country' mentionned above
+   * A data frame named 'Rlast' containing for each country (column) 10,000 samples of posterior distribution of the estimated Rt on the last sunday of the dataset.
+   * A list named 'Predictons' containing a series of data frames for each country (named after the country). Each data frame will have 7 columns containing 10,000 samples of the posterior distribution of the predicted incidence (for 7 days, each column named as the date associated with the prediction). 
+   
+   The folder already contains the ouput for one model for weeks ending on the 8th and 15th of March.
   
