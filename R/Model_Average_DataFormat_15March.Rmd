@@ -1,0 +1,48 @@
+---
+title: "ccc"
+author: "Pierre Nouvellet"
+date: "2019-07"
+---
+
+```{r options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+library(knitr)
+require(png)
+library(epitrix)
+
+opts_chunk$set(collapse = TRUE)
+
+opts_chunk$set(fig.path='figs/', fig.keep='high', 
+               dev=c('png'), fig.width=8, fig.height=8, cache=FALSE,
+               tidy=FALSE, warning=FALSE, fig.show="asis"
+ 	       )
+
+```
+
+
+Note on cleaning:
+- when no incidence reported on database, we assume incidence of 0.
+
+# input
+
+```{r}
+date_week_finishing <-  as.Date('15/03/2020',format = '%d/%m/%Y')
+
+## Data from here:
+## https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide 
+ts <- read.csv("COVID-19-geographic-disbtribution-worldwide-2020-03-17.csv", stringsAsFactors=F)
+
+# serial interval - see https://www.medrxiv.org/content/10.1101/2020.03.10.20033852v1.full.pdf
+shape <- 3.16
+scale <- 1.52
+# hist(rgamma(1e4,shape = shape, scale = scale))
+si_mean <- as.numeric(epitrix::gamma_shapescale2mucv(shape = shape, scale = scale)[1])
+si_std <- as.numeric(epitrix::gamma_shapescale2mucv(shape = shape, scale = scale)[2])*
+  as.numeric(epitrix::gamma_shapescale2mucv(shape = shape, scale = scale)[1])
+
+```
+
+# output
+
+```{r}
+
+source('wrapper_DataFormat.r')
