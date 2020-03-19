@@ -51,11 +51,6 @@ plan <- drake_plan(
     ),
 
 
-    data_to_use = by_country_ts[, c("date_rep", keep)]
-
-
-
-
-
+    data_to_use = by_country_ts[, c("date_rep", keep)],
 
 )
