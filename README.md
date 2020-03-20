@@ -43,7 +43,7 @@ Data Formats
    
    This is to be submitted by each team by noon on the monday of each week.
    
-   The file should be submitted directly to the 'Team.output' folder or emailed to both pierre and Sangeeta and have a standard form, i.e.  a list saved as .rds, named: 'team name_'Std_results_week_end_'date_week_finishing'.rds). The team name should 4 chatacters long. the list should contain:
+   The file should be submitted directly to the 'Team.output' folder or emailed to both pierre and Sangeeta and have a standard form, i.e.  a list saved as .rds, named: 'team name_'Std_results_week_end_'date_week_finishing'_SI1[or 2].rds). The team name should 4 chatacters long. the list should contain:
    * The input data frame 'I_active_transmission' mentionned above.
    * The input data frame 'D_active_transmission' mentionned above.
    * The vector 'Country' mentionned above
