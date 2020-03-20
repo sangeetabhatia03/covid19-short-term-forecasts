@@ -85,7 +85,6 @@ plan <- drake_plan(
 ###### Only keep the ones that have expected components #########
     model_outputs = purrr::map(output_files, readRDS) %>%
         purrr::keep(
-            model_outputs,
             function(x) {
                 all(
                     names(x) %in%
@@ -98,10 +97,20 @@ plan <- drake_plan(
          }
     ),
 
-    model_predictions_qntls = map(
+    model_predictions_qntls = purrr::map(
         model_outputs,
         function(x) {
             pred <- x[["Predictions"]]
+            purrr::map_dfr(pred, function(x) {
+                out <- t(
+                    apply(
+                        x, 2, quantile, prob = c(0.025, 0.1,
+                                                 0.5, 0.6, 0.975)
+                    )
+                )
+                as.data.frame(out)
+            }, .id = "country"
+           )
         }
     )
     ## The full posterioris going to be too big
