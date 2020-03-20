@@ -41,7 +41,7 @@ Data Formats
    
    This is to be submitted by each team by noon on the monday of each week.
    
-   The file should be submitted directly to the 'Team.output' folder or emailed to both pierre and Sangeeta and have a standard form, i.e.  a list saved as .rds, named: 'team name_'Std_results_results_week_end_'date_week_finishing'.rds). The team name should 4 chatacters long. the list should contain:
+   The file should be submitted directly to the 'Team.output' folder or emailed to both pierre and Sangeeta and have a standard form, i.e.  a list saved as .rds, named: 'team name_'Std_results_week_end_'date_week_finishing'.rds). The team name should 4 chatacters long. the list should contain:
    * The input data frame 'I_active_transmission' mentionned above.
    * The vector 'Country' mentionned above
    * A data frame named 'Rt_last' containing for each country (column) 10,000 samples of the posterior distribution of the estimated Rt on the last sunday of the dataset.
