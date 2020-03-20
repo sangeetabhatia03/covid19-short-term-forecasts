@@ -1,56 +1,117 @@
 plan <- drake_plan(
 
-    date_week_finishing =  as.Date('08/03/2020',format = '%d/%m/%Y'),
-
-    raw_data = readr::read_csv(
-        file_in("data/COVID-19-geographic-disbtribution-worldwide-2020-03-17.csv")
+    raw_data = read.csv(
+        file_in(here::here(infile)), stringsAsFactors = FALSE
+    ) %>%
+        mutate_at(
+            vars("DateRep"), ~ as.Date(., format = '%d/%m/%Y')
         ) %>%
-        janitor::clean_names() %>%
-        dplyr::mutate_at(vars("date_rep"), ~ as.Date(., format = '%d/%m/%Y')),
+        ## Manual fixes.
+        ## For 2020-03-17, there are two rows for Somalia
+        ## one with 0 Cases and one with 1 Cases, Delete one of them
+        filter(
+            ! (Countries.and.territories == "Somalia" &
+               DateRep == "2020-03-17" &
+               Cases == 0)
+        ),
 
-    ## Manual fixes.
-    ## For 2020-03-17, there are two rows for Somalia
-    ## one with 0 cases and one with 1 cases, Delete one of them
 
-    raw_data = filter(
-        raw_data,
-        ! (countries_and_territories == "Somalia" &
-           date_rep == "2020-03-17" &
-           cases == 0)
-    ),
+     by_country_deaths = dplyr::select(
+        raw_data, DateRep, Deaths, Countries.and.territories
+        ) %>%
+         tidyr::spread(
+            key = Countries.and.territories, value = Deaths, fill = 0
+            ) %>%
+        dplyr::filter(DateRep <= date_week_finishing),
 
-    by_country_ts = dplyr::select(
-        raw_data, date_rep, cases, countries_and_territories
+
+    by_country_cases = dplyr::select(
+        raw_data, DateRep, Cases, Countries.and.territories
     ) %>%
         tidyr::spread(
-            key = countries_and_territories, value = cases, fill = 0
-     ) %>% dplyr::filter(date_rep <= date_week_finishing)
+            key = Countries.and.territories, value = Cases, fill = 0
+     ) %>% dplyr::filter(DateRep <= date_week_finishing),
 
-    ## Filters.
-    ## Select countries with at least 100 cases in the last 4 weeks, and
-    ## at least 10 cases in the last week.
+    ## Filters for cases
+    ## Select countries with at least 100 Cases in the last 4 weeks, and
+    ## at least 10 Cases in the last week.
 
-
-    last_4_weeks = by_country_ts[by_country_ts$date_rep >=
-                                 max(by_country_ts$date_rep) - 28, ],
-
-    keep = names(
-        which(
-            colSums(last_4_weeks[, -1]) >= 100
-        )
-    ),
-
-    last_1_week = by_country_ts[by_country_ts$date_rep >=
-                                max(by_country_ts$date_rep) - 7,
-                                c("date_rep", keep)],
+    last_4_weeks = by_country_cases[by_country_cases$DateRep >=
+                                 max(by_country_cases$DateRep) - 28, ],
 
     keep = names(
         which(
-            colSums(last_1_week[, -1]) >= 10
+            colSums(last_4_weeks[, -1]) >= Threshold_criterion_4weeks
         )
     ),
 
+    last_1_week = by_country_deaths[by_country_deaths$DateRep >=
+                                max(by_country_deaths$DateRep) - 7,
+                                c("DateRep", keep)],
 
-    data_to_use = by_country_ts[, c("date_rep", keep)],
+    keep2 = names(
+        which(
+            colSums(last_1_week[, -1]) >= Threshold_criterion_7days
+        )
+    ),
+
+    ## For consistency with Pierre's code, rename DateRep to dates
+    cases_to_use = by_country_cases[, c("DateRep", keep2)] %>%
+        dplyr::rename(dates = "DateRep"),
+
+    deaths_to_use = by_country_deaths[, c("DateRep", keep2)] %>%
+        dplyr::rename(dates = "DateRep"),
+
+
+
+    out = saveRDS(
+        object = list(
+            date_week_finishing = date_week_finishing,
+            Threshold_criterion_4weeks = Threshold_criterion_4weeks,
+            Threshold_criterion_7days = Threshold_criterion_7days,
+            I_active_transmission = cases_to_use,
+            D_active_transmission = deaths_to_use,
+            Country = keep2,
+            si_mean = si_mean,
+            si_std = si_std
+        ),
+        file = file_out(outfile)
+    ),
+
+#################################################################
+#################################################################
+####### Part 2, when we have the model outputs ##################
+####### check that model outputs have the expected components ###
+###### Only keep the ones that have expected components #########
+    model_outputs = purrr::map(output_files, readRDS) %>%
+        purrr::keep(
+            model_outputs,
+            function(x) {
+                all(
+                    names(x) %in%
+                    c("I_active_transmission",
+                      ##"D_active_transmission",
+                      "Country",
+                      "Rt_last",
+                      "Predictions")
+                )
+         }
+    ),
+
+    model_predictions_qntls = map(
+        model_outputs,
+        function(x) {
+            pred <- x[["Predictions"]]
+        }
+    )
+    ## The full posterioris going to be too big
+    ## when we have more models and many countries.
+    ## model_predictions = purrr::map_dfr(
+    ##     model_outputs,
+    ##     ~ dplyr::bind_rows(.x[["Predictions"]], .id = "country"),
+    ##     .id = "model"
+    ## )
+
+
 
 )
