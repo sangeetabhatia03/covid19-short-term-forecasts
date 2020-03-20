@@ -32,8 +32,8 @@ date_week_finishing <-  as.Date('15/03/2020',format = '%d/%m/%Y')
 ts <- read.csv("../data/COVID-19-geographic-disbtribution-worldwide-2020-03-17.csv", stringsAsFactors=F)
 
 # serial interval - see Neil
-si_mean <- 6.48 
-si_std <- sqrt(2.7)
+si_mean <- 6.48  
+si_std <- 3.83 
 
 ```
 
