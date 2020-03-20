@@ -33,7 +33,7 @@ ts <- read.csv("../data/COVID-19-geographic-disbtribution-worldwide-2020-03-17.c
 
 # serial interval - see Neil
 si_mean <- 6.48 
-si_std <- 1.64 
+si_std <- sqrt(2.7) 
 
 ```
 
