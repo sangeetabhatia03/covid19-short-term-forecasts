@@ -31,13 +31,9 @@ date_week_finishing <-  as.Date('08/03/2020',format = '%d/%m/%Y')
 ## https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide 
 ts <- read.csv("../data/COVID-19-geographic-disbtribution-worldwide-2020-03-17.csv", stringsAsFactors=F)
 
-# serial interval - see https://www.medrxiv.org/content/10.1101/2020.03.10.20033852v1.full.pdf
-shape <- 3.16
-scale <- 1.52
-# hist(rgamma(1e4,shape = shape, scale = scale))
-si_mean <- as.numeric(epitrix::gamma_shapescale2mucv(shape = shape, scale = scale)[1])
-si_std <- as.numeric(epitrix::gamma_shapescale2mucv(shape = shape, scale = scale)[2])*
-  as.numeric(epitrix::gamma_shapescale2mucv(shape = shape, scale = scale)[1])
+# serial interval - see Neil
+si_mean <- 6.48 
+si_std <- 1.64 
 
 ```
 
