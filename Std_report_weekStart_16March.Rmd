@@ -1,0 +1,177 @@
+---
+title: "ccc"
+author: "Pierre Nouvellet"
+date: "2019-07"
+---
+
+```{r options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+library(knitr)
+library(Hmisc)
+
+opts_chunk$set(collapse = TRUE)
+
+opts_chunk$set(fig.path='figs/', fig.keep='high', 
+               dev=c('png'), fig.width=8, fig.height=8, cache=FALSE,
+               tidy=FALSE, warning=FALSE, fig.show="asis"
+ 	       )
+
+```
+
+# models included in output
+
+```{r}
+# models
+models <- list(week1 = c('RtI1','RtI0'),
+               week2 = c('RtI1','RtI0'))
+n_models <- lapply(models, function(x) length(x))
+
+# time of end of weeks before predictions
+day_end_week <- as.Date(c('2020-03-08','2020-03-15'),format = '%Y-%m-%d')
+n_pred <- length(day_end_week)
+
+if (n_pred != length(models)) print('warning')
+
+```
+
+# Open various prediction files
+
+```{r}
+preds <- list()
+for (j in 1:n_pred){
+   preds[[as.character(day_end_week[j])]] <- list()
+  for (i in 1:n_models[[j]]){
+    preds[[j]][[models[[j]][i]]] <- readRDS(
+      paste0('RData/',models[[j]][i],'_Std_results_week_end_',day_end_week[j],'.rds'))
+  }
+}
+
+
+
+```
+
+# Combine results
+
+### how many unique countries/models/forecasted days included overall
+
+```{r}
+
+# number of unique models across all predictions
+ind_models <- sort(unique(unlist(models)))
+
+# number of prediction days = 7*n_pred
+
+# total number of country acroos all predictions
+ind_country <- preds[[1]][[1]]$Country
+for (i in 2:n_pred){
+  ind_country <- c(ind_country,preds[[i]][[1]]$Country)
+}
+ind_country <- sort(unique(ind_country))
+
+```
+
+### combine Rts
+
+```{r}
+
+Rts <- list()
+for (i in 1:n_pred){
+  temp <- as.data.frame(matrix(NA,length(ind_models)*1e4,length(ind_country)+1))
+  names(temp) <- c('model',ind_country)
+  temp$model <- rep(ind_models,each = 1e4)
+  
+  f_models <- 
+  
+  Rts[[as.character(day_end_week[i])]] <-
+}
+
+```
+
+
+
+
+
+
+## below is old stuff, i was trying, check in case useful 
+a lot of it is organising the ouput of the different models/predictions week in a format easy to handle...
+
+```{r}
+# extract and combine Rts last
+R_last <- cbind(model = rep(models[[1]][1],1e4),preds[[n_pred]][[1]]$Rt_last)
+for (i in 2:n_models[[n_pred]]){
+  R_last <- rbind(R_last,preds[[n_pred]][[i]]$Rt_last)
+}
+R_last_summary <- apply(R_last,2,quantile,c(.5,.025,.975))
+country <- preds[[n_pred]][[1]]$Country
+# clean country names
+country[which(country == 'Saudi_Arabia')] <- 'S.Arabia'
+country[which(country == 'United_States_of_America')] <- 'USA'
+country[which(country == 'United_Kingdom')] <- 'UK'
+country[which(country == 'Czech_Republic')] <- 'Czech R.'
+country[which(country == 'South_Korea')] <- 'S.Korea'
+country[which(country == 'San_Marino')] <- 'S.Marino'
+
+N_geo <- length(country)
+
+# plot errorbar of Rt last
+## margin for side 2 is 7 lines in size
+op <- par(mar = c(6,4,4,2) + 0.1) ## default is c(5,4,4,2) + 0.1
+
+errbar(1:N_geo,R_last_summary[1,],R_last_summary[2,],R_last_summary[3,],
+       xlab = '', ylab = 'R',ylim = c(0,8), bty = 'n',xaxt = "n")
+lines(c(1,N_geo),rep(1,2), col = 'red')
+
+axis(1, at=1:N_geo, labels=country,las=2)
+
+# extract and combine predictions
+Prediction <- list()
+Prediction <- preds[[1]][[1]]$Predictions
+
+for (i in 2:n_models[[n_pred]]){
+  for (c in 1:length(preds[[1]][[1]]$Predictions)){
+    f <- which(names(preds[[1]][[1]]$Predictions)[c] %in% names(Prediction))
+    
+  }
+    Prediction[[c]] <- rbind(Prediction[[c]]$Predictions,preds[[1]][[1]]$Predictions)
+}
+R_last_summary <- apply(R_last,2,quantile,c(.5,.025,.975))
+
+# get daily and weekly median and 95%CrI for all prediction weeks
+
+# save summary incl. for each predictions weeks per country:
+### Rt (median, 95%CrI); 
+### observed weekly count (if available); 
+### predicted weekly count; 
+### performance for that week
+
+
+
+# plot for each country the incidence oberved and the various predictions, 
+### grey for past predictions, blue for news
+
+
+
+```
+
+
+# Indvidual model results
+
+```{r}
+# extract Rts last
+
+
+# plot errorbar of Rt last, 1 color per model
+
+# extract predictions
+
+# get daily and weekly median and 95%CrI for all prediction weeks per model
+
+# save summary incl. for each retrospective predictions weeks per country:
+### performance for each week retrospective
+
+
+
+# plot for each country the incidence oberved and the various predictions, 
+### 1 color per model
+
+
+```
