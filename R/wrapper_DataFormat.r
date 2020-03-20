@@ -18,6 +18,7 @@ I <- as.data.frame(matrix(NA,n_days,length(country)+1))
 names(I) <- c('dates',country)
 
 I[,1] <- seq(time_frame[1],time_frame[2],1)
+D <- I
 
 for (i in 1:length(country)){
   f <- which(ts$Countries.and.territories %in% country[i])
@@ -30,6 +31,7 @@ for (i in 1:length(country)){
     }
     if(length(f)==1){
       I[f,i+1] <- temp$Cases[j]
+      D[f,i+1] <- temp$Deaths[j]
     }
   }
 }
@@ -37,8 +39,8 @@ for (i in 1:length(country)){
 I[is.na(I)] <- 0
 I_full <- I
 
-
-
+D[is.na(D)] <- 0
+D_full <- D
 
 
 
@@ -49,6 +51,7 @@ I_full <- I
 f<- which(I_full$dates <= date_week_finishing)
 
 I_full <- I_full[f,]
+D_full <- D_full[f,]
 
 
 
@@ -59,15 +62,16 @@ I_full <- I_full[f,]
 Threshold_criterion_4weeks <- 100
 d_limit_4weeks <-  4*7
 
-Threshold_criterion_7days <- 10
+Threshold_criterion_7days <- 2
 d_limit_7days <-  7
 
 I_last_4weeks <- tail(I_full,d_limit_4weeks)
-I_last_7days <-  tail(I_full,d_limit_7days)
+D_last_7days <-  tail(D_full,d_limit_7days)
 f <- which((colSums(I_last_4weeks[,-1]) >= Threshold_criterion_4weeks) &
-             (colSums(I_last_7days[,-1]) >= Threshold_criterion_7days))
+             (colSums(D_last_7days[,-1]) >= Threshold_criterion_7days))
 
 I_active_transmission <- I_full[,c(1,f+1)]
+D_active_transmission <- D_full[,c(1,f+1)]
 
 # save
 
@@ -75,6 +79,7 @@ data <- list(date_week_finishing = date_week_finishing,
              Threshold_criterion_4weeks = Threshold_criterion_4weeks,
              Threshold_criterion_7days = Threshold_criterion_7days,
              I_active_transmission = I_active_transmission,
+             D_active_transmission = D_active_transmission,
              Country = colnames(I_active_transmission)[-1],
              si_mean = si_mean,
              si_std = si_std)
