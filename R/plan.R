@@ -138,11 +138,11 @@ plan <- drake_plan(
             as.data.frame(out)
 
         }
-        ),
+     )
   ## Finally render the report
-  report = rmarkdown::render(
-      input = file_in("standardised_weekly_report.Rmd"),
-      output_file = "index.html"
-  )
+  ## report = rmarkdown::render(
+  ##     input = file_in("standardised_weekly_report.Rmd"),
+  ##     output_file = "index.html"
+  ## )
 
 )
