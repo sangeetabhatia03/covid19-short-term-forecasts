@@ -101,18 +101,21 @@ plan <- drake_plan(
         model_outputs,
         function(x) {
             pred <- x[["Predictions"]]
-            purrr::map_dfr(pred, function(x) {
+            purrr::map_dfr(pred, function(y) {
                 out <- t(
-                    apply(
-                        x, 2, quantile, prob = c(0.025, 0.1,
-                                                 0.5, 0.6, 0.975)
+                    apply(y,
+                          2,
+                          quantile,
+                          prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
                     )
                 )
-                as.data.frame(out)
+                out <- as.data.frame(out)
+                out <- tibble::rownames_to_column(out, var = "date")
+                out
             }, .id = "country"
            )
         }
-    )
+    ),
     ## The full posterioris going to be too big
     ## when we have more models and many countries.
     ## model_predictions = purrr::map_dfr(
@@ -121,6 +124,25 @@ plan <- drake_plan(
     ##     .id = "model"
     ## )
 
+  model_rts_qntls = purrr::map(
+        model_outputs,
+        function(x) {
+            out <- t(
+                apply(
+                    x[["Rt_last"]],
+                    2,
+                    quantile,
+                    prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
+                )
+            )
+            as.data.frame(out)
 
+        }
+        ),
+  ## Finally render the report
+  report = rmarkdown::render(
+      input = file_in("standardised_weekly_report.Rmd"),
+      output_file = "index.html"
+  )
 
 )

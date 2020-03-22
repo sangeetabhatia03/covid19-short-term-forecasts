@@ -1,5 +1,5 @@
-infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-17.csv"
-date_week_finishing <-  as.Date('08/03/2020', format = '%d/%m/%Y')
+infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-22.csv"
+date_week_finishing <-  as.Date('22/03/2020', format = '%d/%m/%Y')
 shape <- 3.16
 scale <- 1.52
                                         # hist(rgamma(1e4,shape = shape, scale = scale))
