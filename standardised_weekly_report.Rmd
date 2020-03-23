@@ -54,6 +54,12 @@ In the results section of each model output, a 'methods' section outlines briefl
 ## Data Sources
 
 
+The forecasts produced relies on reported daily counts of deaths per country available on the eCDC website:
+
+https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
+
+While death counts are used for the main analysis and producing forecasts. Reported cases and the death to reported cases ratios for each country are show in the 'Supplementary Information' section.
+
 
 
 ## Results {.tabset .tabset-fade .tabset-pills} 
@@ -62,7 +68,7 @@ In the results section of each model output, a 'methods' section outlines briefl
 
 ### Model 1 {.tabset .tabset-fade .tabset-pills} 
 
-#### Cases
+#### Cases - TO BE REMOVED
 
 ```{r echo = FALSE}
 x <- drake::readd("model_predictions_qntls")[[1]]
@@ -98,6 +104,23 @@ p
 
 #### Effective Reproduction Number Estimates
 
+### Summary of results
+
+a large table with a row per country that ever appeared as 'active transmission'
+and the following columns:
+- country name
+
+for each retrospective week of predictions
+
+- Rt estimated on the first week of predictions (week starting 9th of march) - paste0 with median, 95%CrI(XX;XX)
+- predicted weekly death count - median, 95%CrI(XX;XX)
+- observed weekly death count
+
+for the last week of predictions:
+- Rt estimated on the first week of predictions (week starting 9th of march) - paste0 with median, 95%CrI(XX;XX)
+- predicted weekly death count - median, 95%CrI(XX;XX)
+
+ideally downloadable as xlsx file formatted to keep country column and title row fixed
 
 ### Model 2 
 
