@@ -1,0 +1,73 @@
+projection_plot <- function(obs, pred) {
+
+
+    ## Number of projections
+    nprojs <- length(unique(pred$proj))
+
+    ## Latest projections get a different color
+    palette <- c(
+        rep("#98984d", nprojs - 1),
+        "#b3669e"
+    )
+    names(palette) <- unique(pred$proj)
+
+    date_min <- as.Date("2020-03-01")
+    date_max <- max(pred$date) + 2
+
+    ## Get dates of adding vlines.
+    window_eps <- dplyr::group_by(pred, proj) %>%
+        dplyr::summarise(date = min(date)) %>%
+        dplyr::ungroup()
+
+    window_eps$xintercepts <- as.numeric(
+        window_eps$date
+    ) + 0.5
+    ## To get nice labels
+
+    nice_names <- snakecase::to_any_case(
+        pred$country,
+        "title"
+        )
+    names(nice_names) <- pred$country
+
+    p <- ggplot() +
+    geom_point(data = obs, aes(DateRep, Deaths)) +
+        geom_line(
+            data = pred,
+            aes(date, `50%`, col = proj, group = proj)
+        ) +
+        geom_ribbon(
+            data = pred,
+            aes(x = date,
+                ymin = `2.5%`,
+                ymax = `97.5%`,
+                fill = proj,
+                group = proj),
+            alpha = 0.4) +
+        facet_wrap(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            )
+        ) +
+    scale_color_manual(
+        values = palette,
+        aesthetics = c("color", "fill")
+    ) +
+    theme_pubr() +
+    theme(legend.position = "none") +
+        xlim(date_min, date_max) +
+    geom_vline(
+        xintercept = c(
+           window_eps$xintercepts
+        ),
+        linetype = "dashed"
+    ) + xlab("") +
+        theme(
+            axis.text.x =
+                element_text(angle = -45, hjust = 0)
+        )
+
+    p
+}

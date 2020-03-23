@@ -101,41 +101,16 @@ $$I_t \sim NegBin\left( R_t \Sigma_{s=1}^{t} I_{t-s} w_s, z \right) $$
 
 The value of the overdispersion parameter, z, was taken from analyses of exposure patterns during the SARS epidemic [lloyds-smith sars nature]. 
  
-
-
-#### Cases - TO BE REMOVED
-
-```{r echo = FALSE}
-x <- drake::readd("model_predictions_qntls")[[1]]
-x$date <- as.Date(x$date)
-raw_data <- dplyr::filter(raw_data, country %in% x$country)
-
-p <- ggplot() +
-        geom_point(data = raw_data, aes(DateRep, Cases)) +
-        geom_line(data = x, aes(date, `50%`, group = country)) +
-    geom_ribbon(data = x,
-                aes(x = date,
-                    ymin = `2.5%`,
-                    ymax = `97.5%`,
-                    group = country),
-                alpha = 0.3
-                ) +
-        geom_ribbon(data = x,
-                aes(x = date,
-                    ymin = `40%`,
-                    ymax = `60%`,
-                    group = country),
-                alpha = 0.4
-                ) +
-    facet_wrap(~country, scales = "free_y") +
-    theme_pubr() +
-    xlab("") + ylab("Cases")
-
-p
-    
-```
-
 #### Deaths
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, out.width = "90%"}
+obs <- drake::readd("obs")
+pred <- drake::readd("model_1") 
+pred <- pred[pred$si == "si_1", ]
+pred$date <- as.Date(pred$date)
+projection_plot(obs, pred)
+
+```
 
 #### Effective Reproduction Number Estimates
 
