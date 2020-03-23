@@ -64,66 +64,87 @@ plan <- drake_plan(
 ####### Part 2, when we have the model outputs ##################
 ####### check that model outputs have the expected components ###
 ###### Only keep the ones that have expected components #########
-    model_outputs = purrr::map(output_files, readRDS) %>%
-        purrr::keep(
-            function(x) {
-                all(
-                    names(x) %in%
-                    c("I_active_transmission",
-                      ##"D_active_transmission",
-                      "Country",
-                      "Rt_last",
-                      "Predictions")
-                )
-         }
-    ),
+    model_outputs = purrr::map(output_files, readRDS),
+
 
     model_predictions_qntls = purrr::map(
         model_outputs,
         function(x) {
             pred <- x[["Predictions"]]
             purrr::map_dfr(pred, function(y) {
-                out <- t(
-                    apply(y,
-                          2,
-                          quantile,
-                          prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
-                    )
+                names(y) <- c("si_1", "si_2")
+                out <- purrr::map_dfr(
+                    y,
+                    function(y_si) {
+                        out2 <- t(
+                            apply(y_si,
+                                  2,
+                                  quantile,
+                                  prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
+                                  )
+                        )
+                        out2 <- as.data.frame(out2)
+                        out2 <- tibble::rownames_to_column(out2, var = "date")
+                        out2
+
+                    }, .id = "si"
                 )
-                out <- as.data.frame(out)
-                out <- tibble::rownames_to_column(out, var = "date")
                 out
             }, .id = "country"
            )
         }
-    ),
-    ## The full posterioris going to be too big
-    ## when we have more models and many countries.
-    ## model_predictions = purrr::map_dfr(
-    ##     model_outputs,
-    ##     ~ dplyr::bind_rows(.x[["Predictions"]], .id = "country"),
-    ##     .id = "model"
-    ## )
+        ),
 
-  model_rts_qntls = purrr::map(
-        model_outputs,
-        function(x) {
-            out <- t(
-                apply(
-                    x[["Rt_last"]],
-                    2,
-                    quantile,
-                    prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
-                )
-            )
-            as.data.frame(out)
+    ## Model 1. Name contains RtI0
+    model_1 =  model_predictions_qntls[grep(
+        pattern = "RtI0", x = names(model_predictions_qntls)
+    )] %>% dplyr::bind_rows(.id = "proj") %>%
+    dplyr::mutate_at(vars("date"), as.Date),
 
-        }
-     )
-  ## Finally render the report
-  ## report = rmarkdown::render(
-  ##     input = file_in("standardised_weekly_report.Rmd"),
-  ##     output_file = "index.html"
-  ## )
+    ## Model 2. Names contains sbkp
+    model_2 =  model_predictions_qntls[grep(
+        pattern = "sbkp",
+        x = names(model_predictions_qntls)
+    )] %>%
+        dplyr::bind_rows(.id = "proj") %>%
+    dplyr::mutate_at(vars("date"), as.Date),
+
+
+    obs = dplyr::rename(pass, country = "Countries.and.territories") %>%
+        dplyr::mutate_at(vars("DateRep"), as.Date),
+
+
+ ##    ## The full posterioris going to be too big
+ ##    ## when we have more models and many countries.
+ ##    ## model_predictions = purrr::map_dfr(
+ ##    ##     model_outputs,
+ ##    ##     ~ dplyr::bind_rows(.x[["Predictions"]], .id = "country"),
+ ##    ##     .id = "model"
+ ##    ## )
+
+ ##  model_rts_qntls = purrr::map(
+ ##        model_outputs,
+ ##        function(x) {
+ ##            out <- t(
+ ##                apply(
+ ##                    x[["Rt_last"]],
+ ##                    2,
+ ##                    quantile,
+ ##                    prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
+ ##                )
+ ##            )
+ ##            as.data.frame(out)
+
+ ##        }
+ ## ),
+################### Visualisations ###################################
+################### ############### ##################################
+  ## Model specific projections
+
+  ##Finally render the report
+  report = rmarkdown::render(
+      input = file_in("standardised_weekly_report.Rmd"),
+      output_file = "index.html"
+  )
 
 )
