@@ -1,0 +1,122 @@
+---
+output: 
+pdf_document:
+citation_package: natbib
+keep_tex: false
+fig_caption: true
+latex_engine: pdflatex
+title: "Short-term forecasts of cases and deaths of COVID-19 in multiple countries"
+author:
+- name: Sangeeta Bhatia and Pierre Nouvellet
+affiliation: Imperial College London
+abstract: 
+keywords: 
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+spacing: double
+bibliography: 
+biblio-style: apsr
+endnote: no
+---
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+library(ggplot2)
+library(ggpubr)
+library(drake)
+raw_data <- drake::readd(raw_data)
+raw_data <- dplyr::rename(raw_data, country = "Countries.and.territories")
+
+
+```
+# Introduction {.tabset .tabset-fade .tabset-pills}
+
+As of `r format(Sys.time(), '%B %d, %Y')`, there have more than
+250,000 cases of COVID-19 across the world, with more than 3000
+deaths. In this report, we use the reported number of cases and deaths
+of COVID-19 to make short term forecasts of the trajectory of the
+outbreak. 
+
+## Methods 
+
+## Data Sources
+
+## Caveats
+
+
+## Results {.tabset .tabset-fade .tabset-pills} 
+
+### Ensemble Model 
+
+### Model 1 {.tabset .tabset-fade .tabset-pills} 
+
+#### Cases
+
+```{r echo = FALSE}
+x <- drake::readd("model_predictions_qntls")[[1]]
+x$date <- as.Date(x$date)
+raw_data <- dplyr::filter(raw_data, country %in% x$country)
+
+p <- ggplot() +
+        geom_point(data = raw_data, aes(DateRep, Cases)) +
+        geom_line(data = x, aes(date, `50%`, group = country)) +
+    geom_ribbon(data = x,
+                aes(x = date,
+                    ymin = `2.5%`,
+                    ymax = `97.5%`,
+                    group = country),
+                alpha = 0.3
+                ) +
+        geom_ribbon(data = x,
+                aes(x = date,
+                    ymin = `40%`,
+                    ymax = `60%`,
+                    group = country),
+                alpha = 0.4
+                ) +
+    facet_wrap(~country, scales = "free_y") +
+    theme_pubr() +
+    xlab("") + ylab("Cases")
+
+p
+    
+```
+
+#### Deaths
+
+#### Effective Reproduction Number Estimates
+
+
+### Model 2 
+
+"Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
+ab illo inventore veritatis et quasi architecto beatae vitae dicta
+sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
+aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
+dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed
+quia non numquam eius modi tempora incidunt ut labore et dolore magnam
+aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum
+exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex
+ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in
+ea voluptate velit esse quam nihil molestiae consequatur, vel illum
+qui dolorem eum fugiat quo voluptas nulla pariatur?"
+
+### Model 3 
+
+"Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
+ab illo inventore veritatis et quasi architecto beatae vitae dicta
+sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
+aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
+dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed
+quia non numquam eius modi tempora incidunt ut labore et dolore magnam
+aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum
+exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex
+ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in
+ea voluptate velit esse quam nihil molestiae consequatur, vel illum
+qui dolorem eum fugiat quo voluptas nulla pariatur?"
+
