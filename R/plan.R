@@ -15,9 +15,13 @@ plan <- drake_plan(
                Cases == 0)
         ),
 
+    ## Apply thresholds
+    pass = split(raw_data, raw_data$`Countries.and.territories`) %>%
+        purrr::keep(deaths_threshold) %>%
+        dplyr::bind_rows(),
 
      by_country_deaths = dplyr::select(
-        raw_data, DateRep, Deaths, Countries.and.territories
+        pass, DateRep, Deaths, Countries.and.territories
         ) %>%
          tidyr::spread(
             key = Countries.and.territories, value = Deaths, fill = 0
@@ -26,42 +30,19 @@ plan <- drake_plan(
 
 
     by_country_cases = dplyr::select(
-        raw_data, DateRep, Cases, Countries.and.territories
+        pass, DateRep, Cases, Countries.and.territories
     ) %>%
         tidyr::spread(
             key = Countries.and.territories, value = Cases, fill = 0
      ) %>% dplyr::filter(DateRep <= date_week_finishing),
 
-    ## Filters for cases
-    ## Select countries with at least 100 Cases in the last 4 weeks, and
-    ## at least 10 Cases in the last week.
-
-    last_4_weeks = by_country_cases[by_country_cases$DateRep >=
-                                 max(by_country_cases$DateRep) - 28, ],
-
-    keep = names(
-        which(
-            colSums(last_4_weeks[, -1]) >= Threshold_criterion_4weeks
-        )
-    ),
-
-    last_1_week = by_country_deaths[by_country_deaths$DateRep >=
-                                max(by_country_deaths$DateRep) - 7,
-                                c("DateRep", keep)],
-
-    keep2 = names(
-        which(
-            colSums(last_1_week[, -1]) >= Threshold_criterion_7days
-        )
-    ),
 
     ## For consistency with Pierre's code, rename DateRep to dates
-    cases_to_use = by_country_cases[, c("DateRep", keep2)] %>%
-        dplyr::rename(dates = "DateRep"),
+    cases_to_use = dplyr::rename(by_country_cases, dates = "DateRep"),
 
-    deaths_to_use = by_country_deaths[, c("DateRep", keep2)] %>%
-        dplyr::rename(dates = "DateRep"),
+    deaths_to_use = dplyr::rename(by_country_deaths, dates = "DateRep"),
 
+    Country = colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"],
 
 
     out = saveRDS(
@@ -71,7 +52,7 @@ plan <- drake_plan(
             Threshold_criterion_7days = Threshold_criterion_7days,
             I_active_transmission = cases_to_use,
             D_active_transmission = deaths_to_use,
-            Country = keep2,
+            Country = Country,
             si_mean = si_mean,
             si_std = si_std
         ),
