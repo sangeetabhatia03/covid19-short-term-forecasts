@@ -68,6 +68,40 @@ While death counts are used for the main analysis and producing forecasts. Repor
 
 ### Model 1 {.tabset .tabset-fade .tabset-pills} 
 
+#### Methods
+
+Estimating current transmissibility
+
+We use a previously described approach [cori et al. 2013] to quantify transmissibility during the calibration period, from the incidence of death time series, assuming a certain distribution for the serial interval for death (the time between death in a case and death in their infector). Here, we assumed that the serial interval distribution for death was similar to the classical serial interval distribution (the time between onset of symptom in a case and onset of symptom in their infector).
+
+Our main analysis assume a gamma distributed serial of mean 4.8 days and standard deviation of 2.7 days following [Wang and Teunis, 2020].
+
+Include figure of histogram of SI
+
+The serial interval above might be baised toward lower values given the observation bias whereby, in contact tracing studies, long serial interval tend to be under-represented. To account for this, as a sensitivity analysis, we also ran our analysis with an alternative longer serial interval of mean 6.48 days and standard deviation of 3.83 days [Ferguson 2020, report 9]. Results for this longer interval are presented in the supplementary information section. Most importantly, while using such longer serial interval has very little impact on the weekly forecast produced, it results in much higher estimated of transmissibility.
+
+We assumed that transmissibility was constant throughout the calibration period, and measured it through the reproduction number, R, defined as the average number of secondary cases infected by an infected individual. The estimate of R is informative as if R is above the threshold value 1, and remains above 1, the outbreak is likely to grow further, whereas if R is below 1, and remains below 1, the outbreak will die out.
+
+Our method assumes that the daily incidence can be approximated by a Poisson process using the so-called renewal equation:
+
+$$ I_t \sim Pois\left( R_t \Sigma_{s=1}^{t} I_{t-s} w_s \right) $$
+
+
+where $I_t$ is the incidence (of deaths) on day $t$, $R_t$ is the reproduction number on day $t$, and $w$ is the probability mass function of the serial interval. 
+
+Forward projections
+
+For each country, we used the renewal equation to project the incidence forward, given an estimated reproduction number, and the observed incidence of death. We sampled a set of reproduction numbers from the posterior distribution obtained in the estimation process. For each of these sets, we simulated stochastic realisations of the renewal equation from the end of the calibration period; leading projected incidence trajectories. 
+
+Projections were made on a 7-days horizon. The projections assume that the transmissibility remains constant over this 7-days horizon. If transmissibility were to decrease as a result of control interventions and/or changes in behaviour over this time period, we would predict a lower number of cases; similarly, if transmissibility were to increase over this time period, we would predict a higher number of cases. We limited our projection to 7 days only as assuming constant transmissibility over longer time horizons seemed unrealistic. 
+
+Super-spreading has been shown to be an important characteristics of many coronaviruses. To account for this characteristic, we, assumed that secondary cases are generated according to a negative binomial distribution: 
+
+$$I_t \sim NegBin\left( R_t \Sigma_{s=1}^{t} I_{t-s} w_s, z \right) $$
+
+The value of the overdispersion parameter, z, was taken from analyses of exposure patterns during the SARS epidemic [lloyds-smith sars nature]. 
+
+
 #### Cases - TO BE REMOVED
 
 ```{r echo = FALSE}
@@ -104,7 +138,7 @@ p
 
 #### Effective Reproduction Number Estimates
 
-### Summary of results
+#### Summary of results
 
 a large table with a row per country that ever appeared as 'active transmission'
 and the following columns:
@@ -124,19 +158,28 @@ ideally downloadable as xlsx file formatted to keep country column and title row
 
 ### Model 2 
 
-"Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-ab illo inventore veritatis et quasi architecto beatae vitae dicta
-sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
-dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed
-quia non numquam eius modi tempora incidunt ut labore et dolore magnam
-aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum
-exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex
-ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in
-ea voluptate velit esse quam nihil molestiae consequatur, vel illum
-qui dolorem eum fugiat quo voluptas nulla pariatur?"
+#### Methods
+
+Estimating current transmissibility
+
+The methods is very similar to that of model but given uncertainty surrounding the epidemiological situation before the calibration period, we only used incidence data during the calibration period, and reconstructed the incidence before the calibration period whilst estimating R, as described in [Nouvellet 2018 simple approach]. The model has the advantage of being more robust to changes in reporting before the calibration.
+
+
+Forward projections
+
+As for model 1, we used the renewal equation to project the incidence forward, given a back-calculated early incidence curve, an estimated reproduction number, and the observed incidence over the calibration period. We sampled a sets of back-calculated early incidence curves and reproduction numbers from the posterior distribution obtained in the estimation process. For each of these sets, we simulated stochastic realisations of the renewal equation from the end of the calibration period; leading to projected incidence trajectories. 
+
+Projections were made on a 7-days horizon. The projections assume that the transmissibility remains constant over this horizon. If transmissibility were to decrease as a result of control interventions and/or changes in behaviour over this time period, we would predict a lower number of cases; similarly, if transmissibility were to increase over this time period, we would predict a higher number of cases. We limited our projection to 7 days only as assuming constant transmissibility over longer time horizons seemed unrealistic. 
+
+
+
+#### Deaths
+
+#### Effective Reproduction Number Estimates
+
+#### Summary of results
+
+
 
 ### Model 3 
 
