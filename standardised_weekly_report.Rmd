@@ -61,7 +61,6 @@ https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-
 While death counts are used for the main analysis and producing forecasts. Reported cases and the death to reported cases ratios for each country are show in the 'Supplementary Information' section.
 
 
-
 ## Results {.tabset .tabset-fade .tabset-pills} 
 
 ### Ensemble Model 
