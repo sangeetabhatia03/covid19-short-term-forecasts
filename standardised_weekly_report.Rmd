@@ -33,16 +33,27 @@ raw_data <- dplyr::rename(raw_data, country = "Countries.and.territories")
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
 As of `r format(Sys.time(), '%B %d, %Y')`, there have more than
-250,000 cases of COVID-19 across the world, with more than 3000
-deaths. In this report, we use the reported number of cases and deaths
+351,000 cases of COVID-19 across the world, with more than 15,000
+deaths. In this report, we use the reported number of deaths
 of COVID-19 to make short term forecasts of the trajectory of the
 outbreak. 
 
 ## Methods 
 
+The objective of this project is to forecast for the daily number of COVID-19 Death in countries with sustained local transmission. We aim to produce weekly forecasts every Monday. Multiple teams are involved, each producing weekly forecasts and a centralised team also produces an ensemble forecast.
+
+Forecasts are produce weekly for based on data available on the last Sunday of the previous week. Forecasts are produced only for countries that reported at least 5 deaths in the previous week and 10 deaths in the previous two weeks. For the purpose of our analysis, we assume those countries show strong evidence active and sustained local transmission.
+
+Importantly, all weekly forecasts rely on estimation of current level of transmissibility. Given we are forecasting number of daily deaths expected, current transmissibility reflects epidemiological dynamics when the cases who died became infected. 
+
+Therefore, current estimates of transmissibility based on death reflect transmission events that occur about two to three weeks ago, given the delays between infection and death. As a consequence, in the best case scenario, the impact of current control on estimated of transmissibility will be quantifiable with a two to three weeks delay.
+
+In the results section of each model output, a 'methods' section outlines briefly the methodology used to produce forecasts.
+
+
 ## Data Sources
 
-## Caveats
+
 
 
 ## Results {.tabset .tabset-fade .tabset-pills} 
@@ -120,3 +131,9 @@ ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in
 ea voluptate velit esse quam nihil molestiae consequatur, vel illum
 qui dolorem eum fugiat quo voluptas nulla pariatur?"
 
+
+## Supplementary Information
+
+To include graph of reported cases
+
+To include analysis and graph of death to reported cases ratio
