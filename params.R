@@ -50,16 +50,3 @@ names(output_files) <- gsub(
     pattern = ".rds",
     replacement = ""
 )
-
-
-###################################
-## names(model_predictions_qntls[1:3]) <- paste0("proj", 1:3)
-## model1 <- dplyr::bind_rows(model_predictions_qntls[1:3], .id = "proj")
-## model2 <- dplyr::bind_rows(model_predictions_qntls[4:6])
-## pass <- dplyr::rename(pass, country = "Countries.and.territories")
-## pass$DateRep <- as.Date(pass$DateRep)
-## model1$date  <- as.Date(model1$date)
-
-## model1 <- model1[model1$si == "si_1", ]
-
-

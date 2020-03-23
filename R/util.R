@@ -27,7 +27,7 @@ projection_plot <- function(obs, pred) {
     nice_names <- snakecase::to_any_case(
         pred$country,
         "title"
-        )
+    )
     names(nice_names) <- pred$country
 
     p <- ggplot() +
@@ -67,6 +67,34 @@ projection_plot <- function(obs, pred) {
         theme(
             axis.text.x =
                 element_text(angle = -45, hjust = 0)
+        )
+
+    p
+}
+
+
+rt_plot <- function(rt) {
+
+    nice_names <- snakecase::to_any_case(
+        rt$country,
+        "title"
+    )
+    names(nice_names) <- rt$country
+
+    p <- ggplot() +
+        geom_errorbar(
+            data = rt,
+            aes(x = country, ymin = `2.5%`, ymax = `97.5%`)
+        ) +
+        geom_point(data = rt, aes(x = country, y = `50%`)) +
+        theme_pubr() +
+        xlab("") +
+        ylab("Effective Reproduction Number") +
+        theme(legend.position = "none") +
+        scale_x_discrete(labels = nice_names) +
+        theme(
+            axis.text.x =
+                element_text(angle = -90, hjust = 0)
         )
 
     p

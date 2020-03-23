@@ -3,17 +3,19 @@ plan <- drake_plan(
     raw_data = read.csv(
         file_in(here::here(infile)), stringsAsFactors = FALSE
     ) %>%
-        mutate_at(
+        dplyr::mutate_at(
             vars("DateRep"), ~ as.Date(., format = '%d/%m/%Y')
         ) %>%
         ## Manual fixes.
         ## For 2020-03-17, there are two rows for Somalia
         ## one with 0 Cases and one with 1 Cases, Delete one of them
-        filter(
+        dplyr::filter(
             ! (Countries.and.territories == "Somalia" &
                DateRep == "2020-03-17" &
                Cases == 0)
-        ) %>% dplyr::filter(DateRep <= date_week_finishing),
+        ) %>%
+        dplyr::filter(DateRep <= date_week_finishing),
+
 
     ## Apply thresholds
     pass = split(raw_data, raw_data$`Countries.and.territories`) %>%
@@ -95,6 +97,46 @@ plan <- drake_plan(
         }
         ),
 
+
+    model_rt_qntls = purrr::map(
+        model_outputs,
+        function(x) {
+            pred <- x[["R_last"]]
+            purrr::map_dfr(pred, function(y) {
+                names(y) <- c("si_1", "si_2")
+                out <- purrr::map_dfr(
+                    y,
+                    function(y_si) {
+                        out2 <- quantile(
+                            y_si,
+                            prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
+                        )
+                        out2 <- as.data.frame(out2)
+                        out2 <- tibble::rownames_to_column(
+                            out2,  var = "quantile"
+                        )
+                    }, .id = "si"
+                )
+                out
+            }, .id = "country"
+           )
+        }
+     ),
+    ## Model 1 Rt Estimates
+    model_1_rt =  model_rt_qntls[grep(
+        pattern = "RtI0", x = names(model_rt_qntls)
+    )] %>%
+        dplyr::bind_rows(.id = "proj") %>%
+    tidyr::spread(key = quantile, value = out2),
+
+
+    model_2_rt =  model_rt_qntls[grep(
+        pattern = "sbkp", x = names(model_rt_qntls)
+    )] %>%
+        dplyr::bind_rows(.id = "proj") %>%
+        tidyr::spread(key = quantile, value = out2),
+
+
     ## Model 1. Name contains RtI0
     model_1 =  model_predictions_qntls[grep(
         pattern = "RtI0", x = names(model_predictions_qntls)
@@ -110,7 +152,9 @@ plan <- drake_plan(
     dplyr::mutate_at(vars("date"), as.Date),
 
 
-    obs = dplyr::rename(pass, country = "Countries.and.territories") %>%
+    obs = dplyr::rename(
+        pass, country = "Countries.and.territories"
+    ) %>%
         dplyr::mutate_at(vars("DateRep"), as.Date),
 
 
@@ -122,21 +166,6 @@ plan <- drake_plan(
  ##    ##     .id = "model"
  ##    ## )
 
- ##  model_rts_qntls = purrr::map(
- ##        model_outputs,
- ##        function(x) {
- ##            out <- t(
- ##                apply(
- ##                    x[["Rt_last"]],
- ##                    2,
- ##                    quantile,
- ##                    prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
- ##                )
- ##            )
- ##            as.data.frame(out)
-
- ##        }
- ## ),
 ################### Visualisations ###################################
 ################### ############### ##################################
   ## Model specific projections
