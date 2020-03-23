@@ -206,12 +206,12 @@ To include analysis and graph of death to reported cases ratio
 
 ## References
 
-Cori A, Ferguson NM, Fraser C, Cauchemez S. A New Framework and Software to Estimate Time-Varying Reproduction Numbers During Epidemics. Am J Epidemiol. 2013;178: 1505-1512.
+Cori A, Ferguson NM, Fraser C, Cauchemez S. A New Framework and Software to Estimate Time-Varying Reproduction Numbers During Epidemics. Am J Epidemiol. 2013; 178: 1505-1512.
 
-Strongly heterogeneous transmission of COVID-19 in mainland China: local and regional variation Yuke Wang, MSc1, Peter Teunis, PhD1 March 10, 2020. medRxiv
+Wang Y, Teunis T. Strongly heterogeneous transmission of COVID-19 in mainland China: local and regional variation. March 10, 2020. medRxiv
 
 Ferguson et al. 2020. Report 9: Impact of non-pharmaceutical interventions (NPIs) to reduce COVID-19 mortality and healthcare demand. https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/news--wuhan-coronavirus/
 
-Superspreading and the effect of individual variation on disease emergence    J. O. Lloyd-Smith, S. J. Schreiber, P. E. Kopp & W. M. Getz Nature volume 438, pages355-359(2005)Cite this article
+Lloyd-Smith  JO, Schreiber SJ, Kopp PE, Getz WM. Superspreading and the effect of individual variation on disease emergence. Nature, 2005; 438, 355-359.
 
-Nouvellet, Pierre, Cori, Anne, Garske, Tini, Blake, Isobel M, Dorigatti, Ilaria, Hinsley, Wes, Jombart, Thibaut, Mills, Harriet L, Nedjati-Gilani, Gemma, Van Kerkhove, Maria D, Fraser, Christophe, Donnelly, Christl A, Ferguson, Neil M and Riley, Steven (2018) A simple approach to measure transmissibility and forecast incidence. Epidemics, 22. pp. 29-35. ISSN 1755-4365
+Nouvellet P et al. A simple approach to measure transmissibility and forecast incidence. Epidemics, 2018; 22. 29-35.
