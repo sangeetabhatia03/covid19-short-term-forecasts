@@ -1,3 +1,20 @@
+deaths_threshold <- function(ts, Threshold_criterion_7days = 5, Threshold_criterion_prev7days = 5) {
+
+    th1 <- sum(
+        ts$Deaths[ts$DateRep >= max(ts$DateRep) - 7], na.rm = TRUE
+    ) >=
+        Threshold_criterion_7days
+
+    th2 <- sum(
+        ts$Deaths[ts$DateRep >= max(ts$DateRep) - 14 &
+                  ts$DateRep <= max(ts$DateRep) - 7]
+        ) >=
+        Threshold_criterion_prev7days
+
+    th1 & th2
+
+}
+
 infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-22.csv"
 date_week_finishing <-  as.Date('22/03/2020', format = '%d/%m/%Y')
 shape <- 3.16
@@ -15,8 +32,8 @@ si_mean <- c(si_mean, 6.48)
 si_std <- c(si_std, 3.83)
 
 Threshold_criterion_4weeks <- 100
-Threshold_criterion_7days <- 2 ## at least 2 deaths
-
+Threshold_criterion_7days <- 5 ## at least 2 deaths
+Threshold_criterion_prev7days <- 5 ## at least 5 deaths in the week before last
 outfile <-  paste0('Team.input/data_', date_week_finishing,'.rds')
 outfile <- here::here(outfile)
 

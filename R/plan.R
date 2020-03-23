@@ -13,7 +13,7 @@ plan <- drake_plan(
             ! (Countries.and.territories == "Somalia" &
                DateRep == "2020-03-17" &
                Cases == 0)
-        ),
+        ) %>% dplyr::filter(DateRep <= date_week_finishing),
 
     ## Apply thresholds
     pass = split(raw_data, raw_data$`Countries.and.territories`) %>%
@@ -25,8 +25,8 @@ plan <- drake_plan(
         ) %>%
          tidyr::spread(
             key = Countries.and.territories, value = Deaths, fill = 0
-            ) %>%
-        dplyr::filter(DateRep <= date_week_finishing),
+            ),
+
 
 
     by_country_cases = dplyr::select(
