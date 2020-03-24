@@ -26,6 +26,7 @@ NEED to do:
 ```{r}
 
 date_week_finishing <-  as.Date('22/03/2020',format = '%d/%m/%Y')
+delay_report_death <- 10 # need checking!!
 
 day.project <- 7
 t.window.range <- 7
@@ -52,21 +53,28 @@ date_week_finishing <- d$date_week_finishing
 
 colSums(D[,-1])/colSums(I[,-1])
 
-date <- D$dates[7:nrow(D)]
+date <- D$dates[7:(nrow(D)-delay_report_death)]
 moving_DtoI <- list()
 
-med <- matrix(NA,nrow(D)-6,N_geo)
+med <- matrix(NA,length(date),N_geo)
 low <- med
 up <- med
 
 for (i in 1:nrow(med)){
-  temp <- binconf(x = colSums(D[i:(i+6),-1]) , n = colSums(I[i:(i+6),-1]),alpha = .05, method = 'exact')
+  x = colSums(D[i:(i+6)+delay_report_death,-1])
+  n = colSums(I[(i:(i+6)),-1])
+  temp <- binconf(x = x , 
+                  n = n,alpha = .05, method = 'exact')
+  
+  temp[which(x>n),] <- 1
+  temp[which(n==0),] <- NA
+  
   med[i,] <- temp[,1]
   low[i,] <- temp[,2]
   up[i,] <- temp[,3]
 }
 
-med[which((med==Inf))] <- NA
+# med[which((med==Inf))] <- NA
 
 for (i in 1:N_geo){
   moving_DtoI[[as.character(country[i])]] <- data.frame(date = date,
@@ -77,24 +85,21 @@ for (i in 1:N_geo){
 
 ```
 
-Average and 95%CI for ratio of deaths to reported cases for moving window of 7 days since march.
+Average and 95%CI for ratio of deaths (with a 10-days delay) to reported cases for moving window of 7 days since march.
 
-The ratio ignore the delay between death and case being reported. 
+The ratio roughly accounts for the delay between death and case being reported. 
 
-Unless the true number of daily cases is declining very sharply, the ratio is expected to be below 1.
 
-For a given country, if the reporting of new cases and deaths were both constant over time one would expect:
 
-1) The ratio decreases when the epidemic is growing. The exponential growth rate means that the ratio between case on one day relative to case in the past is growing (i.e. the growth rate is not linear). Therefore the number of death (equivalent to a proportion of reported cases in the past) divided by the number of cases in the same period is declining.
+When deaths exceed the number of reported cases 10-days before, we set the reporting at 1 (95%CI [1;1])
 
-2) The ratio reamins constant when the epidemic is stable; i.e. same number of cases today and in the past.
 
-1) The ratio increases when the epidemic is delcining. The exponential decline means that the ratio between case on one day relative to case in the past is decreasing.
 
-Any other trend suggests a change in the reporting. 
-For instance, an increase in the ratio while incidence is still growing exponetially is a clear indication of lower reporting of cases.
+Any temporal trend suggests a change in the reporting. 
+For instance, an increase in the ratio gives an indication that cases reporting is decreasing.
 
-In the plots below, reported deaths (red) and cases (black) are shown rescaled.
+
+In the plots below, both reported deaths (red) and cases (black) have been rescaled but are comparable to each other. The rescaling is such that the maximium recorded numbers of death or cases (with a 10-days delay) reaches 1.
 
 ```{r}
 
@@ -104,9 +109,10 @@ layout(matrix(1:4,2,2))
 for (i in 1:N_geo){
   a <- moving_DtoI[[i]]
   plot(a$date,a$ratio,lwd = 2,
-       ylim = c(0,max(a[f,2:4],na.rm=TRUE)),
+       #ylim = c(0,max(a[f,2:4],na.rm=TRUE)),
+       ylim=c(0,1),
        type='l',
-       xlim = c(as.Date(c('01/03/2020'),format = '%d/%m/%Y'),date_week_finishing),
+       xlim = c(as.Date(c('01/03/2020'),format = '%d/%m/%Y'),date_week_finishing-delay_report_death),
        bty ='n', main = country[i],col = rgb(0,0,1),
        xlab = '', ylab = 'ratio D to I') 
   
@@ -114,10 +120,17 @@ for (i in 1:N_geo){
           c(a$lower,rev(a$upper)),
           border = NA,
           col = rgb(0,0,1,0.2))
+  f2 <- which( I$dates %in% a$date)
   
-  inc <- cbind(I[f+6,i+1],D[f+6,i+1])
-  lines(a$date[f], inc[,1]/max(inc[,1])*max(a[f,2:4]), type = 'p', pch=16,col='black')
-  lines(a$date[f], inc[,2]/max(inc[,2])*max(a[f,2:4]), type = 'p', pch=16,col='red')
+  f2<-f2[f]
+  inc <- cbind(I[f2,i+1],D[f2+delay_report_death,i+1])
+  lines(a$date[f], 
+        inc[,1]/max(c(inc[,1],inc[,2])),
+        type = 'p', pch=16,col='black')
+  
+  lines(a$date[f], 
+        inc[,2]/max(c(inc[,1],inc[,2])), 
+        type = 'p', pch=16,col='red')
   
   if(i==3){
   legend('topleft',legend = c('ratio','death','reported cases'),bty='n',
@@ -127,13 +140,18 @@ for (i in 1:N_geo){
 
 ```
 
-Average and 95%CI for ratio of deaths to reported cases for the last 4 days.
+Average and 95%CI for ratio of deaths to reported cases for the last 14 days.
+
+
+If all cases (incl. asymptomatics) and death were reported, and the delay fro reporting was exactly 10 days, then the ratio defined would be equivalent to the CFR.
+
+Suprisingly, this appear to be pretty much the case for South Korea (see below).
 
 ```{r}
 
 limits <- seq(date_week_finishing-13,date_week_finishing,by = 1)
 f <- which(D$dates %in% limits)
-temp <- binconf(x = colSums(D[f,-1]) , n = colSums(I[f,-1]),alpha = .05, method = 'exact')
+temp <- binconf(x = colSums(D[f,-1]) , n = colSums(I[f-delay_report_death,-1]),alpha = .05, method = 'exact')
 
 summary_14days <- data.frame(country = country,
                       death = colSums(D[f,-1]),
