@@ -94,7 +94,12 @@ rt_plot <- function(rt) {
         scale_x_discrete(labels = nice_names) +
         theme(
             axis.text.x =
-                element_text(angle = -90, hjust = 0)
+                element_text(angle = -45, hjust = 0)
+        ) +
+        geom_hline(
+            yintercept = 1,
+            linetype = "dashed",
+            col = "red"
         )
 
     p
