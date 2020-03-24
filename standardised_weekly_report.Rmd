@@ -1,6 +1,7 @@
 ---
 output: 
-pdf_document:
+html_document:
+  css: style.css
 citation_package: natbib
 keep_tex: false
 fig_caption: true
@@ -24,7 +25,9 @@ endnote: no
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 library(ggplot2)
 library(ggpubr)
+library(dplyr)
 library(drake)
+library(kableExtra)
 raw_data <- drake::readd(raw_data)
 raw_data <- dplyr::rename(raw_data, country = "Countries.and.territories")
 
@@ -124,6 +127,21 @@ rt_plot(rt)
 
 #### Summary of results
 
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
+x <- x[grep("RtI0", x$model), ]
+
+knitr::kable(
+    x[, -1],
+    align = "l",
+    digits = 2,
+    table.attr='class="table-fixed-header"'
+) %>% kable_styling()
+
+```
+
+
+
 a large table with a row per country that ever appeared as 'active transmission'
 and the following columns:
 - country name
@@ -179,6 +197,14 @@ rt_plot(rt)
 
 #### Summary of results
 
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
+x <- x[grep("sbkp", x$model), ]
+
+knitr::kable(x[, -1], align = "l", digits = 2)
+
+```
 
 
 ### Model 3 

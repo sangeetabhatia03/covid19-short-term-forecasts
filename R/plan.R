@@ -68,7 +68,6 @@ plan <- drake_plan(
 ###### Only keep the ones that have expected components #########
     model_outputs = purrr::map(output_files, readRDS),
 
-
     model_predictions_qntls = purrr::map(
         model_outputs,
         function(x) {
@@ -96,6 +95,48 @@ plan <- drake_plan(
            )
         }
         ),
+
+    weekly_predictions_qntls = purrr::map_dfr(
+        model_outputs,
+        function(x) {
+            pred <- x[["Predictions"]]
+            purrr::imap_dfr(pred, function(y, country) {
+                names(y) <- c("si_1", "si_2")
+                out <- purrr::map_dfr(
+                    y,
+                    function(y_si) {
+                        dates <- as.Date(colnames(y_si))
+                        obs_deaths <- dplyr::filter(
+                            pass,
+                            `Countries.and.territories` == country &
+                            DateRep %in% as.Date(dates)
+                        ) %>% pull(Deaths) %>% sum()
+
+                        week_ending <- tail(colnames(y_si), 1)
+                        weekly <- rowSums(y_si)
+                        weekly <- quantile(
+                            weekly,
+                            prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
+                        )
+                        weekly_df <- as.data.frame(weekly)
+                        weekly_df$week_ending <- week_ending
+                        weekly_df$observed <- obs_deaths
+                        weekly_df <- tibble::rownames_to_column(
+                            weekly_df, var = "quantile"
+                            )
+
+                        weekly_df<- tidyr::spread(
+                          weekly_df, key = quantile, value = weekly
+                          )
+                        weekly_df
+
+                    }, .id = "si"
+                )
+                out
+            }, .id = "country"
+           )
+        }, .id = "model"
+     ),
 
 
     model_rt_qntls = purrr::map(
@@ -135,6 +176,52 @@ plan <- drake_plan(
     )] %>%
         dplyr::bind_rows(.id = "proj") %>%
         tidyr::spread(key = quantile, value = out2),
+
+    formatted_weekly_predictions_qntls = split(
+        weekly_predictions_qntls,
+        weekly_predictions_qntls$si
+    ) %>%
+        purrr::imap(
+            function(x, si_name) {
+                out <- data.frame(
+                    model = x$model,
+                    Country = x$country,
+                    `Week Ending` = x$week_ending,
+                    `Predicted Deaths` = glue::glue(
+                        "{x$`50%`} ({x$`2.5%`} - {x$`97.5%`})",
+                        ),
+                    `Observed Deaths` = x$observed,
+                    check.names = FALSE
+                )
+                ## Get Rt Estimates for this SI and this country
+                rt <- purrr::map_dfr(
+                    model_rt_qntls,
+                    function(y) y[(y$si == si_name), ],
+                    .id = "model"
+                    )
+                rt <- dplyr::select(rt, -si)
+                rt <- rt[rt$quantile %in% c("2.5%", "50%", "97.5%"), ]
+                rt <- tidyr::spread(rt, quantile, out2)
+                rt <- dplyr::mutate_if(
+                    rt,
+                    is.numeric,
+                    ~ round(., 2)
+                )
+                rt$`R_t` <- glue::glue(
+                    "{rt$`50%`} ({rt$`2.5%`} - {rt$`97.5%`})"
+                    )
+                rt <- dplyr::select(rt, model, Country = country, `R_t`)
+                out <- dplyr::left_join(x = out, y = rt)
+                out$Country <- snakecase::to_any_case(
+                    as.character(out$Country),
+                    case = "title"
+                )
+
+                out <- dplyr::arrange(out, Country)
+                out
+            }
+     ),
+
 
 
     ## Model 1. Name contains RtI0
