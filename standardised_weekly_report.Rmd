@@ -106,7 +106,7 @@ The value of the overdispersion parameter, z, was taken from analyses of exposur
  
 #### Deaths
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, out.width = "90%"}
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 obs <- drake::readd("obs")
 pred <- drake::readd("model_1")
 pred <- pred[pred$si == "si_1", ]
@@ -117,7 +117,7 @@ projection_plot(obs, pred)
 
 #### Effective Reproduction Number Estimates
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, out.width = "90%"}
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 rt <- drake::readd("model_1_rt")
 rt <- rt[rt$si == "si_1", ]
 rt <- rt[rt$proj == "RtI0_Std_results_week_end_2020-03-22", ]
@@ -177,7 +177,7 @@ Projections were made on a 7-days horizon. The projections assume that the trans
 
 #### Deaths
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, out.width = "90%"}
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 pred <- drake::readd("model_2") 
 pred <- pred[pred$si == "si_1", ]
 pred$date <- as.Date(pred$date)
@@ -186,7 +186,7 @@ projection_plot(obs, pred)
 
 #### Effective Reproduction Number Estimates
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, out.width = "90%"}
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
 rt <- drake::readd("model_2_rt")
 rt <- rt[rt$si == "si_1", ]

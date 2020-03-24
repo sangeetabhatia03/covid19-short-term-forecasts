@@ -260,7 +260,8 @@ plan <- drake_plan(
   ##Finally render the report
   report = rmarkdown::render(
       input = knitr_in("standardised_weekly_report.Rmd"),
-      output_file = "index.html"
+      output_file = "index.html",
+      output_format = rmarkdown::html_document(css = file_in("style.css"))
   )
 
 )

@@ -1,0 +1,14 @@
+.table-fixed-header tbody{
+  display:block;
+  overflow:auto;
+  height:400px;
+  width:100%;
+}
+.table-fixed-header thead tr{
+  display:table-header-group;
+  height:100%;
+}
+
+.img-fixed-size{
+    height:100%;    
+}

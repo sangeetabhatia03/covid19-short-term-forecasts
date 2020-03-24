@@ -49,7 +49,8 @@ projection_plot <- function(obs, pred) {
             scales = "free_y",
             labeller = as_labeller(
                 nice_names
-            )
+            ),
+            ncol = 2
         ) +
     scale_color_manual(
         values = palette,
@@ -65,9 +66,12 @@ projection_plot <- function(obs, pred) {
         linetype = "dashed"
     ) + xlab("") +
         theme(
+            axis.text.y = element_text(size = 8),
             axis.text.x =
-                element_text(angle = -45, hjust = 0)
-        )
+                element_text(angle = -90, hjust = 0),
+            strip.text.x = element_text(margin = margin(2,0,2,0, "pt"))
+
+          )
 
     p
 }
@@ -94,7 +98,7 @@ rt_plot <- function(rt) {
         scale_x_discrete(labels = nice_names) +
         theme(
             axis.text.x =
-                element_text(angle = -45, hjust = 0)
+                element_text(angle = -90, hjust = 0)
         ) +
         geom_hline(
             yintercept = 1,
