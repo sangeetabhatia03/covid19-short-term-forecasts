@@ -28,9 +28,7 @@ plan <- drake_plan(
          tidyr::spread(
             key = Countries.and.territories, value = Deaths, fill = 0
             ),
-
-
-
+    ## No lines means no cases for that day. That is why fill is 0.
     by_country_cases = dplyr::select(
         pass, DateRep, Cases, Countries.and.territories
     ) %>%
@@ -61,78 +59,40 @@ plan <- drake_plan(
         file = file_out(outfile)
     ),
 
-#################################################################
-#################################################################
-####### Part 2, when we have the model outputs ##################
-####### check that model outputs have the expected components ###
-###### Only keep the ones that have expected components #########
+####################################################################
+####################################################################
+####### Part 2, when we have the model outputs #####################
+####### check that model outputs have the expected components ######
+####### Only keep the ones that have expected components ###########
     model_outputs = purrr::map(output_files, readRDS),
 
     model_predictions_qntls = purrr::map(
         model_outputs,
         function(x) {
             pred <- x[["Predictions"]]
-            purrr::map_dfr(pred, function(y) {
-                names(y) <- c("si_1", "si_2")
-                out <- purrr::map_dfr(
-                    y,
-                    function(y_si) {
-                        out2 <- t(
-                            apply(y_si,
-                                  2,
-                                  quantile,
-                                  prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
-                                  )
-                        )
-                        out2 <- as.data.frame(out2)
-                        out2 <- tibble::rownames_to_column(out2, var = "date")
-                        out2
-
-                    }, .id = "si"
-                )
-                out
-            }, .id = "country"
-           )
+            purrr::map_dfr(
+                pred, extract_predictions_qntls, .id = "country"
+            )
         }
-        ),
+     ),
 
     weekly_predictions_qntls = purrr::map_dfr(
         model_outputs,
         function(x) {
             pred <- x[["Predictions"]]
             purrr::imap_dfr(pred, function(y, country) {
-                names(y) <- c("si_1", "si_2")
-                out <- purrr::map_dfr(
-                    y,
-                    function(y_si) {
-                        dates <- as.Date(colnames(y_si))
-                        obs_deaths <- dplyr::filter(
-                            pass,
-                            `Countries.and.territories` == country &
-                            DateRep %in% as.Date(dates)
-                        ) %>% pull(Deaths) %>% sum()
 
-                        week_ending <- tail(colnames(y_si), 1)
-                        weekly <- rowSums(y_si)
-                        weekly <- quantile(
-                            weekly,
-                            prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
-                        )
-                        weekly_df <- as.data.frame(weekly)
-                        weekly_df$week_ending <- week_ending
-                        weekly_df$observed <- obs_deaths
-                        weekly_df <- tibble::rownames_to_column(
-                            weekly_df, var = "quantile"
-                            )
+                dates <- as.Date(colnames(y_si))
+                obs_deaths <- dplyr::filter(
+                    pass,
+                    `Countries.and.territories` == country &
+                    DateRep %in% as.Date(dates)
+                    ) %>% pull(Deaths) %>% sum()
 
-                        weekly_df<- tidyr::spread(
-                          weekly_df, key = quantile, value = weekly
-                          )
-                        weekly_df
+                weekly_df <- daily_to_weekly(y)
+                weekly_df$observed <- obs_deaths
+                weekly_df
 
-                    }, .id = "si"
-                )
-                out
             }, .id = "country"
            )
         }, .id = "model"
@@ -162,7 +122,7 @@ plan <- drake_plan(
             }, .id = "country"
            )
         }
-     ),
+    ),
     ## Model 1 Rt Estimates
     model_1_rt =  model_rt_qntls[grep(
         pattern = "RtI0", x = names(model_rt_qntls)
@@ -220,8 +180,50 @@ plan <- drake_plan(
                 out <- dplyr::arrange(out, Country)
                 out
             }
-     ),
+            ),
 
+    weeks_ending = list(
+        "2020-03-08" = "2020-03-08",
+        "2020-03-15" = "2020-03-15",
+        "2020-03-22" = "2020-03-22"
+    ),
+    ## For each, for each country, pool projections from diff models
+    ## In the output, the first level is week, 2nd is country and 3rd
+    ## is SI.
+    ensemble_model_predictions = purrr::map(
+        weeks_ending,
+        function(week) {
+            idx <- grep(x = names(model_outputs), pattern = week)
+            outputs <- purrr::map(model_outputs[idx], ~ .[["Predictions"]])
+            ## First Level is model, 2nd is country, 3rd is SI.
+            countries <- names(outputs[[1]])
+            names(countries) <- countries
+            purrr::map(
+                countries,
+                function(country) {
+                    ## y is country specific output
+                    y <- purrr::map(outputs, ~ .[[country]])
+                    ## y has 2 components, one for each SI.
+                    y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
+                    y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
+
+                    out = list(
+                        pool_predictions(y_1),
+                        pool_predictions(y_2)
+                    )
+                }
+            )
+        }
+    ),
+
+    ensemble_model_qntls = purrr::map_dfr(
+        ensemble_model_predictions,
+        function(pred) {
+            purrr::map_dfr(
+                pred, extract_predictions_qntls, .id = "country"
+            )
+        }
+    ),
 
 
     ## Model 1. Name contains RtI0
@@ -253,9 +255,6 @@ plan <- drake_plan(
  ##    ##     .id = "model"
  ##    ## )
 
-################### Visualisations ###################################
-################### ############### ##################################
-  ## Model specific projections
 
   ##Finally render the report
   report = rmarkdown::render(
