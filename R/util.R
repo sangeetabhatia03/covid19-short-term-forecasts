@@ -197,5 +197,3 @@ pool_predictions <- function(outputs, weights = 1) {
 }
 
 
-###
-ensemble_manager <- function()

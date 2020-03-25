@@ -82,7 +82,7 @@ plan <- drake_plan(
             pred <- x[["Predictions"]]
             purrr::imap_dfr(pred, function(y, country) {
 
-                dates <- as.Date(colnames(y_si))
+                dates <- as.Date(colnames(y[[1]]))
                 obs_deaths <- dplyr::filter(
                     pass,
                     `Countries.and.territories` == country &
@@ -222,7 +222,7 @@ plan <- drake_plan(
             purrr::map_dfr(
                 pred, extract_predictions_qntls, .id = "country"
             )
-        }
+        }, .id = "proj"
     ),
 
 

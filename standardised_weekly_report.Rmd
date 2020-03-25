@@ -68,6 +68,16 @@ While death counts are used for the main analysis and producing forecasts. Repor
 
 ### Ensemble Model 
 
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+
+obs <- drake::readd("obs")
+pred <- drake::readd("ensemble_model_qntls")
+pred <- pred[pred$si == "si_1", ]
+pred$date <- as.Date(pred$date)
+projection_plot(obs, pred)
+
+```
+
 ### Model 1 {.tabset .tabset-fade .tabset-pills} 
 
 #### Methods
