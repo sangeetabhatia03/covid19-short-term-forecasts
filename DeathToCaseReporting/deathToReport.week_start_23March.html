@@ -251,8 +251,6 @@ multi_real &lt;- 1/rho
 
 # summary
 summary_14days &lt;- data.frame(country = country,
-                             death = colSums(D[f,-1]),
-                             cases = colSums(I[f,-1]),
                              deaths_to_reported_ratio = paste0(round(temp[,1],digits = 3)*100,
                                                                '% ; 95%CI [',
                                                                round(temp[,2],digits = 3)*100,
