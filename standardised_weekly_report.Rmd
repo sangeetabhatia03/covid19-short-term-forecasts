@@ -135,6 +135,8 @@ While death counts are used for the main analysis and producing forecasts. Repor
 
 #### Projections
 
+Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
+
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
 obs <- drake::readd("obs")
@@ -146,6 +148,8 @@ projection_plot(obs, ensb_pred1)
 ```
 
 #### Summary of results
+
+Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- drake::readd("fmtd_ensemble_weekly_qntls")[[1]]
@@ -163,13 +167,13 @@ knitr::kable(
 #### Methods
 
 
-Estimating current transmissibility
+**Estimating current transmissibility**
 
 We use a previously described approach [cori et al. 2013] to quantify transmissibility during the calibration period, from the incidence of death time series, assuming a certain distribution for the serial interval for death (the time between death in a case and death in their infector). Here, we assumed that the serial interval distribution for death was similar to the classical serial interval distribution (the time between onset of symptom in a case and onset of symptom in their infector).
 
 Our main analysis assume a gamma distributed serial of mean 4.8 days and standard deviation of 2.7 days following [Wang and Teunis, 2020].
 
-Include figure of histogram of SI
+**Include figure of histogram of SI**
 
 The serial interval above might be biased toward lower values given the observation bias whereby, in contact tracing studies, long serial interval tend to be under-represented. To account for this, as a sensitivity analysis, we also ran our analysis with an alternative longer serial interval of mean 6.48 days and standard deviation of 3.83 days [Ferguson 2020, report 9]. Results for this longer interval are presented in the supplementary information section. Most importantly, while using such longer serial interval has very little impact on the weekly forecast produced, it results in much higher estimated of transmissibility.
 
@@ -182,7 +186,7 @@ $$ I_t \sim Pois\left( R_t \Sigma_{s=1}^{t} I_{t-s} w_s \right) $$
 
 where $I_t$ is the incidence (of deaths) on day $t$, $R_t$ is the reproduction number on day $t$, and $w$ is the probability mass function of the serial interval. 
 
-Forward projections
+**Forward projections**
 
 For each country, we used the renewal equation to project the incidence forward, given an estimated reproduction number, and the observed incidence of death. We sampled a set of reproduction numbers from the posterior distribution obtained in the estimation process. For each of these sets, we simulated stochastic realisations of the renewal equation from the end of the calibration period; leading projected incidence trajectories. 
 
@@ -196,6 +200,8 @@ The value of the overdispersion parameter, z, was taken from analyses of exposur
  
 #### Projections 
 
+Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
+
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 obs <- drake::readd("obs")
 pred <- drake::readd("model_1")
@@ -207,6 +213,8 @@ projection_plot(obs, pred)
 
 #### Effective Reproduction Number Estimates
 
+In the figure below, for each country with active transmission (see methods), we plot the latest estimate of transmissibility ($R_t$), specifically estimated median and associated 95%CrI.
+
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 rt <- drake::readd("model_1_rt")
 rt <- rt[rt$si == "si_1", ]
@@ -216,6 +224,8 @@ rt_plot(rt)
 ```
 
 #### Summary of results
+
+Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
@@ -241,12 +251,12 @@ knitr::kable(
 
 #### Methods
 
-Estimating current transmissibility
+**Estimating current transmissibility**
 
 The methods is very similar to that of model but given uncertainty surrounding the epidemiological situation before the calibration period, we only used incidence data during the calibration period, and reconstructed the incidence before the calibration period whilst estimating R, as described in [Nouvellet 2018 simple approach]. The model has the advantage of being more robust to changes in reporting before the calibration.
 
 
-Forward projections
+**Forward projections**
 
 As for model 1, we used the renewal equation to project the incidence forward, given a back-calculated early incidence curve, an estimated reproduction number, and the observed incidence over the calibration period. We sampled a sets of back-calculated early incidence curves and reproduction numbers from the posterior distribution obtained in the estimation process. For each of these sets, we simulated stochastic realisations of the renewal equation from the end of the calibration period; leading to projected incidence trajectories. 
 
@@ -256,6 +266,9 @@ Projections were made on a 7-days horizon. The projections assume that the trans
 
 #### Projections
 
+Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
+
+
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 pred <- drake::readd("model_2") 
 pred <- pred[pred$si == "si_1", ]
@@ -264,6 +277,8 @@ projection_plot(obs, pred)
 ```
 
 #### Effective Reproduction Number Estimates
+
+In the figure below, for each country with active transmission (see methods), we plot the latest estimate of transmissibility ($R_t$), specifically estimated median and associated 95%CrI.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
@@ -276,6 +291,7 @@ rt_plot(rt)
 
 #### Summary of results
 
+Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
@@ -298,6 +314,8 @@ Results with a longer Serial Interval (mean 6.48 days, SD 3.83 days).
 
 ### Projections
 
+Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
+
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
 ensb_pred2 <- ensb_pred[ensb_pred$si == "si_2", ]
@@ -308,6 +326,7 @@ projection_plot(obs, ensb_pred2)
 
 ### Effective Reproduction Number Estimates
 
+In the figure below, for each country with active transmission (see methods), we plot the latest estimate of transmissibility ($R_t$), specifically estimated median and associated 95%CrI.
 
 ## Case Ascertainment
 
@@ -441,13 +460,14 @@ The forecasts produced relies on reported daily counts of deaths per country ava
 
 https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
 
+Other references:
 
-Cori A, Ferguson NM, Fraser C, Cauchemez S. A New Framework and Software to Estimate Time-Varying Reproduction Numbers During Epidemics. Am J Epidemiol. 2013; 178: 1505-1512.
+* Cori A, Ferguson NM, Fraser C, Cauchemez S. A New Framework and Software to Estimate Time-Varying Reproduction Numbers During Epidemics. Am J Epidemiol. 2013; 178: 1505-1512.
 
-Wang Y, Teunis T. Strongly heterogeneous transmission of COVID-19 in mainland China: local and regional variation. March 10, 2020. medRxiv
+* Wang Y, Teunis T. Strongly heterogeneous transmission of COVID-19 in mainland China: local and regional variation. March 10, 2020. medRxiv
 
-Ferguson et al. 2020. Report 9: Impact of non-pharmaceutical interventions (NPIs) to reduce COVID-19 mortality and healthcare demand. https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/news--wuhan-coronavirus/
+* Ferguson et al. 2020. Report 9: Impact of non-pharmaceutical interventions (NPIs) to reduce COVID-19 mortality and healthcare demand. https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/news--wuhan-coronavirus/
 
-Lloyd-Smith  JO, Schreiber SJ, Kopp PE, Getz WM. Superspreading and the effect of individual variation on disease emergence. Nature, 2005; 438, 355-359.
+* Lloyd-Smith  JO, Schreiber SJ, Kopp PE, Getz WM. Superspreading and the effect of individual variation on disease emergence. Nature, 2005; 438, 355-359.
 
-Nouvellet P et al. A simple approach to measure transmissibility and forecast incidence. Epidemics, 2018; 22. 29-35.
+* Nouvellet P et al. A simple approach to measure transmissibility and forecast incidence. Epidemics, 2018; 22. 29-35.
