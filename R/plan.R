@@ -228,13 +228,26 @@ plan <- drake_plan(
         ensemble_weekly_qntls,
         ensemble_weekly_qntls$si
     ) %>% purrr::map(function(x) {
+        ## Get observed number of deaths calculated earlier.
+        y <- dplyr::select(
+            weekly_predictions_qntls,
+            week_ending,
+            country,
+            Observed = observed
+        )
+        y <- dplyr::distinct(y)
         x <- format_weekly_pred(x)
+        x <- left_join(
+            x,
+            y,
+            by = c("Country" = "country",
+                   "Week Ending" = "week_ending")
+        )
         x <- dplyr::arrange(x, Country)
         x$Country <- snakecase::to_any_case(
             as.character(x$Country),
             case = "title"
         )
-
         x
     }),
 
