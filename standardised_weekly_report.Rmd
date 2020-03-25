@@ -223,7 +223,6 @@ knitr::kable(
     ) %>% kable_styling() %>%
      row_spec(0, align = "left")
 
-
 ```
 
 
@@ -245,16 +244,133 @@ projection_plot(obs, ensb_pred2)
 ### Effective Reproduction Number Estimates
 
 
-## Supplementary Information
+## Case Ascertainment
 
-To include graph of reported cases
+Average and 95%CI for ratio of deaths (with a 10-days delay) to reported cases for moving window of 7 days since march.
 
-To include analysis and graph of death to reported cases ratio
+The ratio roughly accounts for the delay between death and case being reported. 
+
+
+
+When deaths exceed the number of reported cases 10-days before, we set the reporting at 1 (95%CI [1;1])
+
+
+
+Any temporal trend suggests a change in the reporting. 
+For instance, an increase in the ratio gives an indication that cases reporting is decreasing.
+
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+date_week_finishing <-  as.Date('22/03/2020',format = '%d/%m/%Y')
+delay_report_death <- 10 # need checking!!
+
+day.project <- 7
+t.window.range <- 7
+
+rep <- 2e4
+d <- readRDS(file = here::here(paste0('Team.input/data_',date_week_finishing,'.rds')))
+
+D <- d$D_active_transmission
+I <- d$I_active_transmission
+country <- d$Country
+N_geo <- length(country)
+date_week_finishing <- d$date_week_finishing
+
+##colSums(D[,-1])/colSums(I[,-1])
+
+date <- D$dates[7:(nrow(D)-delay_report_death)]
+moving_DtoI <- list()
+
+med <- matrix(NA,length(date),N_geo)
+low <- med
+up <- med
+
+for (i in 1:nrow(med)){
+  x = colSums(D[i:(i+6)+delay_report_death,-1])
+  n = colSums(I[(i:(i+6)),-1])
+  temp <- Hmisc::binconf(x = x , 
+                  n = n,alpha = .05, method = 'exact')
+  
+  temp[which(x>n),] <- 1
+  temp[which(n==0),] <- NA
+  
+  med[i,] <- temp[,1]
+  low[i,] <- temp[,2]
+  up[i,] <- temp[,3]
+}
+
+# med[which((med==Inf))] <- NA
+
+for (i in 1:N_geo){
+  moving_DtoI[[as.character(country[i])]] <- data.frame(date = date,
+                                                        ratio = med[,i],
+                                                        lower = low[,i],
+                                                        upper = up[,i])
+}
+
+```
+
+In the plots below, both reported deaths (red) and cases (black) have
+been rescaled but are comparable to each other. The rescaling is such
+that the maximium recorded numbers of death or cases (with a 10-days
+delay) reaches 1.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+f <- which(moving_DtoI[[1]]$date >= as.Date(c('01/03/2020'),format = '%d/%m/%Y'))
+
+layout(matrix(1:4,2,2))
+for (i in 1:N_geo){
+  a <- moving_DtoI[[i]]
+  plot(a$date,a$ratio,lwd = 2,
+       #ylim = c(0,max(a[f,2:4],na.rm=TRUE)),
+       ylim=c(0,1),
+       type='l',
+       xlim = c(as.Date(c('01/03/2020'),format = '%d/%m/%Y'),date_week_finishing-delay_report_death),
+       bty ='n', main = country[i],col = rgb(0,0,1),
+       xlab = '', ylab = 'ratio D to I') 
+  
+  polygon(c(a$date,rev(a$date)),
+          c(a$lower,rev(a$upper)),
+          border = NA,
+          col = rgb(0,0,1,0.2))
+  f2 <- which( I$dates %in% a$date)
+  
+  f2<-f2[f]
+  inc <- cbind(I[f2,i+1],D[f2+delay_report_death,i+1])
+  lines(a$date[f], 
+        inc[,1]/max(c(inc[,1],inc[,2])),
+        type = 'p', pch=16,col='black')
+  
+  lines(a$date[f], 
+        inc[,2]/max(c(inc[,1],inc[,2])), 
+        type = 'p', pch=16,col='red')
+  
+  if(i==3){
+  legend('topleft',legend = c('ratio','death','reported cases'),bty='n',
+         lwd=c(3,NA,NA),pch=c(NA,16,16),col = c(rgb(0,0,1),rgb(1,0,0),rgb(0,0,0)))
+  }
+}
+
+```
+
+Average and 95%CI for ratio of deaths to reported cases for the last 14 days.
+
+
+If all cases (incl. asymptomatics) and death were reported, and the delay fro reporting was exactly 10 days, then the ratio defined would be equivalent to the CFR.
+
+Suprisingly, this appear to be pretty much the case for South Korea
+(see below).
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+x <- readr::read_csv(here::here("Team.output/summary_DeathToRepoted_14days.csv"))
+knitr::kable(x[, -1]) %>%
+    kable_styling() 
+
+```
+
 
 ## References
-
-## Data Sources
-
 
 The forecasts produced relies on reported daily counts of deaths per country available on the eCDC website:
 
