@@ -240,13 +240,50 @@ limits &lt;- seq(date_week_finishing-13,date_week_finishing,by = 1)
 f &lt;- which(D$dates %in% limits)
 temp &lt;- binconf(x = colSums(D[f,-1]) , n = colSums(I[f-delay_report_death,-1]),alpha = .05, method = 'exact')
 
+
+# assumed CFR
+CFR &lt;- .01
+rho &lt;- 1/temp*CFR
+rho[rho&gt;1] &lt;- 1
+
+# meaning the real epidemics is x times bigger than observed
+multi_real &lt;- 1/rho
+
+# summary
 summary_14days &lt;- data.frame(country = country,
-                      death = colSums(D[f,-1]),
-                      cases = colSums(I[f,-1]),
-                      median = round(temp[,1],digits = 3)*100,
-                      lower = round(temp[,2],digits = 3)*100,
-                      upper = round(temp[,3],digits = 3)*100)
-summary_14days &lt;- summary_14days[order(summary_14days$median,decreasing = TRUE),]
+                             death = colSums(D[f,-1]),
+                             cases = colSums(I[f,-1]),
+                             deaths_to_reported_ratio = paste0(round(temp[,1],digits = 3)*100,
+                                                               '% ; 95%CI [',
+                                                               round(temp[,2],digits = 3)*100,
+                                                               ';',
+                                                               round(temp[,3],digits = 3)*100,
+                                                               ']%'),
+                             estimated_reporting = paste0(round(rho[,1],digits = 3)*100,
+                                                          '% ; 95%CI [',
+                                                          round(rho[,2],digits = 3)*100,
+                                                          ';',
+                                                          round(rho[,3],digits = 3)*100,
+                                                          ']%'),
+                             factor_to_real_size = paste0(round(multi_real[,1],digits = 1),
+                                                          ' ; 95%CI [',
+                                                          round(multi_real[,2],digits = 1),
+                                                          ';',
+                                                          round(multi_real[,3],digits = 1),
+                                                          ']'),
+                             Observed_case_last_week = colSums(tail(I[,-1],7)),
+                             Predicted_True_case_last_week = paste0(
+                               round(multi_real[,1]*colSums(tail(I[,-1],7)),digits = 0),
+                               ' ; 95%CI [',
+                               
+                               round(multi_real[,2]*colSums(tail(I[,-1],7)),digits = 0),
+                               ';',
+                               
+                               round(multi_real[,3]*colSums(tail(I[,-1],7)),digits = 0),
+                               ']'))
+
+summary_14days &lt;- summary_14days[order(temp[,1],decreasing = TRUE),]
+
 write.csv(summary_14days,file = 'summary_DeathToRepoted_14days.csv')</code></pre>
 </div>
 
