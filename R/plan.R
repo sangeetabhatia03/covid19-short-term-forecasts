@@ -87,7 +87,15 @@ plan <- drake_plan(
                     pass,
                     `Countries.and.territories` == country &
                     DateRep %in% as.Date(dates)
-                    ) %>% pull(Deaths) %>% sum()
+                    )
+                if (nrow(obs_deaths) == 0) {
+                    message(
+                        "No observations for dates ", dates, " in ", country
+                    )
+                    obs_deaths <- NA
+                } else {
+                    obs_deaths <- sum(obs_deaths$Deaths)
+                }
 
                 weekly_df <- daily_to_weekly(y)
                 weekly_df$observed <- obs_deaths
