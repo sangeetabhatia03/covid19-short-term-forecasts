@@ -39,7 +39,72 @@ As of `r format(Sys.time(), '%B %d, %Y')`, there have more than
 351,000 cases of COVID-19 across the world, with more than 15,000
 deaths. In this report, we use the reported number of deaths
 of COVID-19 to make short term forecasts of the trajectory of the
-outbreak. 
+outbreak.
+
+## Summary
+
+### Objectives and caveats
+
+The **main** objective in this report is to produce forecasts of the number of deaths in the week ahead per country with active transmission.
+
+*	Active transmission is defined as have more than five deaths in the last week and preceding week.
+*	We forecast deaths as it likely that reporting of deaths in more reliable than reporting of cases, and temporal trends in reporting of deaths are also likely to be much smaller than temporal trends in reporting cases.
+*Because we are forecasting deaths, latest estimates of transmissibility reflect the epidemiological situation when those dying were infected.
+
+A **secondary** objective of this report is to analyse case ascertainment per country. In this analysis, key assumption are:
+  
+*	The true underlying Case Fatality Ratio (CFR) is 1%,
+*	The delay from a death to this case being reported is 10 days.
+
+### Key results on transmissibility and forecasting
+
+Key results below are based on ensemble forecast.
+
+Transmissibility is characterised by the reproduction number, i.e. the average number of cases that one infected is likely to infect. Analysis of transmissibility indicates that the reproduction number last week (week starting [date]) was highest in:
+  
+*	[Top country name] with an estimated Rt of: [median; 95%CrI [] ], and
+*	[2nd Top country name] with an estimated Rt of: [median; 95%CrI [] ],
+
+and was lowest in:
+  
+*	[Bottom country name] with an estimated Rt of: [median; 95%CrI [] ], and
+*	[2nd Bottom country name] with an estimated Rt of: [median; 95%CrI [] ]
+
+Forecast of predicted deaths in the coming week (week starting [date]) is expected to be highest in:
+  
+*	[Top country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ], and
+*	[2nd Top country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ],
+
+and was lowest in:
+  
+*	[Bottom country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ], and
+*	[2nd Bottom country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ],
+
+Forecasts in previous weeks were good with [XX]% of observed numbers of deaths per country included in our 95% CrI.
+
+### Key results on case ascertainment
+
+Case ascertainment based on the last previous 2 weeks deaths and reported cases in the 10 days prior to that period indicate that countries with lowest case ascertainment were:
+  
+*	[Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ], and
+*	[2nd Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ],
+
+and countries with the highest case ascertainment were:
+  
+*	[Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ], and
+*	[2nd Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ],
+
+Based on the estimated ascertainment, we estimated the true size of the epidemics in the previous 7 days (week starting [date]). 
+Countries with the highest true epidemics size in this period were:
+  
+*	[Top country name] with an estimated true epidemics size in this period of: [median; 95%CrI [] ], and
+*	[2nd Top country name] with an estimated ascertainment of: [median; 95%CrI []%],
+
+and countries with the lowest true epidemics size in this period were:
+  
+*	[Bottom country name] with an estimated true epidemics size in this period of: [median; 95%CrI [] ], and
+*	[2nd Bottom country name] with an estimated ascertainment of: [median; 95%CrI []%],
+
 
 ## Methods 
 
