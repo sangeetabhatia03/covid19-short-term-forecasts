@@ -28,6 +28,8 @@ library(ggpubr)
 library(dplyr)
 library(drake)
 library(kableExtra)
+library(DT)
+source("R/util.R")
 raw_data <- drake::readd(raw_data)
 raw_data <- dplyr::rename(raw_data, country = "Countries.and.territories")
 
@@ -85,11 +87,13 @@ projection_plot(obs, ensb_pred1)
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- drake::readd("fmtd_ensemble_weekly_qntls")[[1]]
 
-knitr::kable(
-    x,
-    align = "l",
-    digits = 2
-) %>% kable_styling()
+## knitr::kable(
+##     x,
+##     align = "l",
+##     digits = 2
+## ) %>% kable_styling()
+
+DT::datatable(x)
 
 ```
 
