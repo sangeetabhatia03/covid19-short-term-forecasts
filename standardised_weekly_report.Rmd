@@ -156,33 +156,22 @@ rt_plot(rt)
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
 x <- x[grep("RtI0", x$model), ]
-
+x <- dplyr::select(x, -model)
 knitr::kable(
-    x[, -1],
-    align = "l",
+    x,
+    ##align = "l",
     digits = 2,
-    table.attr='class="table-fixed-header"'
-) %>% kable_styling()
+    ##table.attr='class="table-fixed-header"'
+    ) %>%
+    kable_styling(
+        bootstrap_options = "striped",
+        ##full_width = F,
+        ##position = "center",
+        fixed_thead = TRUE
+    ) %>% row_spec(0, align = "left")
 
 ```
 
-
-
-a large table with a row per country that ever appeared as 'active transmission'
-and the following columns:
-- country name
-
-for each retrospective week of predictions
-
-- Rt estimated on the first week of predictions (week starting 9th of march) - paste0 with median, 95%CrI(XX;XX)
-- predicted weekly death count - median, 95%CrI(XX;XX)
-- observed weekly death count
-
-for the last week of predictions:
-- Rt estimated on the first week of predictions (week starting 9th of march) - paste0 with median, 95%CrI(XX;XX)
-- predicted weekly death count - median, 95%CrI(XX;XX)
-
-ideally downloadable as xlsx file formatted to keep country column and title row fixed
 
 ### Model 2 {.tabset .tabset-fade .tabset-pills} 
 
@@ -227,8 +216,14 @@ rt_plot(rt)
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
 x <- x[grep("sbkp", x$model), ]
+x <- dplyr::select(x, -model)
+knitr::kable(
+    x,
+    ##align = "l",
+    digits = 2
+    ) %>% kable_styling() %>%
+     row_spec(0, align = "left")
 
-knitr::kable(x[, -1], align = "l", digits = 2)
 
 ```
 

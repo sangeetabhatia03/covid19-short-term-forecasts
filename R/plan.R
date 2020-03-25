@@ -230,8 +230,6 @@ plan <- drake_plan(
         x
     }),
 
-
-
     ## Model 1. Name contains RtI0
     model_1 =  model_predictions_qntls[grep(
         pattern = "RtI0", x = names(model_predictions_qntls)
