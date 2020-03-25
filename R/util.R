@@ -157,15 +157,16 @@ daily_to_weekly <- function(y) {
     out <- purrr::map_dfr(
         y,
         function(y_si) {
-
-            week_ending <- tail(colnames(y_si), 1)
             weekly <- rowSums(y_si)
             weekly <- quantile(
                 weekly,
                 prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
             )
             weekly_df <- as.data.frame(weekly)
-            weekly_df$week_ending <- week_ending
+            ## This is not the last date for which predictions are
+            ## available, but the last date for which observations are
+            ## available.
+            weekly_df$week_ending <- as.Date(colnames(y_si)[1]) - 1
 
             weekly_df <- tibble::rownames_to_column(
                 weekly_df, var = "quantile"
@@ -213,6 +214,7 @@ format_weekly_pred <- function(x) {
     out
 }
 
+## rt in tall format
 format_last_rt <- function(rt) {
 
     rt <- dplyr::select(rt, -si)

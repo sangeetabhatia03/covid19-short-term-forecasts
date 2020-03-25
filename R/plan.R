@@ -98,6 +98,7 @@ plan <- drake_plan(
                 }
 
                 weekly_df <- daily_to_weekly(y)
+
                 weekly_df$observed <- obs_deaths
                 weekly_df
 
@@ -206,6 +207,46 @@ plan <- drake_plan(
         }
     ),
 
+    ensemble_model_rt = purrr::map_dfr(
+        weeks_ending,
+        function(week) {
+            idx <- grep(x = names(model_outputs), pattern = week)
+            outputs <- purrr::map(model_outputs[idx], ~ .[["R_last"]])
+            ## First Level is model, 2nd is country, 3rd is SI.
+            countries <- names(outputs[[1]])
+            names(countries) <- countries
+            purrr::map_dfr(
+                countries,
+                function(country) {
+                    ## y is country specific output
+                    y <- purrr::map(outputs, ~ .[[country]])
+                    ## y has 2 components, one for each SI.
+                    ## Determine quantiles
+                    probs <- c(0.025, 0.5, 0.975)
+                    y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
+                    y_1 <- quantile(
+                        unlist(y_1), probs = probs
+                    )
+                    y_1 <- tibble::rownames_to_column(
+                        data.frame(out2 = y_1), var = "quantile"
+                    )
+                    y_1$si <- "si_1"
+
+                    y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
+                    y_2 <- quantile(
+                        unlist(y_2), probs = probs
+                    )
+                    y_2 <- tibble::rownames_to_column(
+                        data.frame(out2 = y_2), var = "quantile"
+                    )
+                    y_2$si <- "si_2"
+                    rbind(y_1, y_2)
+
+                }, .id = "country"
+            )
+        }, .id = "model" ## this is really week ending, but to be able to resue prev code, i am calling it model
+    ),
+
     ensemble_model_qntls = purrr::map_dfr(
         ensemble_model_predictions,
         function(pred) {
@@ -228,6 +269,8 @@ plan <- drake_plan(
         ensemble_weekly_qntls,
         ensemble_weekly_qntls$si
     ) %>% purrr::map(function(x) {
+
+        this_si <- x$si[1]
         ## Get observed number of deaths calculated earlier.
         y <- dplyr::select(
             weekly_predictions_qntls,
@@ -237,17 +280,32 @@ plan <- drake_plan(
         )
         y <- dplyr::distinct(y)
         x <- format_weekly_pred(x)
-        x <- left_join(
+        x$`Week Ending` <- as.Date(x$`Week Ending`)
+        y$week_ending <- as.Date(y$week_ending)
+        x <- dplyr::left_join(
             x,
             y,
             by = c("Country" = "country",
                    "Week Ending" = "week_ending")
         )
         x <- dplyr::arrange(x, Country)
+
+        ## Get R_t estimates for this country and this
+        ## Week.
+        rt <- dplyr::filter(ensemble_model_rt, si == this_si)
+        rt <- format_last_rt(rt)
+        rt$model <- as.Date(rt$model)
+        x <- dplyr::left_join(
+            x,
+            rt,
+            by = c("Week Ending" = "model",
+                   "Country" = "Country")
+            )
         x$Country <- snakecase::to_any_case(
             as.character(x$Country),
             case = "title"
         )
+
         x
     }),
 

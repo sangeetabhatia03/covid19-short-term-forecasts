@@ -94,8 +94,7 @@ x <- drake::readd("fmtd_ensemble_weekly_qntls")[[1]]
 knitr::kable(
     x,
     align = "l",
-    digits = 2,
-    table.attr='class="table-fixed-header"'
+    digits = 2
 ) %>% kable_styling()
 
 ```
