@@ -229,7 +229,7 @@ knitr::kable(
 ## Sensitivity Analyses
 
 
-Results with a longer Serial Interval.
+Results with a longer Serial Interval (mean 6.48 days, SD 3.83 days).
 
 ### Projections
 
