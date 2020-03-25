@@ -60,21 +60,15 @@ Therefore, current estimates of transmissibility based on death reflect transmis
 In the results section of each model output, a 'methods' section outlines briefly the methodology used to produce forecasts.
 
 
-## Data Sources
-
-
-The forecasts produced relies on reported daily counts of deaths per country available on the eCDC website:
-
-https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
 
 While death counts are used for the main analysis and producing forecasts. Reported cases and the death to reported cases ratios for each country are show in the 'Supplementary Information' section.
 
 
-## Results {.tabset .tabset-fade .tabset-pills} 
+## Projections and Rt Estimates {.tabset .tabset-fade .tabset-pills} 
 
 ### Ensemble Model {.tabset .tabset-fade .tabset-pills} 
 
-#### Deaths
+#### Projections
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
@@ -135,7 +129,7 @@ $$I_t \sim NegBin\left( R_t \Sigma_{s=1}^{t} I_{t-s} w_s, z \right) $$
 
 The value of the overdispersion parameter, z, was taken from analyses of exposure patterns during the SARS epidemic [lloyds-smith sars nature]. 
  
-#### Deaths
+#### Projections 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 obs <- drake::readd("obs")
@@ -195,7 +189,7 @@ Projections were made on a 7-days horizon. The projections assume that the trans
 
 
 
-#### Deaths
+#### Projections
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 pred <- drake::readd("model_2") 
@@ -257,6 +251,14 @@ To include graph of reported cases
 To include analysis and graph of death to reported cases ratio
 
 ## References
+
+## Data Sources
+
+
+The forecasts produced relies on reported daily counts of deaths per country available on the eCDC website:
+
+https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
+
 
 Cori A, Ferguson NM, Fraser C, Cauchemez S. A New Framework and Software to Estimate Time-Varying Reproduction Numbers During Epidemics. Am J Epidemiol. 2013; 178: 1505-1512.
 
