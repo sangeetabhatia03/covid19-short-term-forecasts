@@ -43,9 +43,15 @@ outbreak.
 
 ## Methods 
 
-The objective of this project is to forecast for the daily number of COVID-19 Death in countries with sustained local transmission. We aim to produce weekly forecasts every Monday. Multiple teams are involved, each producing weekly forecasts and a centralised team also produces an ensemble forecast.
+The objective of this project is to forecast for the daily number of COVID-19 deaths in countries with sustained local transmission. We aim to produce weekly forecasts every Monday. Multiple teams are involved, each producing weekly forecasts and a centralised team also produces an ensemble forecast.
 
-Forecasts are produce weekly for based on data available on the last Sunday of the previous week. Forecasts are produced only for countries that reported at least 5 deaths in the previous week and 10 deaths in the previous two weeks. For the purpose of our analysis, we assume those countries show strong evidence active and sustained local transmission.
+We use reported deaths rather than pretored cases, as the former ascertainment of the former is likely to be much more stable over time than the later. The ascertainment of deaths is also likely to be much higher then for cases, as most cases will show mild (if any) symptoms.
+
+As we forecasting deaths, the latest estimates of trasnsmissibility reflect the epidemiological conditions when those dying were infected. Therefore, adisadvantage in using death, is this delay between case reporting and death.
+
+As weel as forecasting, we also use reported death and past report cases (using a fix delay) to analyse the reporting trends per country. If the reporting of cases and death was perfect, as well as the delay between reporting and death fixed and known, the ratio of death to delayed cases would be exactly the Case Fatalty Ratio (CFR).
+
+Forecasts are produced weekly for based on data available on the last Sunday of the previous week. Forecasts are produced only for countries that reported at least 5 deaths in the previous week and 10 deaths in the previous two weeks. For the purpose of our analysis, we assume those countries show strong evidence active and sustained local transmission.
 
 Importantly, all weekly forecasts rely on estimation of current level of transmissibility. Given we are forecasting number of daily deaths expected, current transmissibility reflects epidemiological dynamics when the cases who died became infected. 
 
