@@ -73,10 +73,10 @@ While death counts are used for the main analysis and producing forecasts. Repor
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
 obs <- drake::readd("obs")
-pred <- drake::readd("ensemble_model_qntls")
-pred <- pred[pred$si == "si_1", ]
-pred$date <- as.Date(pred$date)
-projection_plot(obs, pred)
+ensb_pred <- drake::readd("ensemble_model_qntls")
+ensb_pred1 <- ensb_pred[ensb_pred$si == "si_1", ]
+ensb_pred1$date <- as.Date(ensb_pred1$date)
+projection_plot(obs, ensb_pred1)
 
 ```
 
@@ -227,21 +227,22 @@ knitr::kable(
 ```
 
 
-### Model 3 
+## Sensitivity Analyses
 
-"Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-ab illo inventore veritatis et quasi architecto beatae vitae dicta
-sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
-dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed
-quia non numquam eius modi tempora incidunt ut labore et dolore magnam
-aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum
-exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex
-ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in
-ea voluptate velit esse quam nihil molestiae consequatur, vel illum
-qui dolorem eum fugiat quo voluptas nulla pariatur?"
+
+Results with a longer Serial Interval.
+
+### Projections
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+
+ensb_pred2 <- ensb_pred[ensb_pred$si == "si_2", ]
+ensb_pred2$date <- as.Date(ensb_pred2$date)
+projection_plot(obs, ensb_pred2)
+
+```
+
+### Effective Reproduction Number Estimates
 
 
 ## Supplementary Information
