@@ -330,19 +330,21 @@ In the figure below, for each country with active transmission (see methods), we
 
 ## Case Ascertainment
 
-Average and 95%CI for ratio of deaths (with a 10-days delay) to reported cases for moving window of 7 days since march.
+The analysis rely on 2 key assumptions:
+  
+*	The true underlying Case Fatality Ratio (CFR) is 1%,
+*	The delay from a death to this case being reported is 10 days.
 
-The ratio roughly accounts for the delay between death and case being reported. 
-
-
-
-When deaths exceed the number of reported cases 10-days before, we set the reporting at 1 (95%CI [1;1])
-
-
+First, we analyses the ratio of reported deaths to reported cases 10 days prior.
+Therefore, the ratio roughly accounts for the delay between death and case being reported. 
 
 Any temporal trend suggests a change in the reporting. 
 For instance, an increase in the ratio gives an indication that cases reporting is decreasing.
 
+
+**Temporal trend in the ratio of deaths to reported cases**
+
+Sarting in march, we compute the average and 95%CI for the ratio of deaths  to reported cases (with a 10-days delay) using a moving window of 7 days.
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -395,9 +397,11 @@ for (i in 1:N_geo){
 
 ```
 
-In the plots below, both reported deaths (red) and cases (black) have
+The figure below shows the temporal trends in the ratio of reported deaths to reported cases 10 days prior (medians and 95%CIs, solida lines and bands).
+
+We also plot both the reported deaths (red) and reported cases (black). Those have
 been rescaled but are comparable to each other. The rescaling is such
-that the maximium recorded numbers of death or cases (with a 10-days
+that the maximium recorded numbers of deaths or cases (with a 10-days
 delay) reaches 1.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
@@ -438,11 +442,27 @@ for (i in 1:N_geo){
 
 ```
 
+*Note that if deaths exceed the number of reported cases 10-days before, we set the reporting at 1 (95%CI [1;1])*
+
+**Estimating ascertainment**
+
+If all cases (incl. asymptomatics) and deaths were reported, and the delay from reporting to death was exactly 10 days, then the ratio defined above would be equivalent to the Case Fatality Ratio (CFR).
+
+Assuming a CFR of 1%, the ascertainment, $\rho$, can be defined as:
+$$\rho = \frac{I^r}{D^r} CFR$$
+with $D^r$ and $I^r$ the reported number of deaths and cases (with a 10-days delay).
+
+And the ratio previously defined is 
+$$\frac{D^r}{I^r}$$
+
+Below we summarise:
+
+* Estimated ratio per country (mean and 95%CI) during the last 14 days, 
+* Estimated case ascertainment per country (mean and 95%CI) during the last 14 days,
+* Estimated factor to be multipled to observed cases number to obatin true number of cases. Mean and 95%CI, estimated for the last 14 days.
+* Observed and predicted number of cases in the last week (week starting [date]).
+
 Average and 95%CI for ratio of deaths to reported cases for the last 14 days.
-
-
-If all cases (incl. asymptomatics) and death were reported, and the delay fro reporting was exactly 10 days, then the ratio defined would be equivalent to the CFR.
-
 Suprisingly, this appear to be pretty much the case for South Korea
 (see below).
 
