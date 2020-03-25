@@ -49,28 +49,34 @@ outbreak.
 
 The **main** objective in this report is to produce forecasts of the number of deaths in the week ahead per country with active transmission.
 
-*	Active transmission is defined as have more than five deaths in the last week and preceding week.
-*	We forecast deaths as it likely that reporting of deaths in more reliable than reporting of cases, and temporal trends in reporting of deaths are also likely to be much smaller than temporal trends in reporting cases.
-*Because we are forecasting deaths, latest estimates of transmissibility reflect the epidemiological situation when those dying were infected.
+* Active transmission is defined as have more than five deaths in the last week and preceding week.
+* We forecast deaths as it likely that reporting of deaths in more
+reliable than reporting of cases, and temporal trends in reporting of
+deaths are also likely to be more stable than trends in reporting cases.
+* Because we are forecasting deaths, latest estimates of
+transmissibility reflect the epidemiological situation when those dying were infected.
 
-A **secondary** objective of this report is to analyse case ascertainment per country. In this analysis, key assumption are:
+A **secondary** objective of this report is to analyse case ascertainment per country. In this analysis, key assumptions are:
   
-*	The true underlying Case Fatality Ratio (CFR) is 1%,
-*	The delay from a death to this case being reported is 10 days.
+* The true underlying Case Fatality Ratio (CFR) is 1%,
+* The delay from a case being reported to death is 10 days.
 
 ### Key results on transmissibility and forecasting
 
 Key results below are based on ensemble forecast.
 
-Transmissibility is characterised by the reproduction number, i.e. the average number of cases that one infected is likely to infect. Analysis of transmissibility indicates that the reproduction number last week (week starting [date]) was highest in:
+Transmissibility is characterised by the reproduction number, i.e. the 
+average number of cases that one infected is likely to
+infect. Analysis of transmissibility indicates that the reproduction 
+number last week (week starting [date]) was highest in:
   
-*	[Top country name] with an estimated Rt of: [median; 95%CrI [] ], and
-*	[2nd Top country name] with an estimated Rt of: [median; 95%CrI [] ],
+* [Top country name] with an estimated Rt of: [median; 95%CrI [] ], and
+* [2nd Top country name] with an estimated Rt of: [median; 95%CrI [] ],
 
 and was lowest in:
   
-*	[Bottom country name] with an estimated Rt of: [median; 95%CrI [] ], and
-*	[2nd Bottom country name] with an estimated Rt of: [median; 95%CrI [] ]
+* [Bottom country name] with an estimated Rt of: [median; 95%CrI [] ], and
+* [2nd Bottom country name] with an estimated Rt of: [median; 95%CrI [] ]
 
 Forecast of predicted deaths in the coming week (week starting [date]) is expected to be highest in:
   
@@ -82,11 +88,14 @@ and was lowest in:
 *	[Bottom country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ], and
 *	[2nd Bottom country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ],
 
-Forecasts in previous weeks were good with [XX]% of observed numbers of deaths per country included in our 95% CrI.
+Forecasts in previous weeks were good with [XX]% of observed numbers
+of deaths per country included in our 95% CrI.
 
 ### Key results on case ascertainment
 
-Case ascertainment based on the last previous 2 weeks deaths and reported cases in the 10 days prior to that period indicate that countries with lowest case ascertainment were:
+Case ascertainment based on the deaths in the previous 2 weeks  and 
+reported cases in the 10 days prior to that period indicate that 
+countries with lowest case ascertainment were:
   
 *	[Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ], and
 *	[2nd Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ],
@@ -112,11 +121,15 @@ and countries with the lowest true epidemics size in this period were:
 
 The objective of this project is to forecast for the daily number of COVID-19 deaths in countries with sustained local transmission. We aim to produce weekly forecasts every Monday. Multiple teams are involved, each producing weekly forecasts and a centralised team also produces an ensemble forecast.
 
-We use reported deaths rather than pretored cases, as the former ascertainment of the former is likely to be much more stable over time than the later. The ascertainment of deaths is also likely to be much higher then for cases, as most cases will show mild (if any) symptoms.
+We use reported deaths rather than reported cases, as the
+ascertainment of deaths is likely to be much more stable over time
+than the reporting of cases. The ascertainment of deaths is also 
+likely to be much higher then for cases, as most cases will show mild 
+(if any) symptoms.
 
-As we forecasting deaths, the latest estimates of trasnsmissibility reflect the epidemiological conditions when those dying were infected. Therefore, adisadvantage in using death, is this delay between case reporting and death.
+As we forecasting deaths, the latest estimates of transmissibility reflect the epidemiological conditions when those dying were infected. Therefore, disadvantage in using death, is this delay between case reporting and death.
 
-As weel as forecasting, we also use reported death and past report cases (using a fix delay) to analyse the reporting trends per country. If the reporting of cases and death was perfect, as well as the delay between reporting and death fixed and known, the ratio of death to delayed cases would be exactly the Case Fatalty Ratio (CFR).
+As well as forecasting, we also use reported death and past report cases (using a fix delay) to analyse the reporting trends per country. If the reporting of cases and death was perfect, as well as the delay between reporting and death fixed and known, the ratio of death to delayed cases would be exactly the Case Fatality Ratio (CFR).
 
 Forecasts are produced weekly for based on data available on the last Sunday of the previous week. Forecasts are produced only for countries that reported at least 5 deaths in the previous week and 10 deaths in the previous two weeks. For the purpose of our analysis, we assume those countries show strong evidence active and sustained local transmission.
 
@@ -232,21 +245,11 @@ rt_plot(rt)
 Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
+
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
 x <- x[grep("RtI0", x$model), ]
 x <- dplyr::select(x, -model)
-knitr::kable(
-    x,
-    ##align = "l",
-    digits = 2,
-    ##table.attr='class="table-fixed-header"'
-    ) %>%
-    kable_styling(
-        bootstrap_options = "striped",
-        ##full_width = F,
-        ##position = "center",
-        fixed_thead = TRUE
-    ) %>% row_spec(0, align = "left")
+DT::datatable(x)
 
 ```
 
@@ -298,15 +301,11 @@ rt_plot(rt)
 Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
+
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
 x <- x[grep("sbkp", x$model), ]
 x <- dplyr::select(x, -model)
-knitr::kable(
-    x,
-    ##align = "l",
-    digits = 2
-    ) %>% kable_styling() %>%
-     row_spec(0, align = "left")
+DT::datatable(x)
 
 ```
 
@@ -336,8 +335,8 @@ In the figure below, for each country with active transmission (see methods), we
 
 The analysis rely on 2 key assumptions:
   
-*	The true underlying Case Fatality Ratio (CFR) is 1%,
-*	The delay from a death to this case being reported is 10 days.
+* The true underlying Case Fatality Ratio (CFR) is 1%,
+* The delay from a death to this case being reported is 10 days.
 
 First, we analyses the ratio of reported deaths to reported cases 10 days prior.
 Therefore, the ratio roughly accounts for the delay between death and case being reported. 
@@ -348,7 +347,7 @@ For instance, an increase in the ratio gives an indication that cases reporting 
 
 **Temporal trend in the ratio of deaths to reported cases**
 
-Sarting in march, we compute the average and 95%CI for the ratio of deaths  to reported cases (with a 10-days delay) using a moving window of 7 days.
+Starting in march, we compute the average and 95%CI for the ratio of deaths  to reported cases (with a 10-days delay) using a moving window of 7 days.
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -401,7 +400,7 @@ for (i in 1:N_geo){
 
 ```
 
-The figure below shows the temporal trends in the ratio of reported deaths to reported cases 10 days prior (medians and 95%CIs, solida lines and bands).
+The figure below shows the temporal trends in the ratio of reported deaths to reported cases 10 days prior (medians and 95%CIs, solid lines and bands).
 
 We also plot both the reported deaths (red) and reported cases (black). Those have
 been rescaled but are comparable to each other. The rescaling is such
@@ -450,7 +449,7 @@ for (i in 1:N_geo){
 
 **Estimating ascertainment**
 
-If all cases (incl. asymptomatics) and deaths were reported, and the delay from reporting to death was exactly 10 days, then the ratio defined above would be equivalent to the Case Fatality Ratio (CFR).
+If all cases (incl. asymptomatic) and deaths were reported, and the delay from reporting to death was exactly 10 days, then the ratio defined above would be equivalent to the Case Fatality Ratio (CFR).
 
 Assuming a CFR of 1%, the ascertainment, $\rho$, can be defined as:
 $$\rho = \frac{I^r}{D^r} CFR$$
@@ -463,11 +462,11 @@ Below we summarise:
 
 * Estimated ratio per country (mean and 95%CI) during the last 14 days, 
 * Estimated case ascertainment per country (mean and 95%CI) during the last 14 days,
-* Estimated factor to be multipled to observed cases number to obatin true number of cases. Mean and 95%CI, estimated for the last 14 days.
+* Estimated factor to be multiplied to observed cases number to obtain true number of cases. Mean and 95%CI, estimated for the last 14 days.
 * Observed and predicted number of cases in the last week (week starting [date]).
 
 Average and 95%CI for ratio of deaths to reported cases for the last 14 days.
-Suprisingly, this appear to be pretty much the case for South Korea
+Surprisingly, this appear to be pretty much the case for South Korea
 (see below).
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
