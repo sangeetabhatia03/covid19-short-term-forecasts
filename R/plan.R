@@ -143,34 +143,16 @@ plan <- drake_plan(
     ) %>%
         purrr::imap(
             function(x, si_name) {
-                out <- data.frame(
-                    model = x$model,
-                    Country = x$country,
-                    `Week Ending` = x$week_ending,
-                    `Predicted Deaths` = glue::glue(
-                        "{x$`50%`} ({x$`2.5%`} - {x$`97.5%`})",
-                        ),
-                    `Observed Deaths` = x$observed,
-                    check.names = FALSE
-                )
+                out <- format_weekly_pred(x)
+                out$model <- x$model
+                out$`Observed Deaths` <- x$observed
                 ## Get Rt Estimates for this SI and this country
                 rt <- purrr::map_dfr(
                     model_rt_qntls,
                     function(y) y[(y$si == si_name), ],
                     .id = "model"
-                    )
-                rt <- dplyr::select(rt, -si)
-                rt <- rt[rt$quantile %in% c("2.5%", "50%", "97.5%"), ]
-                rt <- tidyr::spread(rt, quantile, out2)
-                rt <- dplyr::mutate_if(
-                    rt,
-                    is.numeric,
-                    ~ round(., 2)
                 )
-                rt$`R_t` <- glue::glue(
-                    "{rt$`50%`} ({rt$`2.5%`} - {rt$`97.5%`})"
-                    )
-                rt <- dplyr::select(rt, model, Country = country, `R_t`)
+                rt <- format_last_rt(rt)
                 out <- dplyr::left_join(x = out, y = rt)
                 out$Country <- snakecase::to_any_case(
                     as.character(out$Country),
@@ -180,7 +162,7 @@ plan <- drake_plan(
                 out <- dplyr::arrange(out, Country)
                 out
             }
-            ),
+    ),
 
     weeks_ending = list(
         "2020-03-08" = "2020-03-08",
@@ -224,6 +206,30 @@ plan <- drake_plan(
             )
         }, .id = "proj"
     ),
+
+    ensemble_weekly_qntls = purrr::map_dfr(
+        ensemble_model_predictions,
+        function(pred) {
+             purrr::map_dfr(
+                pred, daily_to_weekly, .id = "country"
+           )
+        }, .id = "proj"
+    ),
+
+    fmtd_ensemble_weekly_qntls = split(
+        ensemble_weekly_qntls,
+        ensemble_weekly_qntls$si
+    ) %>% purrr::map(function(x) {
+        x <- format_weekly_pred(x)
+        x <- dplyr::arrange(x, Country)
+        x$Country <- snakecase::to_any_case(
+            as.character(x$Country),
+            case = "title"
+        )
+
+        x
+    }),
+
 
 
     ## Model 1. Name contains RtI0

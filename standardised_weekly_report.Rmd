@@ -66,7 +66,9 @@ While death counts are used for the main analysis and producing forecasts. Repor
 
 ## Results {.tabset .tabset-fade .tabset-pills} 
 
-### Ensemble Model 
+### Ensemble Model {.tabset .tabset-fade .tabset-pills} 
+
+#### Deaths
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
@@ -75,6 +77,20 @@ pred <- drake::readd("ensemble_model_qntls")
 pred <- pred[pred$si == "si_1", ]
 pred$date <- as.Date(pred$date)
 projection_plot(obs, pred)
+
+```
+
+#### Summary of results
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+x <- drake::readd("fmtd_ensemble_weekly_qntls")[[1]]
+
+knitr::kable(
+    x,
+    align = "l",
+    digits = 2,
+    table.attr='class="table-fixed-header"'
+) %>% kable_styling()
 
 ```
 
