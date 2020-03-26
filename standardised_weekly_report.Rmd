@@ -100,17 +100,18 @@ intervals.
 
 Case ascertainment based on the deaths in the previous 2 weeks  and 
 reported cases in the 10 days prior to that period indicate that 
-countries with lowest case ascertainment were:
+countries with highest case ascertainment were:
   
-*	[Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ], and
-*	[2nd Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ],
+* South Korea with an estimated ascertainment of 100% (95% CrI 89.2% - 100%)
+* Germany with an estimated ascertainment of 23.1% (95% CrI 18.3% - 29.6%)
 
-and countries with the highest case ascertainment were:
+and countries with the lowest case ascertainment were:
   
-*	[Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ], and
-*	[2nd Top country name] with an estimated ascertainment of: [median%; 95%CrI []% ],
+* Spain with an estimated ascertainment of 1.6% (95% CrI 1.6% - 1.7%)
+* Philippines with an estimated ascertainment of: 1.9% (95% CrI 1.5% - 2.7%)
 
-Based on the estimated ascertainment, we estimated the true size of the epidemics in the previous 7 days (week starting [date]). 
+Based on the estimated ascertainment, we estimated the true size of
+the epidemics in the previous 7 days (week starting 15th March). 
 Countries with the highest true epidemics size in this period were:
   
 *	[Top country name] with an estimated true epidemics size in this period of: [median; 95%CrI [] ], and
