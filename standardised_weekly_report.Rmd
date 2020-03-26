@@ -119,7 +119,11 @@ and countries with the lowest true epidemics size in this period were:
 
 ## Methods 
 
-The objective of this project is to forecast for the daily number of COVID-19 deaths in countries with sustained local transmission. We aim to produce weekly forecasts every Monday. Multiple teams are involved, each producing weekly forecasts and a centralised team also produces an ensemble forecast.
+The objective of this project is to forecast for the daily number of 
+COVID-19 deaths in countries with sustained local transmission. We aim 
+to produce weekly forecasts every Monday. Multiple teams are involved, 
+each producing weekly forecasts and a centralised team also produces 
+an ensemble forecast.
 
 We use reported deaths rather than reported cases, as the
 ascertainment of deaths is likely to be much more stable over time
@@ -190,7 +194,23 @@ We use a previously described approach [cori et al. 2013] to quantify transmissi
 
 Our main analysis assume a gamma distributed serial of mean 4.8 days and standard deviation of 2.7 days following [Wang and Teunis, 2020].
 
-**Include figure of histogram of SI**
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+
+short <- EpiEstim::discr_si(0:90, 4.8, 2.7)
+long <- EpiEstim::discr_si(0:90, 6.48, 3.83)
+df <- data.frame(
+    x = c(0:90, 0:90),
+    cat = c(rep("short", 91), rep("long", 91)),
+    val = c(short, long)
+)
+ggplot(df, aes(x, val, fill = cat)) +
+    geom_col(position = "dodge") +
+    theme_pubr() +
+    theme(legend.position = "none") +
+    xlab("") +
+    ylab("")
+    
+```
 
 The serial interval above might be biased toward lower values given the observation bias whereby, in contact tracing studies, long serial interval tend to be under-represented. To account for this, as a sensitivity analysis, we also ran our analysis with an alternative longer serial interval of mean 6.48 days and standard deviation of 3.83 days [Ferguson 2020, report 9]. Results for this longer interval are presented in the supplementary information section. Most importantly, while using such longer serial interval has very little impact on the weekly forecast produced, it results in much higher estimated of transmissibility.
 
