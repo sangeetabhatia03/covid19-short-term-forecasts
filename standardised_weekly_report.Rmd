@@ -47,14 +47,17 @@ outbreak.
 
 ### Objectives and caveats
 
-The **main** objective in this report is to produce forecasts of the number of deaths in the week ahead per country with active transmission.
+The **main** objective in this report is to produce forecasts of the 
+number of deaths in the week ahead per country with active transmission.
 
-* Active transmission is defined as have more than five deaths in the last week and preceding week.
-* We forecast deaths as it likely that reporting of deaths in more
-reliable than reporting of cases, and temporal trends in reporting of
+* Active transmission is defined as have more than five deaths in the 
+last week and preceding week.
+* We forecast deaths as it is likely that reporting of deaths in more
+reliable than reporting of cases. Temporal trends in reporting of
 deaths are also likely to be more stable than trends in reporting cases.
 * Because we are forecasting deaths, latest estimates of
-transmissibility reflect the epidemiological situation when those dying were infected.
+transmissibility reflect the epidemiological situation when those
+dying were infected.
 
 A **secondary** objective of this report is to analyse case ascertainment per country. In this analysis, key assumptions are:
   
@@ -68,28 +71,30 @@ Key results below are based on ensemble forecast.
 Transmissibility is characterised by the reproduction number, i.e. the 
 average number of cases that one infected is likely to
 infect. Analysis of transmissibility indicates that the reproduction 
-number last week (week starting [date]) was highest in:
+number last week (week starting 22nd March) was highest in:
   
-* [Top country name] with an estimated Rt of: [median; 95%CrI [] ], and
-* [2nd Top country name] with an estimated Rt of: [median; 95%CrI [] ],
+* Germany with an estimated median Rt of: 4.5 (95% CrI 5.9 - 3.5), and
+* USA with an estimated median Rt of 4.3 (95% CrI 3.4 - 4.8)
 
 and was lowest in:
   
-* [Bottom country name] with an estimated Rt of: [median; 95%CrI [] ], and
-* [2nd Bottom country name] with an estimated Rt of: [median; 95%CrI [] ]
+* Japan with an estimated Rt of 0.6 (95% CrI 1.2 - 0.2)
+* China with an estimated Rt of 0.8 (95% CrI 0.6 - 1.0)
 
-Forecast of predicted deaths in the coming week (week starting [date]) is expected to be highest in:
+Forecast of predicted deaths in the coming week (week starting [date]) is highest in:
   
-*	[Top country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ], and
-*	[2nd Top country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ],
+* Italy with a forecasted number of weekly deaths 9030 (95% CrI 7813 - 10400)
+* Spain with a forecasted number of weekly deaths 5628 (95% CrI 3950 -
+  8654)
 
-and was lowest in:
+and is lowest in:
   
-*	[Bottom country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ], and
-*	[2nd Bottom country name] with a forecasted number of weekly deaths Rt of: [median; 95%CrI [] ],
+* Japan with a forecasted number of weekly deaths 6 (95% CrI 0 - 44)
+* Iraq with a forecasted number of weekly deaths 14 (95% CrI 0 - 825).
 
-Forecasts in previous weeks were good with [XX]% of observed numbers
-of deaths per country included in our 95% CrI.
+Forecasts in previous weeks were good with 90.1% of observed number
+of deaths across all countries included in the 95% CrI of the forecast
+intervals.
 
 ### Key results on case ascertainment
 
@@ -165,12 +170,24 @@ ensb_pred1$date <- as.Date(ensb_pred1$date)
 projection_plot(obs, ensb_pred1)
 
 ```
+### Effective Reproduction Number
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+ens_rt <- drake::readd("ensemble_model_rt")
+ens_rt <- ens_rt[ens_rt$si == "si_1", ]
+ens_rt$model <- as.Date(ens_rt$model)
+ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
+ens_rt <- tidyr::spread(ens_rt, quantile, out2)
+rt_plot(ens_rt)
+
+```
 
 #### Summary of results
 
 Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
+
 x <- drake::readd("fmtd_ensemble_weekly_qntls")[[1]]
 
 ## knitr::kable(
