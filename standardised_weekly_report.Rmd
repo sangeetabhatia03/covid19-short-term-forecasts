@@ -577,7 +577,7 @@ $$\frac{D^r}{I^r}$$
 
 Below we summarise:
 
-* Estimated ratio per country (mean and 95%CI) during the last 14 days, 
+* Estimated ratio of deaths per delayed reported cases per country (mean and 95%CI) during the last 14 days, 
 * Estimated case ascertainment per country (mean and 95%CI) during the last 14 days,
 * Estimated factor to be multiplied to observed cases number to obtain true number of cases. Mean and 95%CI, estimated for the last 14 days.
 * Observed and predicted number of cases in the last week (week starting [date]).
