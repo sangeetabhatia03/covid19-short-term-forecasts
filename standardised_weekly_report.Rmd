@@ -41,7 +41,7 @@ As of `r format(Sys.time(), '%B %d, %Y')`, there have more than
 351,000 cases of COVID-19 across the world, with more than 15,000
 deaths. In this report, we use the reported number of deaths
 of COVID-19 to make short term forecasts of the trajectory of the
-outbreak.
+outbreak. 
 
 ## Summary
 
@@ -50,17 +50,31 @@ outbreak.
 The **main** objective in this report is to produce forecasts of the 
 number of deaths in the week ahead per country with active transmission.
 
-* Active transmission is defined as have more than five deaths in the 
-last week and preceding week.
+* We define a country to have sustained local active transmission if
+at least five deaths were observed in the country in the last week and 10 in the 
+preceding week.
+
 * We forecast deaths as it is likely that reporting of deaths in more
 reliable than reporting of cases. Temporal trends in reporting of
-deaths are also likely to be more stable than trends in reporting cases.
+deaths are also likely to be more stable than trends in reporting
+cases.
+
 * Because we are forecasting deaths, latest estimates of
 transmissibility reflect the epidemiological situation when those
-dying were infected.
+dying were infected. Therefore, in the best case scenario, the
+impact of current controls on estimated transmissibility will be
+quantifiable with delay of up to a three weeks.
 
-A **secondary** objective of this report is to analyse case ascertainment per country. In this analysis, key assumptions are:
-  
+
+A **secondary** objective of this report is to analyse case
+ascertainment per country. As well as forecasting, we also use reported deaths and past reported
+cases (using a fixed delay) to analyse the reporting trends per
+country. If the reporting of cases and death was perfect, as well as
+the delay between reporting and death fixed and known, the ratio of
+death to delayed cases would be exactly the Case Fatality Ratio (CFR).
+
+In this analysis, key assumptions are:
+
 * The true underlying Case Fatality Ratio (CFR) is 1%,
 * The delay from a case being reported to death is 10 days.
 
@@ -114,53 +128,77 @@ Based on the estimated ascertainment, we estimated the true size of
 the epidemics in the previous 7 days (week starting 15th March). 
 Countries with the highest true epidemics size in this period were:
   
-*	[Top country name] with an estimated true epidemics size in this period of: [median; 95%CrI [] ], and
-*	[2nd Top country name] with an estimated ascertainment of: [median; 95%CrI []%],
+* Italy with an estimated true epidemics size in this period of
+  1364565 (95% CrI 1333474 - 1395862).
+* Spain with an estimated true epidemics size in this period of
+1190204 (95% CrI 1149931 - 1229837)
 
-and countries with the lowest true epidemics size in this period were:
+Countries with the lowest true epidemics size in this period were:
   
-*	[Bottom country name] with an estimated true epidemics size in this period of: [median; 95%CrI [] ], and
-*	[2nd Bottom country name] with an estimated ascertainment of: [median; 95%CrI []%],
+* South Korea with an estimated true epidemics size in this period of
+  735 (95% CrI 735 - 824)
+* Japan with an estimated true epidemics size in this period of
+1843 (95% CrI 1256 - 2592).
+
+## Methods
+
+We define a country to have sustained local active transmission if
+at least five deaths were observed in the country in the last week and 10 in the 
+preceding week. We intend to produce forecasts every week, for the
+week ahead. Three different modelling teams will produce these
+forecats which are then used to produce an ensemble forecasts.
+
+Our main analysis assume a gamma distributed serial of mean 4.8 days
+and standard deviation of 2.7 days following [Wang and Teunis, 2020].
+The serial interval estimates might be biased toward lower values given
+the observation bias whereby, in contact tracing studies, long serial
+interval tend to be under-represented. To account for this, as a
+sensitivity analysis, we also ran our analysis with an alternative
+longer serial interval of mean 6.48 days and standard deviation of
+3.83 days [Ferguson 2020, report 9]. Results for this longer interval
+are presented in the supplementary information section. Most
+importantly, while using such longer serial interval has very little
+impact on the weekly forecast produced, it results in much higher
+estimated of transmissibility.
 
 
-## Methods 
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
-The objective of this project is to forecast for the daily number of 
-COVID-19 deaths in countries with sustained local transmission. We aim 
-to produce weekly forecasts every Monday. Multiple teams are involved, 
-each producing weekly forecasts and a centralised team also produces 
-an ensemble forecast.
-
-We use reported deaths rather than reported cases, as the
-ascertainment of deaths is likely to be much more stable over time
-than the reporting of cases. The ascertainment of deaths is also 
-likely to be much higher then for cases, as most cases will show mild 
-(if any) symptoms.
-
-As we forecasting deaths, the latest estimates of transmissibility reflect the epidemiological conditions when those dying were infected. Therefore, disadvantage in using death, is this delay between case reporting and death.
-
-As well as forecasting, we also use reported death and past report cases (using a fix delay) to analyse the reporting trends per country. If the reporting of cases and death was perfect, as well as the delay between reporting and death fixed and known, the ratio of death to delayed cases would be exactly the Case Fatality Ratio (CFR).
-
-Forecasts are produced weekly for based on data available on the last Sunday of the previous week. Forecasts are produced only for countries that reported at least 5 deaths in the previous week and 10 deaths in the previous two weeks. For the purpose of our analysis, we assume those countries show strong evidence active and sustained local transmission.
-
-Importantly, all weekly forecasts rely on estimation of current level of transmissibility. Given we are forecasting number of daily deaths expected, current transmissibility reflects epidemiological dynamics when the cases who died became infected. 
-
-Therefore, current estimates of transmissibility based on death reflect transmission events that occur about two to three weeks ago, given the delays between infection and death. As a consequence, in the best case scenario, the impact of current control on estimated of transmissibility will be quantifiable with a two to three weeks delay.
-
-In the results section of each model output, a 'methods' section outlines briefly the methodology used to produce forecasts.
+short <- EpiEstim::discr_si(0:90, 4.8, 2.7)
+long <- EpiEstim::discr_si(0:90, 6.48, 3.83)
+df <- data.frame(
+    x = c(0:90, 0:90),
+    cat = c(rep("short", 91), rep("long", 91)),
+    val = c(short, long)
+)
+ggplot(df, aes(x, val, fill = cat)) +
+    geom_col(position = "dodge") +
+    theme_pubr() +
+    theme(legend.position = "none") +
+    xlab("") +
+    ylab("")
+    
+```
 
 
-
-While death counts are used for the main analysis and producing forecasts. Reported cases and the death to reported cases ratios for each country are show in the 'Supplementary Information' section.
 
 
 ## Projections and Rt Estimates {.tabset .tabset-fade .tabset-pills} 
 
 ### Ensemble Model {.tabset .tabset-fade .tabset-pills} 
 
+### Methods
+
+This is an unweighted ensemble of models 1 and 2.
+
 #### Projections
 
-Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
+Below for each country with active transmission (see methods), we plot
+the observed incidence of deaths in the last 3 weeks (black
+dots). Past forecasts, where available, are shown in green (median and
+95%CrI band), while latest forecasts are show in red. Horizontal
+dashed line show the start and end of each week (Monday to Sunday).
+
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
@@ -185,7 +223,11 @@ rt_plot(ens_rt)
 
 #### Summary of results
 
-Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
+Below for each country with active transmission (see methods), a table 
+summarising for each period and country forecasted, the observed
+(where available) and forecasted weekly death count, and estimated
+levels of transmissibility.
+
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -208,58 +250,83 @@ DT::datatable(x)
 
 **Estimating current transmissibility**
 
-We use a previously described approach [cori et al. 2013] to quantify transmissibility during the calibration period, from the incidence of death time series, assuming a certain distribution for the serial interval for death (the time between death in a case and death in their infector). Here, we assumed that the serial interval distribution for death was similar to the classical serial interval distribution (the time between onset of symptom in a case and onset of symptom in their infector).
+We use a previously described approach [cori et al. 2013] to quantify
+transmissibility during the calibration period, from the incidence of
+death time series, assuming a certain distribution for the serial
+interval for death (the time between death in a case and death in
+their infector). Here, we assumed that the serial interval
+distribution for death was similar to the classical serial interval
+distribution (the time between onset of symptom in a case and onset of
+symptom in their infector).
 
-Our main analysis assume a gamma distributed serial of mean 4.8 days and standard deviation of 2.7 days following [Wang and Teunis, 2020].
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+We assume that transmissibility was constant throughout the
+calibration period, and measured it through the reproduction number,
+R, defined as the average number of secondary cases infected by an
+infected individual. The estimate of R is informative as if R is above
+the threshold value 1, and remains above 1, the outbreak is likely to
+grow further, whereas if R is below 1, and remains below 1, the
+outbreak will die out.
 
-short <- EpiEstim::discr_si(0:90, 4.8, 2.7)
-long <- EpiEstim::discr_si(0:90, 6.48, 3.83)
-df <- data.frame(
-    x = c(0:90, 0:90),
-    cat = c(rep("short", 91), rep("long", 91)),
-    val = c(short, long)
-)
-ggplot(df, aes(x, val, fill = cat)) +
-    geom_col(position = "dodge") +
-    theme_pubr() +
-    theme(legend.position = "none") +
-    xlab("") +
-    ylab("")
-    
-```
 
-The serial interval above might be biased toward lower values given the observation bias whereby, in contact tracing studies, long serial interval tend to be under-represented. To account for this, as a sensitivity analysis, we also ran our analysis with an alternative longer serial interval of mean 6.48 days and standard deviation of 3.83 days [Ferguson 2020, report 9]. Results for this longer interval are presented in the supplementary information section. Most importantly, while using such longer serial interval has very little impact on the weekly forecast produced, it results in much higher estimated of transmissibility.
+Our method assumes that the daily incidence can be approximated by a
+Poisson process using the renewal equation:
 
-We assumed that transmissibility was constant throughout the calibration period, and measured it through the reproduction number, R, defined as the average number of secondary cases infected by an infected individual. The estimate of R is informative as if R is above the threshold value 1, and remains above 1, the outbreak is likely to grow further, whereas if R is below 1, and remains below 1, the outbreak will die out.
-
-Our method assumes that the daily incidence can be approximated by a Poisson process using the so-called renewal equation:
 
 $$ I_t \sim Pois\left( R_t \Sigma_{s=1}^{t} I_{t-s} w_s \right) $$
 
 
-where $I_t$ is the incidence (of deaths) on day $t$, $R_t$ is the reproduction number on day $t$, and $w$ is the probability mass function of the serial interval. 
+where $I_t$ is the incidence (of deaths) on day $t$, $R_t$ is the
+reproduction number on day $t$, and $w$ is the probability mass
+function of the serial interval. 
+
 
 **Forward projections**
 
-For each country, we used the renewal equation to project the incidence forward, given an estimated reproduction number, and the observed incidence of death. We sampled a set of reproduction numbers from the posterior distribution obtained in the estimation process. For each of these sets, we simulated stochastic realisations of the renewal equation from the end of the calibration period; leading projected incidence trajectories. 
+For each country, we used the renewal equation to project the
+incidence forward, given an estimated reproduction number, and the
+observed incidence of death. We sampled a set of reproduction numbers
+from the posterior distribution obtained in the estimation
+process. For each of these sets, we simulated stochastic realisations
+of the renewal equation from the end of the calibration period;
+leading projected incidence trajectories. 
 
-Projections were made on a 7-days horizon. The projections assume that the transmissibility remains constant over this 7-days horizon. If transmissibility were to decrease as a result of control interventions and/or changes in behaviour over this time period, we would predict a lower number of cases; similarly, if transmissibility were to increase over this time period, we would predict a higher number of cases. We limited our projection to 7 days only as assuming constant transmissibility over longer time horizons seemed unrealistic. 
 
-Super-spreading has been shown to be an important characteristics of many coronaviruses. To account for this characteristic, we, assumed that secondary cases are generated according to a negative binomial distribution: 
+Projections were made on a 7-days horizon. The projections assume that
+the transmissibility remains constant over this 7-days horizon. If
+transmissibility were to decrease as a result of control interventions
+and/or changes in behaviour over this time period, we would predict a
+lower number of cases; similarly, if transmissibility were to increase
+over this time period, we would predict a higher number of cases. We
+limited our projection to 7 days only as assuming constant
+transmissibility over longer time horizons seemed unrealistic. 
+
+
+Super-spreading has been shown to be an important characteristics of
+many coronaviruses. To account for this characteristic, we, assumed
+that secondary cases are generated according to a negative binomial
+distribution: 
+
 
 $$I_t \sim NegBin\left( R_t \Sigma_{s=1}^{t} I_{t-s} w_s, z \right) $$
 
-The value of the overdispersion parameter, z, was taken from analyses of exposure patterns during the SARS epidemic [lloyds-smith sars nature]. 
+The value of the overdispersion parameter, z, was taken from analyses
+of exposure patterns during the SARS epidemic [lloyds-smith sars
+nature]. 
+
  
 #### Projections 
 
-Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
+Below for each country with active transmission (see methods), we plot
+the observed incidence of deaths in the last 3 weeks (black
+dots). Past forecasts, where available, are shown in green (median and
+95%CrI band), while latest forecasts are show in red. Horizontal
+dashed line show the start and end of each week (Monday to Sunday).
+
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 obs <- drake::readd("obs")
-pred <- drake::readd("model_1")
+pred <- drake::readd("model_2")
 pred <- pred[pred$si == "si_1", ]
 pred$date <- as.Date(pred$date)
 projection_plot(obs, pred)
@@ -268,24 +335,31 @@ projection_plot(obs, pred)
 
 #### Effective Reproduction Number Estimates
 
-In the figure below, for each country with active transmission (see methods), we plot the latest estimate of transmissibility ($R_t$), specifically estimated median and associated 95%CrI.
+In the figure below, for each country with active transmission (see
+methods), we plot the latest estimate of transmissibility ($R_t$),
+specifically estimated median and associated 95%CrI.
+
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
-rt <- drake::readd("model_1_rt")
+rt <- drake::readd("model_2_rt")
 rt <- rt[rt$si == "si_1", ]
-rt <- rt[rt$proj == "RtI0_Std_results_week_end_2020-03-22", ]
+rt <- rt[rt$proj == "sbkp_Std_results_week_end_2020-03-22", ]
 rt_plot(rt)
 
 ```
 
 #### Summary of results
 
-Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
+Below for each country with active transmission (see methods), a table
+summarising for each period and country forecasted, the observed
+(where available) and forecasted weekly death count, and estimated
+level of transmissibility.
+
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
-x <- x[grep("RtI0", x$model), ]
+x <- x[grep("sbkp", x$model), ]
 x <- dplyr::select(x, -model)
 DT::datatable(x)
 
