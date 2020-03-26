@@ -51,10 +51,9 @@ The **main** objective in this report is to produce forecasts of the
 number of deaths in the week ahead per country with active transmission.
 
 * We define a country to have sustained local active transmission if
-at least five deaths were observed in the country in the last week and 10 in the 
-preceding week.
+at least five deaths were observed in the country in the last week and also in the week before that.
 
-* We forecast deaths as it is likely that reporting of deaths in more
+* We forecast deaths as it is likely that reporting of deaths is more
 reliable than reporting of cases. Temporal trends in reporting of
 deaths are also likely to be more stable than trends in reporting
 cases.
@@ -63,15 +62,15 @@ cases.
 transmissibility reflect the epidemiological situation when those
 dying were infected. Therefore, in the best case scenario, the
 impact of current controls on estimated transmissibility will be
-quantifiable with delay of up to a three weeks.
+quantifiable with a delay (i.e. delay between reporting and death).
 
 
 A **secondary** objective of this report is to analyse case
-ascertainment per country. As well as forecasting, we also use reported deaths and past reported
+ascertainment per country. As well as forecasting, we use the number of reported deaths and of past reported
 cases (using a fixed delay) to analyse the reporting trends per
 country. If the reporting of cases and death was perfect, as well as
 the delay between reporting and death fixed and known, the ratio of
-death to delayed cases would be exactly the Case Fatality Ratio (CFR).
+deaths to delayed cases would be exactly the Case Fatality Ratio (CFR).
 
 In this analysis, key assumptions are:
 
@@ -88,23 +87,25 @@ infect. Analysis of transmissibility indicates that the reproduction
 number last week (week starting 22nd March) was highest in:
   
 * Germany with an estimated median Rt of: 4.5 (95% CrI 5.9 - 3.5), and
-* USA with an estimated median Rt of 4.3 (95% CrI 3.4 - 4.8)
+* USA with an estimated median Rt of 4.3 (95% CrI 3.4 - 4.8);
 
 and was lowest in:
   
-* Japan with an estimated Rt of 0.6 (95% CrI 1.2 - 0.2)
-* China with an estimated Rt of 0.8 (95% CrI 0.6 - 1.0)
+* Japan with an estimated Rt of 0.6 (95% CrI 1.2 - 0.2), and
+* China with an estimated Rt of 0.8 (95% CrI 0.6 - 1.0).
 
-Forecast of predicted deaths in the coming week (week starting 22nd March) is highest in:
+Forecast of predicted deaths in the coming week (week starting [date]) is highest in:
   
-* Italy with a forecasted number of weekly deaths 9030 (95% CrI 7813 - 10400)
+* Italy with a forecasted number of weekly deaths 9030 (95% CrI 7813 - 10400), and
 * Spain with a forecasted number of weekly deaths 5628 (95% CrI 3950 -
-  8654)
+  8654);
 
 and is lowest in:
   
-* Japan with a forecasted number of weekly deaths 6 (95% CrI 0 - 44)
+* Japan with a forecasted number of weekly deaths 6 (95% CrI 0 - 44), and
 * Iraq with a forecasted number of weekly deaths 14 (95% CrI 0 - 825).
+
+
 
 ```{r}
 x <- drake::readd("weekly_predictions_qntls")
@@ -118,43 +119,42 @@ intervals.
 
 ### Key results on case ascertainment
 
-Case ascertainment based on the deaths in the previous 2 weeks  and 
-reported cases in the 10 days prior to that period indicate that 
+Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
+reported cases in the 10 days prior to that period. Results indicate that 
 countries with highest case ascertainment were:
   
-* South Korea with an estimated ascertainment of 100% (95% CrI 89.2% - 100%)
-* Germany with an estimated ascertainment of 23.1% (95% CrI 18.3% - 29.6%)
+* South Korea with an estimated ascertainment of 100% (95% CrI 89.2% - 100%), and
+* Germany with an estimated ascertainment of 23.1% (95% CrI 18.3% - 29.6%);
 
 and countries with the lowest case ascertainment were:
   
-* Spain with an estimated ascertainment of 1.6% (95% CrI 1.6% - 1.7%)
-* Philippines with an estimated ascertainment of: 1.9% (95% CrI 1.5% - 2.7%)
+* Spain with an estimated ascertainment of 1.6% (95% CrI 1.6% - 1.7%), and
+* Philippines with an estimated ascertainment of: 1.9% (95% CrI 1.5% - 2.7%).
 
 Based on the estimated ascertainment, we estimated the true size of
 the epidemics in the previous 7 days (week starting 15th March). 
 Countries with the highest true epidemics size in this period were:
   
 * Italy with an estimated true epidemics size in this period of
-  1364565 (95% CrI 1333474 - 1395862).
+  1364565 (95% CrI 1333474 - 1395862), and
 * Spain with an estimated true epidemics size in this period of
-1190204 (95% CrI 1149931 - 1229837)
+1190204 (95% CrI 1149931 - 1229837).
 
-Countries with the lowest true epidemics size in this period were:
+and countries with the lowest true epidemics size in this period were:
   
 * South Korea with an estimated true epidemics size in this period of
-  735 (95% CrI 735 - 824)
+  735 (95% CrI 735 - 824), and
 * Japan with an estimated true epidemics size in this period of
 1843 (95% CrI 1256 - 2592).
 
 ## Methods
 
 We define a country to have sustained local active transmission if
-at least five deaths were observed in the country in the last week and 10 in the 
-preceding week. We intend to produce forecasts every week, for the
-week ahead. Three different modelling teams will produce these
+at least five deaths were observed in the country in the last week and also in the week before that. We intend to produce forecasts every week, for the
+week ahead. So far, three different modelling teams will produce these
 forecats which are then used to produce an ensemble forecasts.
 
-Our main analysis assume a gamma distributed serial of mean 4.8 days
+Our main analysis assumes a gamma distributed serial of mean 4.8 days
 and standard deviation of 2.7 days following [Wang and Teunis, 2020].
 The serial interval estimates might be biased toward lower values given
 the observation bias whereby, in contact tracing studies, long serial
@@ -163,10 +163,9 @@ sensitivity analysis, we also ran our analysis with an alternative
 longer serial interval of mean 6.48 days and standard deviation of
 3.83 days [Ferguson 2020, report 9]. Results for this longer interval
 are presented in the supplementary information section. Most
-importantly, while using such longer serial interval has very little
+importantly, while using such a longer serial interval has very little
 impact on the weekly forecast produced, it results in much higher
-estimated of transmissibility. The figure below shows the two serial
-interval distributions that have been used in these analyses.
+estimated of transmissibility.
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
@@ -194,11 +193,13 @@ ggplot(df, aes(x, val, fill = cat)) +
 
 ### Ensemble Model {.tabset .tabset-fade .tabset-pills} 
 
-#### Methods
+### Methods
 
 This is an unweighted ensemble of models 1 and 2.
 
 #### Projections
+
+**Current and past forecasts**
 
 Below for each country with active transmission (see methods), we plot
 the observed incidence of deaths in the last 3 weeks (black
@@ -216,7 +217,10 @@ ensb_pred1$date <- as.Date(ensb_pred1$date)
 projection_plot(obs, ensb_pred1)
 
 ```
-#### Effective Reproduction Number
+
+**Estimates of effective Reproduction Numbers**
+
+Below, estimates of effective Reproduction Numbers by country (median and 95%CrI).
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 ens_rt <- drake::readd("ensemble_model_rt")
@@ -318,11 +322,12 @@ distribution:
 $$I_t \sim NegBin\left( R_t \Sigma_{s=1}^{t} I_{t-s} w_s, z \right) $$
 
 The value of the overdispersion parameter, z, was taken from analyses
-of exposure patterns during the SARS epidemic [lloyds-smith sars
-nature]. 
+of exposure patterns during the SARS epidemic [lloyds-smith et al. 2003]. 
 
  
 #### Projections 
+
+**Current and past forecasts**
 
 Below for each country with active transmission (see methods), we plot
 the observed incidence of deaths in the last 3 weeks (black
@@ -379,52 +384,26 @@ DT::datatable(x)
 
 **Estimating current transmissibility**
 
-The methods is very similar to that of model 1 but given uncertainty
-surrounding the epidemiological situation before the calibration
-period, we only used incidence data during the calibration period, and
-reconstructed the incidence before the calibration period whilst
-estimating R, as described in [Nouvellet 2018 simple approach]. The
-model has the advantage of being more robust to changes in reporting
-before the calibration.
-
+The methods is very similar to that of model but given uncertainty surrounding the epidemiological situation before the calibration period, we only used incidence data during the calibration period, and reconstructed the incidence before the calibration period whilst estimating R, as described in [Nouvellet et al. 2018]. The model has the advantage of being more robust to changes in reporting before the calibration.
 
 
 **Forward projections**
 
-As for model 1, we used the renewal equation to project the incidence
-forward, given a back-calculated early incidence curve, an estimated
-reproduction number, and the observed incidence over the calibration
-period. We sampled a sets of back-calculated early incidence curves
-and reproduction numbers from the posterior distribution obtained in
-the estimation process. For each of these sets, we simulated
-stochastic realisations of the renewal equation from the end of the
-calibration period; leading to projected incidence trajectories. 
+As for model 1, we used the renewal equation to project the incidence forward, given a back-calculated early incidence curve, an estimated reproduction number, and the observed incidence over the calibration period. We sampled a sets of back-calculated early incidence curves and reproduction numbers from the posterior distribution obtained in the estimation process. For each of these sets, we simulated stochastic realisations of the renewal equation from the end of the calibration period; leading to projected incidence trajectories. 
 
-
-Projections were made on a 7-days horizon. The projections assume that
-the transmissibility remains constant over this horizon. If
-transmissibility were to decrease as a result of control interventions
-and/or changes in behaviour over this time period, we would predict a
-lower number of cases; similarly, if transmissibility were to increase
-over this time period, we would predict a higher number of cases. We
-limited our projection to 7 days only as assuming constant
-transmissibility over longer time horizons seemed unrealistic. 
-
+Projections were made on a 7-days horizon. The projections assume that the transmissibility remains constant over this horizon. If transmissibility were to decrease as a result of control interventions and/or changes in behaviour over this time period, we would predict a lower number of cases; similarly, if transmissibility were to increase over this time period, we would predict a higher number of cases. We limited our projection to 7 days only as assuming constant transmissibility over longer time horizons seemed unrealistic. 
 
 
 
 #### Projections
 
-Below for each country with active transmission (see methods), we plot
-the observed incidence of deaths in the last 3 weeks (black
-dots). Past forecasts, where available, are shown in green (median and
-95%CrI band), while latest forecasts are show in red. Horizontal
-dashed line show the start and end of each week (Monday to Sunday).
+**Current and past forecasts**
 
+Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
-pred <- drake::readd("model_1") 
+pred <- drake::readd("model_2") 
 pred <- pred[pred$si == "si_1", ]
 pred$date <- as.Date(pred$date)
 projection_plot(obs, pred)
@@ -436,25 +415,21 @@ In the figure below, for each country with active transmission (see methods), we
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
-rt <- drake::readd("model_1_rt")
+rt <- drake::readd("model_2_rt")
 rt <- rt[rt$si == "si_1", ]
-rt <- rt[rt$proj == "RtI0_Std_results_week_end_2020-03-22", ]
+rt <- rt[rt$proj == "sbkp_Std_results_week_end_2020-03-22", ]
 rt_plot(rt)
 
 ```
 
 #### Summary of results
 
-Below for each country with active transmission (see methods), a table
-summarising for each period and country forecasted, the observed
-(where available) and forecasted weekly death count, and estimated
-level of transmissibility.
-
+Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
-x <- x[grep("RtI0", x$model), ]
+x <- x[grep("sbkp", x$model), ]
 x <- dplyr::select(x, -model)
 DT::datatable(x)
 
@@ -464,16 +439,11 @@ DT::datatable(x)
 ## Sensitivity Analyses
 
 
-Results with a longer Serial Interval (mean 6.48 days, SD 3.83 days).
+Results below use a longer Serial Interval (mean 6.48 days, SD 3.83 days).
 
 ### Projections
 
-Below for each country with active transmission (see methods), we plot
-the observed incidence of deaths in the last 3 weeks (black
-dots). Past forecasts, where available, are shown in green (median and
-95%CrI band), while latest forecasts are show in red. Horizontal
-dashed line show the start and end of each week (Monday to Sunday).
-
+Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
@@ -485,32 +455,25 @@ projection_plot(obs, ensb_pred2)
 
 ### Effective Reproduction Number Estimates
 
-In the figure below, for each country with active transmission (see
-methods), we plot the latest estimate of transmissibility ($R_t$),
-specifically estimated median and associated 95%CrI.
-
+In the figure below, for each country with active transmission (see methods), we plot the latest estimate of transmissibility ($R_t$), specifically estimated median and associated 95%CrI.
 
 ## Case Ascertainment
 
-The analysis relies on 2 key assumptions:
+The analysis rely on 2 key assumptions:
   
 * The true underlying Case Fatality Ratio (CFR) is 1%,
 * The delay from a death to this case being reported is 10 days.
 
-First, we analyses the ratio of reported deaths to reported cases 10
-days prior.Therefore, the ratio roughly accounts for the delay between death and
-case being reported.  Any temporal trends suggests a change in the reporting. 
-For instance, an increase in the ratio gives an indication that cases
-reporting is decreasing.
+First, we analyses the ratio of reported deaths to reported cases 10 days prior.
+Therefore, the ratio roughly accounts for the delay between death and case being reported. 
 
+Any temporal trend suggests a change in the reporting. 
+For instance, an increase in the ratio gives an indication that cases reporting is decreasing.
 
 
 **Temporal trend in the ratio of deaths to reported cases**
 
-Starting in march, we compute the average and 95% CI for the ratio of
-deaths to reported cases (with a 10-days delay) using a moving window
-of 7 days.
-
+Starting in march, we compute the average and 95%CI for the ratio of deaths  to reported cases (with a 10-days delay) using a moving window of 7 days.
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -563,16 +526,13 @@ for (i in 1:N_geo){
 
 ```
 
-The figure below shows the temporal trends in the ratio of reported
-deaths to reported cases 10 days prior (medians and 95%CIs, solid
-lines and bands).
-
-We also plot both the reported deaths (red) and reported cases
-(black). The reported deaths and cases have been rescaled to a scale
-of 0 to 1 to allow for easy comparison.
+The figure below shows the temporal trends in the ratio of reported deaths to reported cases 10 days prior (medians and 95%CIs, solid lines and bands).
+We also plot both the reported deaths (red) and reported cases (black). Those have
+been rescaled but are comparable to each other. The rescaling is such
+that the maximium recorded numbers of deaths or cases (with a 10-days
+delay) reaches 1.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
-
 f <- which(moving_DtoI[[1]]$date >= as.Date(c('01/03/2020'),format = '%d/%m/%Y'))
 
 layout(matrix(1:4,2,2))
@@ -610,13 +570,11 @@ for (i in 1:N_geo){
 
 ```
 
-*Note that if deaths exceed the number of reported cases 10-days before, we set the reporting at 1 (95%CI [1;1])*
+*Note that if deaths exceed the number of reported cases 10-days before, we set the ratio at 1 (95%CI [1;1])*
 
 **Estimating ascertainment**
 
-If all cases (including asymptomatic) and deaths were reported, and
-the delay from reporting to death was exactly 10 days, then the ratio
-defined above would be equivalent to the Case Fatality Ratio (CFR).
+If all cases (incl. asymptomatic) and deaths were reported, and the delay from reporting to death was exactly 10 days, then the ratio defined above would be equivalent to the Case Fatality Ratio (CFR).
 
 Assuming a CFR of 1%, the ascertainment, $\rho$, can be defined as:
 $$\rho = \frac{I^r}{D^r} CFR$$
@@ -627,7 +585,7 @@ $$\frac{D^r}{I^r}$$
 
 Below we summarise:
 
-* Estimated ratio per country (mean and 95%CI) during the last 14 days, 
+* Estimated ratio of deaths per delayed reported cases per country (mean and 95%CI) during the last 14 days, 
 * Estimated case ascertainment per country (mean and 95%CI) during the last 14 days,
 * Estimated factor to be multiplied to observed cases number to obtain true number of cases. Mean and 95%CI, estimated for the last 14 days.
 * Observed and predicted number of cases in the last week (week starting [date]).
@@ -638,8 +596,8 @@ Surprisingly, this appear to be pretty much the case for South Korea
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- readr::read_csv(here::here("Team.output/summary_DeathToRepoted_14days.csv"))
-DT::datatable(x[, -1])
-
+knitr::kable(x[, -1]) %>%
+    kable_styling() 
 
 ```
 
