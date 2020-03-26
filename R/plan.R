@@ -20,7 +20,12 @@ plan <- drake_plan(
     ## Apply thresholds
     pass = split(raw_data, raw_data$`Countries.and.territories`) %>%
         purrr::keep(deaths_threshold) %>%
-        dplyr::bind_rows(),
+        dplyr::bind_rows() %>%
+        dplyr::filter(`Countries.and.territories`
+                      %in% c("China", "France", "Germany", "Iran", "Iraq", "Italy",
+"Japan", "Netherlands", "Philippines", "South_Korea", "Spain",
+"Switzerland", "United_Kingdom", "United_States_of_America")),
+
 
      by_country_deaths = dplyr::select(
         pass, DateRep, Deaths, Countries.and.territories
@@ -28,6 +33,7 @@ plan <- drake_plan(
          tidyr::spread(
             key = Countries.and.territories, value = Deaths, fill = 0
             ),
+
     ## No lines means no cases for that day. That is why fill is 0.
     by_country_cases = dplyr::select(
         pass, DateRep, Cases, Countries.and.territories
@@ -106,7 +112,6 @@ plan <- drake_plan(
            )
         }, .id = "model"
      ),
-
 
     model_rt_qntls = purrr::map(
         model_outputs,

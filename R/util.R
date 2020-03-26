@@ -88,9 +88,14 @@ rt_plot <- function(rt) {
     p <- ggplot() +
         geom_errorbar(
             data = rt,
-            aes(x = country, ymin = `2.5%`, ymax = `97.5%`)
+            aes(x = country, ymin = `2.5%`, ymax = `97.5%`, col = model),
+            position = position_dodge(width = 0.5)
         ) +
-        geom_point(data = rt, aes(x = country, y = `50%`)) +
+        geom_point(
+            data = rt,
+            aes(x = country, y = `50%`, col = model),
+            position = position_dodge(width = 0.5)
+            ) +
         theme_pubr() +
         xlab("") +
         ylab("Effective Reproduction Number") +
@@ -98,7 +103,8 @@ rt_plot <- function(rt) {
         scale_x_discrete(labels = nice_names) +
         theme(
             axis.text.x =
-                element_text(angle = -90, hjust = 0)
+                element_text(angle = -90, hjust = 0),
+            legend.position = "none"
         ) +
         geom_hline(
             yintercept = 1,

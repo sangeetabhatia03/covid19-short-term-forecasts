@@ -107,7 +107,7 @@ and is lowest in:
 
 
 
-```{r}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- drake::readd("weekly_predictions_qntls")
 x <- na.omit(x)
 propinci <- assessr:::prop_in_ci(x$observed, x$`2.5%`, x$`97.5%`)
@@ -170,19 +170,19 @@ estimated of transmissibility.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
-short <- EpiEstim::discr_si(0:90, 4.8, 2.7)
-long <- EpiEstim::discr_si(0:90, 6.48, 3.83)
+short <- EpiEstim::discr_si(0:30, 4.8, 2.7)
+long <- EpiEstim::discr_si(0:30, 6.48, 3.83)
 df <- data.frame(
-    x = c(0:90, 0:90),
-    cat = c(rep("short", 91), rep("long", 91)),
+    x = c(0:30, 0:30),
+    cat = c(rep("short", 31), rep("long", 31)),
     val = c(short, long)
 )
 ggplot(df, aes(x, val, fill = cat)) +
     geom_col(position = "dodge") +
     theme_pubr() +
     theme(legend.position = "none") +
-    xlab("") +
-    ylab("")
+    xlab("Days") +
+    ylab("Probability")
     
 ```
 
@@ -193,7 +193,7 @@ ggplot(df, aes(x, val, fill = cat)) +
 
 ### Ensemble Model {.tabset .tabset-fade .tabset-pills} 
 
-### Methods
+#### Methods
 
 This is an unweighted ensemble of models 1 and 2.
 
@@ -218,17 +218,38 @@ projection_plot(obs, ensb_pred1)
 
 ```
 
-**Estimates of effective Reproduction Numbers**
+#### Estimates of effective Reproduction Numbers
 
 Below, estimates of effective Reproduction Numbers by country (median and 95%CrI).
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
-ens_rt <- drake::readd("ensemble_model_rt")
-ens_rt <- ens_rt[ens_rt$si == "si_1", ]
+
+ens_rt_both <- drake::readd("ensemble_model_rt")
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_1", ]
 ens_rt$model <- as.Date(ens_rt$model)
 ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
+model_rt <- drake::readd("model_rt_qntls")
+model_rt <- model_rt[grep(
+    pattern = max(ens_rt$model), names(model_rt)
+)]
+model_rt <- dplyr::bind_rows(model_rt, .id = "model")
+model_rt <- model_rt[model_rt$si == "si_1", ]
+## re-arrange columns so that we can rbind.
+model_rt <- model_rt[ , colnames(ens_rt)]
+ens_rt <- rbind(model_rt, ens_rt)
 ens_rt <- tidyr::spread(ens_rt, quantile, out2)
-rt_plot(ens_rt)
+palette <- c("#7aa457", "#9e6ebd", "#cb6751")
+names(palette) <- unique(ens_rt$model)
+
+rt_plot(ens_rt) +
+    scale_color_manual(
+        values = palette,
+        labels = c("Ensemble", "Model 1", "Model 2")
+    ) + theme(
+            legend.position = "bottom",
+            legend.title = element_blank()
+        )
+
 
 ```
 
@@ -338,7 +359,7 @@ dashed line show the start and end of each week (Monday to Sunday).
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 obs <- drake::readd("obs")
-pred <- drake::readd("model_2")
+pred <- drake::readd("model_1")
 pred <- pred[pred$si == "si_1", ]
 pred$date <- as.Date(pred$date)
 projection_plot(obs, pred)
@@ -353,9 +374,10 @@ specifically estimated median and associated 95%CrI.
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
-rt <- drake::readd("model_2_rt")
+rt <- drake::readd("model_1_rt")
 rt <- rt[rt$si == "si_1", ]
-rt <- rt[rt$proj == "sbkp_Std_results_week_end_2020-03-22", ]
+rt <- rt[rt$proj == "RtI0_Std_results_week_end_2020-03-22", ]
+rt$model <- rt$proj
 rt_plot(rt)
 
 ```
@@ -371,7 +393,7 @@ level of transmissibility.
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
-x <- x[grep("sbkp", x$model), ]
+x <- x[grep("RtI0", x$model), ]
 x <- dplyr::select(x, -model)
 DT::datatable(x)
 
@@ -418,6 +440,7 @@ In the figure below, for each country with active transmission (see methods), we
 rt <- drake::readd("model_2_rt")
 rt <- rt[rt$si == "si_1", ]
 rt <- rt[rt$proj == "sbkp_Std_results_week_end_2020-03-22", ]
+rt$model <- rt$proj
 rt_plot(rt)
 
 ```
@@ -436,7 +459,7 @@ DT::datatable(x)
 ```
 
 
-## Sensitivity Analyses
+## Sensitivity Analyses {.tabset .tabset-fade .tabset-pills} 
 
 
 Results below use a longer Serial Interval (mean 6.48 days, SD 3.83 days).
@@ -455,7 +478,42 @@ projection_plot(obs, ensb_pred2)
 
 ### Effective Reproduction Number Estimates
 
-In the figure below, for each country with active transmission (see methods), we plot the latest estimate of transmissibility ($R_t$), specifically estimated median and associated 95%CrI.
+In the figure below, for each country with active transmission (see
+methods), we plot the latest estimate of transmissibility ($R_t$),
+specifically estimated median and associated 95%CrI.
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+
+
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
+ens_rt$model <- as.Date(ens_rt$model)
+ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
+
+model_rt <- drake::readd("model_rt_qntls")
+model_rt <- model_rt[grep(
+    pattern = max(ens_rt$model), names(model_rt)
+)]
+model_rt <- dplyr::bind_rows(model_rt, .id = "model")
+model_rt <- model_rt[model_rt$si == "si_2", ]
+## re-arrange columns so that we can rbind.
+model_rt <- model_rt[ , colnames(ens_rt)]
+ens_rt <- rbind(model_rt, ens_rt)
+ens_rt <- tidyr::spread(ens_rt, quantile, out2)
+palette <- c("#7aa457", "#9e6ebd", "#cb6751")
+names(palette) <- unique(ens_rt$model)
+
+rt_plot(ens_rt) +
+    scale_color_manual(
+        values = palette,
+        labels = c("Ensemble", "Model 1", "Model 2")
+    ) + theme(
+            legend.position = "bottom",
+            legend.title = element_blank()
+        )
+
+
+```
 
 ## Case Ascertainment
 
