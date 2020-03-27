@@ -34,6 +34,12 @@ ens_rt_tall <- tidyr::spread(ens_rt, quantile, out2)
 top2_rt <- dplyr::top_n(ens_rt_tall, n = 2, wt = `50%`)
 bottom2_rt <- dplyr::top_n(ens_rt_tall, n = -2, wt = `50%`)
 
+
+ensemble_weekly_qntls <- drake::readd("ensemble_weekly_qntls")
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "si_1", ]
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$proj == date_week_finishing, ]
+top2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = 2, wt = `50%`)
+bottom2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = -2, wt = `50%`)
 model_rt <- drake::readd("model_rt_qntls")
 model_rt <- model_rt[grep(
     pattern = max(ens_rt$model), names(model_rt)
@@ -136,14 +142,17 @@ and was lowest in:
 * `r bottom2_rt$country[2]` with an estimated median Rt of 
 `r bottom2_rt[["50%"]][2]` (95% CrI `r bottom2_rt[["2.5%"]][2]` - `r bottom2_rt[["97.5%"]][2]`).
 
-Forecast of predicted deaths in the coming week (week starting [date]) is highest in:
+Forecast of predicted deaths in the coming week (week starting `r date_week_finishing`) is highest in:
   
-* Italy with a forecasted number of weekly deaths 9030 (95% CrI 7813 - 10400), and
-* Spain with a forecasted number of weekly deaths 5628 (95% CrI 3950 -
-  8654);
+* `r top2_deaths$country[1]` with an estimated median deaths of 
+`r top2_deaths[["50%"]][1]` (95% CrI `r top2_deaths[["2.5%"]][1]` - `r top2_deaths[["97.5%"]][1]`), and
+* `r top2_deaths$country[2]` with an estimated median deaths of 
+`r top2_deaths[["50%"]][2]` (95% CrI `r top2_deaths[["2.5%"]][2]` - `r top2_deaths[["97.5%"]][2]`).
 
 and is lowest in:
   
-* Japan with a forecasted number of weekly deaths 6 (95% CrI 0 - 44), and
-* Iraq with a forecasted number of weekly deaths 14 (95% CrI 0 - 825).
+* `r bottom2_deaths$country[1]` with an estimated median deaths of 
+`r bottom2_deaths[["50%"]][1]` (95% CrI `r bottom2_deaths[["2.5%"]][1]` - `r bottom2_deaths[["97.5%"]][1]`), and
+* `r bottom2_deaths$country[2]` with an estimated median deaths of 
+`r bottom2_deaths[["50%"]][2]` (95% CrI `r bottom2_deaths[["2.5%"]][2]` - `r bottom2_deaths[["97.5%"]][2]`).
 
