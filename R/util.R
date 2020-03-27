@@ -79,12 +79,13 @@ projection_plot <- function(obs, pred) {
 
 rt_plot <- function(rt) {
 
+
     nice_names <- snakecase::to_any_case(
         rt$country,
         "title"
     )
     names(nice_names) <- rt$country
-
+    rt$country <- reorder(rt$country, -rt$`50%`)
     p <- ggplot() +
         geom_errorbar(
             data = rt,
