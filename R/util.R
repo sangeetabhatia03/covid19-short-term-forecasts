@@ -20,7 +20,7 @@ projection_plot <- function(obs, pred) {
         dplyr::ungroup()
 
     window_eps$xintercepts <- as.numeric(
-        window_eps$date
+        window_eps$date - 1
     ) + 0.5
     ## To get nice labels
 
@@ -108,8 +108,7 @@ rt_plot <- function(rt) {
         ) +
         geom_hline(
             yintercept = 1,
-            linetype = "dashed",
-            col = "red"
+            linetype = "dashed"
         )
 
     p

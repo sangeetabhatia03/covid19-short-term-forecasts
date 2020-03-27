@@ -187,7 +187,7 @@ ggplot(df, aes(x, val, fill = cat)) +
     
 ```
 
-
+<br><br>
 
 
 ## Projections and Rt Estimates {.tabset .tabset-fade .tabset-pills} 
@@ -218,6 +218,8 @@ ensb_pred1$date <- as.Date(ensb_pred1$date)
 projection_plot(obs, ensb_pred1)
 
 ```
+
+<br><br>
 
 #### Estimates of effective Reproduction Numbers
 
@@ -254,6 +256,8 @@ rt_plot(ens_rt) +
 
 ```
 
+<br><br>
+
 #### Summary of results
 
 Below for each country with active transmission (see methods), a table 
@@ -275,6 +279,8 @@ x <- drake::readd("fmtd_ensemble_weekly_qntls")[[1]]
 DT::datatable(x)
 
 ```
+
+<br><br>
 
 ### Model 1 {.tabset .tabset-fade .tabset-pills} 
 
@@ -334,7 +340,6 @@ over this time period, we would predict a higher number of cases. We
 limited our projection to 7 days only as assuming constant
 transmissibility over longer time horizons seemed unrealistic. 
 
-
 Super-spreading has been shown to be an important characteristics of
 many coronaviruses. To account for this characteristic, we, assumed
 that secondary cases are generated according to a negative binomial
@@ -367,6 +372,8 @@ projection_plot(obs, pred)
 
 ```
 
+<br><br>
+
 #### Effective Reproduction Number Estimates
 
 In the figure below, for each country with active transmission (see
@@ -382,6 +389,8 @@ rt$model <- rt$proj
 rt_plot(rt)
 
 ```
+
+<br><br>
 
 #### Summary of results
 
@@ -399,6 +408,8 @@ x <- dplyr::select(x, -model)
 DT::datatable(x)
 
 ```
+
+<br><br>
 
 
 ### Model 2 {.tabset .tabset-fade .tabset-pills} 
@@ -460,9 +471,14 @@ pred$date <- as.Date(pred$date)
 projection_plot(obs, pred)
 ```
 
+<br><br>
+
 #### Effective Reproduction Number Estimates
 
-In the figure below, for each country with active transmission (see methods), we plot the latest estimate of transmissibility ($R_t$), specifically estimated median and associated 95%CrI.
+In the figure below, for each country with active transmission (see
+methods), we plot the latest estimate of transmissibility ($R_t$),
+specifically estimated median and associated 95% CrI.
+
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 
@@ -474,9 +490,15 @@ rt_plot(rt)
 
 ```
 
+<br><br>
+
 #### Summary of results
 
-Below for each country with active transmission (see methods), a table summarising for each period and country forecasted, the observed (where available) and forecasted weekly death count, and estimated level of transmissibility.
+Below for each country with active transmission (see methods), a table
+summarising for each period and country forecasted, the observed
+(where available) and forecasted weekly death count, and estimated
+level of transmissibility.
+
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -486,6 +508,8 @@ x <- dplyr::select(x, -model)
 DT::datatable(x)
 
 ```
+
+<br><br>
 
 
 ## Sensitivity Analyses {.tabset .tabset-fade .tabset-pills} 
@@ -509,6 +533,9 @@ ensb_pred2$date <- as.Date(ensb_pred2$date)
 projection_plot(obs, ensb_pred2)
 
 ```
+
+<br><br>
+
 
 ### Effective Reproduction Number Estimates
 
@@ -548,6 +575,10 @@ rt_plot(ens_rt) +
 
 
 ```
+
+
+<br><br>
+
 
 ## Case Ascertainment
 
