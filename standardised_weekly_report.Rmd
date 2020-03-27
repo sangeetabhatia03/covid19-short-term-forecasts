@@ -30,8 +30,7 @@ library(drake)
 library(kableExtra)
 library(DT)
 source("R/util.R")
-raw_data <- drake::readd(raw_data)
-raw_data <- dplyr::rename(raw_data, country = "Countries.and.territories")
+
 
 
 ```
@@ -51,7 +50,9 @@ The **main** objective in this report is to produce forecasts of the
 number of deaths in the week ahead per country with active transmission.
 
 * We define a country to have sustained local active transmission if
-at least five deaths were observed in the country in the last week and also in the week before that.
+at least five deaths were observed in the country in the last week and
+also in the week before that.
+
 
 * We forecast deaths as it is likely that reporting of deaths is more
 reliable than reporting of cases. Temporal trends in reporting of
@@ -66,7 +67,8 @@ quantifiable with a delay (i.e. delay between reporting and death).
 
 
 A **secondary** objective of this report is to analyse case
-ascertainment per country. As well as forecasting, we use the number of reported deaths and of past reported
+ascertainment per country. As well as forecasting, we use the number
+of reported deaths and of past reported
 cases (using a fixed delay) to analyse the reporting trends per
 country. If the reporting of cases and death was perfect, as well as
 the delay between reporting and death fixed and known, the ratio of
@@ -108,9 +110,13 @@ and is lowest in:
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-x <- drake::readd("weekly_predictions_qntls")
-x <- na.omit(x)
-propinci <- assessr:::prop_in_ci(x$observed, x$`2.5%`, x$`97.5%`)
+
+weekly_pred <- drake::readd("weekly_predictions_qntls")
+weekly_pred <- na.omit(weekly_pred)
+propinci <- assessr::prop_in_ci(
+    weekly_pred$observed, weekly_pred$`2.5%`, weekly_pred$`97.5%`
+)
+
 ```
 Forecasts in previous weeks were good with 
 `r scales::percent(propinci, accuracy = 0.1)` of observed number
@@ -406,14 +412,37 @@ DT::datatable(x)
 
 **Estimating current transmissibility**
 
-The methods is very similar to that of model but given uncertainty surrounding the epidemiological situation before the calibration period, we only used incidence data during the calibration period, and reconstructed the incidence before the calibration period whilst estimating R, as described in [Nouvellet et al. 2018]. The model has the advantage of being more robust to changes in reporting before the calibration.
+The methods is very similar to that of model but given uncertainty
+surrounding the epidemiological situation before the calibration
+period, we only used incidence data during the calibration period, and
+reconstructed the incidence before the calibration period whilst
+estimating R, as described in [Nouvellet et al. 2018]. The model has
+the advantage of being more robust to changes in reporting before the
+calibration.
+
 
 
 **Forward projections**
 
-As for model 1, we used the renewal equation to project the incidence forward, given a back-calculated early incidence curve, an estimated reproduction number, and the observed incidence over the calibration period. We sampled a sets of back-calculated early incidence curves and reproduction numbers from the posterior distribution obtained in the estimation process. For each of these sets, we simulated stochastic realisations of the renewal equation from the end of the calibration period; leading to projected incidence trajectories. 
+As for model 1, we used the renewal equation to project the incidence
+forward, given a back-calculated early incidence curve, an estimated
+reproduction number, and the observed incidence over the calibration
+period. We sampled a sets of back-calculated early incidence curves
+and reproduction numbers from the posterior distribution obtained in
+the estimation process. For each of these sets, we simulated
+stochastic realisations of the renewal equation from the end of the
+calibration period; leading to projected incidence trajectories. 
 
-Projections were made on a 7-days horizon. The projections assume that the transmissibility remains constant over this horizon. If transmissibility were to decrease as a result of control interventions and/or changes in behaviour over this time period, we would predict a lower number of cases; similarly, if transmissibility were to increase over this time period, we would predict a higher number of cases. We limited our projection to 7 days only as assuming constant transmissibility over longer time horizons seemed unrealistic. 
+
+Projections were made on a 7-days horizon. The projections assume that
+the transmissibility remains constant over this horizon. If
+transmissibility were to decrease as a result of control interventions
+and/or changes in behaviour over this time period, we would predict a
+lower number of cases; similarly, if transmissibility were to increase
+over this time period, we would predict a higher number of cases. We
+limited our projection to 7 days only as assuming constant
+transmissibility over longer time horizons seemed unrealistic. 
+
 
 
 
@@ -421,7 +450,12 @@ Projections were made on a 7-days horizon. The projections assume that the trans
 
 **Current and past forecasts**
 
-Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
+Below for each country with active transmission (see methods), we plot
+the observed incidence of deaths in the last 3 weeks (black
+dots). Past forecasts, where available, are shown in green (median and
+95%CrI band), while latest forecasts are show in red. Horizontal
+dashed line show the start and end of each week (Monday to Sunday).
+
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
@@ -466,7 +500,12 @@ Results below use a longer Serial Interval (mean 6.48 days, SD 3.83 days).
 
 ### Projections
 
-Below for each country with active transmission (see methods), we plot the observed incidence of deaths in the last 3 weeks (black dots). Past forecasts, where available, are shown in green (median and 95%CrI band), while latest forecasts are show in red. Horizontal dashed line show the start and end of each week (Monday to Sunday).
+Below for each country with active transmission (see methods), we plot
+the observed incidence of deaths in the last 3 weeks (black
+dots). Past forecasts, where available, are shown in green (median and
+95%CrI band), while latest forecasts are show in red. Horizontal
+dashed line show the start and end of each week (Monday to Sunday).
+
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
 

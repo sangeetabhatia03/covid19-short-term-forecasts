@@ -1,0 +1,149 @@
+
+### Key results on transmissibility and forecasting
+
+
+```{r}
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(drake)
+library(kableExtra)
+library(DT)
+source("R/util.R")
+
+weekly_pred <- drake::readd("weekly_predictions_qntls")
+
+
+weekly_pred <- na.omit(weekly_pred)
+propinci <- assessr::prop_in_ci(
+    weekly_pred$observed, weekly_pred$`2.5%`, weekly_pred$`97.5%`
+)
+
+
+obs <- drake::readd("obs")
+ensb_pred <- drake::readd("ensemble_model_qntls")
+ensb_pred1 <- ensb_pred[ensb_pred$si == "si_1", ]
+ensb_pred1$date <- as.Date(ensb_pred1$date)
+projection_plot(obs, ensb_pred1)
+
+ens_rt_both <- drake::readd("ensemble_model_rt")
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_1", ]
+ens_rt$model <- as.Date(ens_rt$model)
+ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
+ens_rt_tall <- tidyr::spread(ens_rt, quantile, out2)
+top2_rt <- dplyr::top_n(ens_rt_tall, n = 2, wt = `50%`)
+bottom2_rt <- dplyr::top_n(ens_rt_tall, n = -2, wt = `50%`)
+
+model_rt <- drake::readd("model_rt_qntls")
+model_rt <- model_rt[grep(
+    pattern = max(ens_rt$model), names(model_rt)
+)]
+model_rt <- dplyr::bind_rows(model_rt, .id = "model")
+model_rt <- model_rt[model_rt$si == "si_1", ]
+## re-arrange columns so that we can rbind.
+model_rt <- model_rt[ , colnames(ens_rt)]
+ens_rt <- rbind(model_rt, ens_rt)
+ens_rt <- tidyr::spread(ens_rt, quantile, out2)
+palette <- c("#7aa457", "#9e6ebd", "#cb6751")
+names(palette) <- unique(ens_rt$model)
+
+rt_plot(ens_rt) +
+    scale_color_manual(
+        values = palette,
+        labels = c("Ensemble", "Model 1", "Model 2")
+    ) + theme(
+            legend.position = "bottom",
+            legend.title = element_blank()
+        )
+
+
+x <- drake::readd("fmtd_ensemble_weekly_qntls")[[1]]
+DT::datatable(x)
+rt <- drake::readd("model_1_rt")
+rt <- rt[rt$si == "si_1", ]
+rt <- rt[rt$proj == "RtI0_Std_results_week_end_2020-03-22", ]
+rt$model <- rt$proj
+rt_plot(rt)
+
+x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
+x <- x[grep("RtI0", x$model), ]
+x <- dplyr::select(x, -model)
+DT::datatable(x)
+
+pred <- drake::readd("model_2") 
+pred <- pred[pred$si == "si_1", ]
+pred$date <- as.Date(pred$date)
+projection_plot(obs, pred)
+
+rt <- drake::readd("model_2_rt")
+rt <- rt[rt$si == "si_1", ]
+rt <- rt[rt$proj == "sbkp_Std_results_week_end_2020-03-22", ]
+rt$model <- rt$proj
+rt_plot(rt)
+
+x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
+x <- x[grep("sbkp", x$model), ]
+x <- dplyr::select(x, -model)
+DT::datatable(x)
+
+ensb_pred2 <- ensb_pred[ensb_pred$si == "si_2", ]
+ensb_pred2$date <- as.Date(ensb_pred2$date)
+projection_plot(obs, ensb_pred2)
+
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
+ens_rt$model <- as.Date(ens_rt$model)
+ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
+
+model_rt <- drake::readd("model_rt_qntls")
+model_rt <- model_rt[grep(
+    pattern = max(ens_rt$model), names(model_rt)
+)]
+model_rt <- dplyr::bind_rows(model_rt, .id = "model")
+model_rt <- model_rt[model_rt$si == "si_2", ]
+## re-arrange columns so that we can rbind.
+model_rt <- model_rt[ , colnames(ens_rt)]
+ens_rt <- rbind(model_rt, ens_rt)
+ens_rt <- tidyr::spread(ens_rt, quantile, out2)
+palette <- c("#7aa457", "#9e6ebd", "#cb6751")
+names(palette) <- unique(ens_rt$model)
+
+rt_plot(ens_rt) +
+    scale_color_manual(
+        values = palette,
+        labels = c("Ensemble", "Model 1", "Model 2")
+    ) + theme(
+            legend.position = "bottom",
+            legend.title = element_blank()
+        )
+
+```
+Key results below are based on ensemble forecast.
+
+Transmissibility is characterised by the reproduction number, i.e. the 
+average number of cases that one infected is likely to
+infect. Analysis of transmissibility indicates that the reproduction 
+number last week (week starting `r date_week_finishing`) was highest in:
+  
+* `r top2_rt$country[1]` with an estimated median Rt of 
+`r top2_rt[["50%"]][1]` (95% CrI `r top2_rt[["2.5%"]][1]` - `r top2_rt[["97.5%"]][1]`), and
+* `r top2_rt$country[2]` with an estimated median Rt of 
+`r top2_rt[["50%"]][2]` (95% CrI `r top2_rt[["2.5%"]][2]` - `r top2_rt[["97.5%"]][2]`).
+
+and was lowest in:
+  
+* `r bottom2_rt$country[1]` with an estimated median Rt of 
+`r bottom2_rt[["50%"]][1]` (95% CrI `r bottom2_rt[["2.5%"]][1]` - `r bottom2_rt[["97.5%"]][1]`), and
+* `r bottom2_rt$country[2]` with an estimated median Rt of 
+`r bottom2_rt[["50%"]][2]` (95% CrI `r bottom2_rt[["2.5%"]][2]` - `r bottom2_rt[["97.5%"]][2]`).
+
+Forecast of predicted deaths in the coming week (week starting [date]) is highest in:
+  
+* Italy with a forecasted number of weekly deaths 9030 (95% CrI 7813 - 10400), and
+* Spain with a forecasted number of weekly deaths 5628 (95% CrI 3950 -
+  8654);
+
+and is lowest in:
+  
+* Japan with a forecasted number of weekly deaths 6 (95% CrI 0 - 44), and
+* Iraq with a forecasted number of weekly deaths 14 (95% CrI 0 - 825).
+
