@@ -15,6 +15,7 @@ deaths_threshold <- function(ts, Threshold_criterion_7days = 5, Threshold_criter
 
 }
 
+##infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-26.csv"
 infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-22.csv"
 date_week_finishing <-  as.Date('22/03/2020', format = '%d/%m/%Y')
 shape <- 3.16
@@ -50,3 +51,5 @@ names(output_files) <- gsub(
     pattern = ".rds",
     replacement = ""
 )
+
+

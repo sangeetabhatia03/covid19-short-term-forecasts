@@ -30,9 +30,14 @@ library(drake)
 library(kableExtra)
 library(DT)
 source("R/util.R")
-
-
-
+source("params.R")
+knitr::opts_chunk$set(
+    echo = FALSE, 
+    fig.width = 9, 
+    fig.height = 6,
+    warning = FALSE,
+    messages = FALSE
+)
 ```
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
@@ -79,41 +84,15 @@ In this analysis, key assumptions are:
 * The true underlying Case Fatality Ratio (CFR) is 1%,
 * The delay from a case being reported to death is 10 days.
 
-### Key results on transmissibility and forecasting
-
-Key results below are based on ensemble forecast.
-
-Transmissibility is characterised by the reproduction number, i.e. the 
-average number of cases that one infected is likely to
-infect. Analysis of transmissibility indicates that the reproduction 
-number last week (week starting 22nd March) was highest in:
-  
-* Germany with an estimated median Rt of: 4.5 (95% CrI 5.9 - 3.5), and
-* USA with an estimated median Rt of 4.3 (95% CrI 3.4 - 4.8);
-
-and was lowest in:
-  
-* Japan with an estimated Rt of 0.6 (95% CrI 1.2 - 0.2), and
-* China with an estimated Rt of 0.8 (95% CrI 0.6 - 1.0).
-
-Forecast of predicted deaths in the coming week (week starting [date]) is highest in:
-  
-* Italy with a forecasted number of weekly deaths 9030 (95% CrI 7813 - 10400), and
-* Spain with a forecasted number of weekly deaths 5628 (95% CrI 3950 -
-  8654);
-
-and is lowest in:
-  
-* Japan with a forecasted number of weekly deaths 6 (95% CrI 0 - 44), and
-* Iraq with a forecasted number of weekly deaths 14 (95% CrI 0 - 825).
-
+```{r child = "dynamic-summary.Rmd"}
+```
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 weekly_pred <- drake::readd("weekly_predictions_qntls")
 weekly_pred <- na.omit(weekly_pred)
-propinci <- assessr::prop_in_ci(
+propinci <- assessr:::prop_in_ci(
     weekly_pred$observed, weekly_pred$`2.5%`, weekly_pred$`97.5%`
 )
 
@@ -153,10 +132,15 @@ and countries with the lowest true epidemics size in this period were:
 * Japan with an estimated true epidemics size in this period of
 1843 (95% CrI 1256 - 2592).
 
+<br>
+<br>
+
 ## Methods
 
 We define a country to have sustained local active transmission if
-at least five deaths were observed in the country in the last week and also in the week before that. We intend to produce forecasts every week, for the
+at least five deaths were observed in the country in the last week and
+also in the week before that. We intend to produce forecasts every
+week, for the
 week ahead. So far, three different modelling teams will produce these
 forecats which are then used to produce an ensemble forecasts.
 

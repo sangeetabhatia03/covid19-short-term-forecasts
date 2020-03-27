@@ -20,11 +20,11 @@ plan <- drake_plan(
     ## Apply thresholds
     pass = split(raw_data, raw_data$`Countries.and.territories`) %>%
         purrr::keep(deaths_threshold) %>%
-        dplyr::bind_rows() %>%
-        dplyr::filter(`Countries.and.territories`
-                      %in% c("China", "France", "Germany", "Iran", "Iraq", "Italy",
-"Japan", "Netherlands", "Philippines", "South_Korea", "Spain",
-"Switzerland", "United_Kingdom", "United_States_of_America")),
+        dplyr::bind_rows(),
+##         dplyr::filter(`Countries.and.territories`
+##                       %in% c("China", "France", "Germany", "Iran", "Iraq", "Italy",
+## "Japan", "Netherlands", "Philippines", "South_Korea", "Spain",
+## "Switzerland", "United_Kingdom", "United_States_of_America")),
 
 
      by_country_deaths = dplyr::select(
