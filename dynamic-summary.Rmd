@@ -19,10 +19,10 @@ ensemble_weekly_qntls <- drake::readd("ensemble_weekly_qntls")
 ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "si_1", ]
 ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$proj == date_week_finishing, ]
 top2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = 2, wt = `50%`) %>%
-    dplyr::mutate_if(is.numeric, ~ round(., 2))
+    dplyr::mutate_if(is.numeric, round)
 
 bottom2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = -2, wt = `50%`) %>%
-        dplyr::mutate_if(is.numeric, ~ round(., 2))
+        dplyr::mutate_if(is.numeric, round)
 
 model_rt <- drake::readd("model_rt_qntls")
 model_rt <- model_rt[grep(
