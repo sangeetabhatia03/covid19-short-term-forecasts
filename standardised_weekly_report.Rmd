@@ -90,10 +90,21 @@ In this analysis, key assumptions are:
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-weekly_pred <- drake::readd("weekly_predictions_qntls")
-weekly_pred <- na.omit(weekly_pred)
+ensb_pred <- drake::readd("ensemble_model_qntls")
+ensb_pred <- na.omit(ensb_pred)
+## We only need the projections before the most recent one.
+pass <- drake::readd("pass")
+pass$DateRep <- as.Date(pass$DateRep)
+ensb_pred$date <- as.Date(ensb_pred$date)
+x <- dplyr::left_join(
+    ensb_pred,
+    pass,
+    by = c("date" = "DateRep",
+           "country" = "Countries.and.territories")
+    ) %>% na.omit()
+x <- x[x$si == "si_1", ]
 propinci <- assessr:::prop_in_ci(
-    weekly_pred$observed, weekly_pred$`2.5%`, weekly_pred$`97.5%`
+    x$Deaths, x$`2.5%`, x$`97.5%`
 )
 
 ```
