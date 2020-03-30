@@ -9,7 +9,7 @@ fig_caption: true
 latex_engine: pdflatex
 title: "Short-term forecasts of cases and deaths of COVID-19 in multiple countries"
 author:
-- name: Sangeeta Bhatia and Pierre Nouvellet
+- name: Sangeeta Bhatia, Anne Cori and Pierre Nouvellet + COVID-19 list
 affiliation: Imperial College London
 abstract: 
 keywords: 
