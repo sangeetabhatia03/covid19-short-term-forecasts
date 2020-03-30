@@ -129,10 +129,10 @@ plan <- drake_plan(
                         out2 <- as.data.frame(out2)
                         out2 <- tibble::rownames_to_column(
                             out2,  var = "quantile"
-                        )
+                            )
+                        out2
                     }, .id = "si"
                 )
-                out
             }, .id = "country"
            )
         }
@@ -181,7 +181,9 @@ plan <- drake_plan(
     weeks_ending = list(
         "2020-03-08" = "2020-03-08",
         "2020-03-15" = "2020-03-15",
-        "2020-03-22" = "2020-03-22"
+        "2020-03-22" = "2020-03-22",
+        "2020-03-29" = "2020-03-29"
+
     ),
     ## For each, for each country, pool projections from diff models
     ## In the output, the first level is week, 2nd is country and 3rd

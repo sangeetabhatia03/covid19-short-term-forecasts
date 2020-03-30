@@ -226,6 +226,7 @@ format_last_rt <- function(rt) {
     rt <- dplyr::select(rt, -si)
     rt <- rt[rt$quantile %in% c("2.5%", "50%", "97.5%"), ]
     rt <- tidyr::spread(rt, quantile, out2)
+    rt <- dplyr::arrange(rt, `50%`)
     rt <- dplyr::mutate_if(
         rt,
         is.numeric,

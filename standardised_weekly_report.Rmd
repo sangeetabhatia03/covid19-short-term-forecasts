@@ -2,6 +2,7 @@
 output: 
 html_document:
   css: style.css
+word_document: default
 citation_package: natbib
 keep_tex: false
 fig_caption: true
@@ -20,6 +21,7 @@ spacing: double
 bibliography: 
 biblio-style: apsr
 endnote: no
+always_allow_html: true
 ---
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -33,8 +35,8 @@ source("R/util.R")
 source("params.R")
 knitr::opts_chunk$set(
     echo = FALSE, 
-    fig.width = 9, 
-    fig.height = 6,
+    fig.width = 18, 
+    fig.height = 12,
     warning = FALSE,
     messages = FALSE
 )
@@ -169,7 +171,7 @@ impact on the weekly forecast produced, it results in much higher
 estimated of transmissibility.
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 short <- EpiEstim::discr_si(0:30, 4.8, 2.7)
 long <- EpiEstim::discr_si(0:30, 6.48, 3.83)
@@ -205,11 +207,11 @@ This is an unweighted ensemble of models 1 and 2.
 Below for each country with active transmission (see methods), we plot
 the observed incidence of deaths in the last 3 weeks (black
 dots). Past forecasts, where available, are shown in green (median and
-95%CrI band), while latest forecasts are show in red. Horizontal
+95% CrI interval), while latest forecasts are show in red. Horizontal
 dashed line show the start and end of each week (Monday to Sunday).
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 obs <- drake::readd("obs")
 ensb_pred <- drake::readd("ensemble_model_qntls")
@@ -225,7 +227,7 @@ projection_plot(obs, ensb_pred1)
 
 Below, estimates of effective Reproduction Numbers by country (median and 95%CrI).
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 ens_rt_both <- drake::readd("ensemble_model_rt")
 ens_rt <- ens_rt_both[ens_rt_both$si == "si_1", ]
@@ -363,7 +365,7 @@ dots). Past forecasts, where available, are shown in green (median and
 dashed line show the start and end of each week (Monday to Sunday).
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 obs <- drake::readd("obs")
 pred <- drake::readd("model_1")
 pred <- pred[pred$si == "si_1", ]
@@ -381,10 +383,10 @@ methods), we plot the latest estimate of transmissibility ($R_t$),
 specifically estimated median and associated 95%CrI.
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 rt <- drake::readd("model_1_rt")
 rt <- rt[rt$si == "si_1", ]
-rt <- rt[rt$proj == "RtI0_Std_results_week_end_2020-03-22", ]
+rt <- rt[rt$proj == "RtI0_Std_results_week_end_2020-03-29", ]
 rt$model <- rt$proj
 rt_plot(rt)
 
@@ -464,7 +466,7 @@ dashed line show the start and end of each week (Monday to Sunday).
 
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 pred <- drake::readd("model_2") 
 pred <- pred[pred$si == "si_1", ]
 pred$date <- as.Date(pred$date)
@@ -480,11 +482,11 @@ methods), we plot the latest estimate of transmissibility ($R_t$),
 specifically estimated median and associated 95% CrI.
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 rt <- drake::readd("model_2_rt")
 rt <- rt[rt$si == "si_1", ]
-rt <- rt[rt$proj == "sbkp_Std_results_week_end_2020-03-22", ]
+rt <- rt[rt$proj == "sbkp_Std_results_week_end_2020-03-29", ]
 rt$model <- rt$proj
 rt_plot(rt)
 
@@ -526,7 +528,7 @@ dots). Past forecasts, where available, are shown in green (median and
 dashed line show the start and end of each week (Monday to Sunday).
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 ensb_pred2 <- ensb_pred[ensb_pred$si == "si_2", ]
 ensb_pred2$date <- as.Date(ensb_pred2$date)
@@ -544,7 +546,7 @@ methods), we plot the latest estimate of transmissibility ($R_t$),
 specifically estimated median and associated 95%CrI.
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 
 ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
@@ -655,7 +657,7 @@ been rescaled but are comparable to each other. The rescaling is such
 that the maximium recorded numbers of deaths or cases (with a 10-days
 delay) reaches 1.
 
-```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width = 9, fig.height = 6.4}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 f <- which(moving_DtoI[[1]]$date >= as.Date(c('01/03/2020'),format = '%d/%m/%Y'))
 
 layout(matrix(1:4,2,2))
@@ -719,9 +721,9 @@ Surprisingly, this appear to be pretty much the case for South Korea
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 x <- readr::read_csv(here::here("Team.output/summary_DeathToRepoted_14days.csv"))
-knitr::kable(x[, -1]) %>%
-    kable_styling() 
-
+## knitr::kable(x[, -1]) %>%
+##     kable_styling() 
+DT::datatable(x[, -1])
 ```
 
 

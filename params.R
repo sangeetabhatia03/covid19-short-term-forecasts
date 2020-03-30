@@ -16,8 +16,11 @@ deaths_threshold <- function(ts, Threshold_criterion_7days = 5, Threshold_criter
 }
 
 ##infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-26.csv"
-infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-22.csv"
-date_week_finishing <-  as.Date('22/03/2020', format = '%d/%m/%Y')
+##infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-22.csv"
+infile <- "data/COVID-19-geographic-disbtribution-worldwide-2020-03-29.csv"
+## 29.03.2019 Had to manually change the column names as they were
+## different from last week.
+date_week_finishing <-  as.Date('29/03/2020', format = '%d/%m/%Y')
 shape <- 3.16
 scale <- 1.52
                                         # hist(rgamma(1e4,shape = shape, scale = scale))
@@ -53,3 +56,22 @@ names(output_files) <- gsub(
 )
 
 
+##################
+### Outputs for Pierre
+#######################
+## pred <- purrr::map(model_outputs, ~ .[["Predictions"]])
+## ### pred is a list where each component correspons to a model
+## ### Each element of pred is a list of country specific outputs
+## ### Each element of country is set of 2 outputs corresponding to the
+## ### 2 SIs.
+## si_1 <- purrr::map(pred, function(x) purrr::map(x, ~ .[[1]]))
+## si_1 <- purrr::map(si_1, function(model) {
+##     out <- purrr::map_dfr(model, function(x){
+##         out2 <- t(x)
+##         out2 <- data.frame(out2)
+##         out2 <- tibble::rownames_to_column(out2, var = "date")
+##         out2
+##     }, .id = "country"
+##   )
+## })
+## purrr::iwalk(si_1, function(x, y) readr::write_rds(x = x, path = glue::glue("data/{y}_pred.rds")))
