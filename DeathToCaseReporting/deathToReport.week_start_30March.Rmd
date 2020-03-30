@@ -25,7 +25,7 @@ NEED to do:
 
 ```{r}
 
-date_week_finishing <-  as.Date('22/03/2020',format = '%d/%m/%Y')
+date_week_finishing <-  as.Date('29/03/2020',format = '%d/%m/%Y')
 delay_report_death <- 10 # need checking!!
 
 day.project <- 7
