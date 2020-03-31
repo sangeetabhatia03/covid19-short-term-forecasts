@@ -12,7 +12,12 @@ projection_plot <- function(obs, pred) {
 
     date_min <- as.Date("2020-03-01")
     date_max <- max(pred$date) + 2
-
+    dates_to_mark <- seq(
+        from = date_min,
+        to = date_max,
+        by = "1 day"
+    )
+    dates_to_mark <- dates_to_mark[weekdays(dates_to_mark) == "Monday"]
     ## Get dates of adding vlines.
     window_eps <- dplyr::group_by(pred, proj) %>%
         dplyr::summarise(date = min(date)) %>%
@@ -44,7 +49,7 @@ projection_plot <- function(obs, pred) {
     ) +
     theme_pubr() +
     theme(legend.position = "none") +
-        xlim(date_min, date_max) +
+        scale_x_date(breaks = dates_to_mark, limits = c(date_min, date_max)) +
     geom_vline(
         xintercept = c(
            window_eps$xintercepts

@@ -40,8 +40,8 @@ knitr::opts_chunk$set(
     warning = FALSE,
     messages = FALSE
     )
-scipen <- getOption("scipen")
-options(scipen = 999)
+
+
 ```
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
@@ -203,8 +203,8 @@ This is an unweighted ensemble of Models 1 and 2.
 **Current and past forecasts**
 
 Below for each country with active transmission (see methods), we plot
-the observed incidence of deaths in the last 3 weeks (black
-dots). Past forecasts, where available, are shown in green (median and
+the observed incidence of deaths (black dots). 
+Past forecasts, where available, are shown in green (median and
 95% CrI interval), while latest forecasts are show in red. Vertical
 dashed line show the start and end of each week (Monday to Sunday).
 
@@ -224,6 +224,7 @@ names(nice_names) <- ensb_pred1$country
 ```
 
 ```{r}
+
 projection_plot(obs, ensb_pred1) +
     ggforce::facet_wrap_paginate(
             ~country,
@@ -381,7 +382,7 @@ potential voluntary behavior changes.
 **Current and past forecasts**
 
 Below for each country with active transmission (see methods), we plot
-the observed incidence of deaths in the last 3 weeks (black
+the observed incidence of deaths (black
 dots). Past forecasts, where available, are shown in green (median and
 95%CrI band), while latest forecasts are show in red. Horizontal
 dashed lines show the start and end of each week (Monday to Sunday).
@@ -542,7 +543,7 @@ branching process model using a Poisson offspring distribution.
 **Current and past forecasts**
 
 Below for each country with active transmission (see methods), we plot
-the observed incidence of deaths in the last 3 weeks (black
+the observed incidence of deaths (black
 dots). Past forecasts, where available, are shown in green (median and
 95%CrI band), while latest forecasts are show in red. Horizontal
 dashed lines show the start and end of each week (Monday to Sunday).
@@ -655,7 +656,7 @@ presented here.
 ### Projections
 
 Below for each country with active transmission (see methods), we plot
-the observed incidence of deaths in the last 3 weeks (black
+the observed incidence of deaths (black
 dots). Past forecasts, where available, are shown in green (median and
 95%CrI band), while latest forecasts are show in red. Horizontal
 dashed line show the start and end of each week (Monday to Sunday).
@@ -767,7 +768,7 @@ rt_plot(ens_rt) +
 <br><br>
 
 
-## Case Ascertainment
+## Case Ascertainment {.tabset .tabset-fade .tabset-pills}
 
 The analysis relies on the following assumptions:
   
@@ -789,7 +790,7 @@ stabilizing.
 
 
 
-**Temporal trend in the ratio of deaths to reported cases**
+### Temporal trend in the ratio of deaths to reported cases
 
 Starting in March, we compute the average and 95% CI for the ratio of
 deaths  to reported cases (with a 10-days delay) using a moving window
@@ -847,7 +848,7 @@ knitr::include_graphics("figs/unnamed-chunk-4-8.png")
 
 *Note that if deaths exceed the number of reported cases 10-days before, we set the ratio at 1 (95%CI [1;1])*
 
-**Estimating ascertainment**
+### Estimating ascertainment
 
 If all cases (including asymptomatic cases) and deaths were reported,
 and the delay from reporting to death was exactly 10 days, then the
@@ -875,11 +876,15 @@ Below we summarise the:
 Average and 95% CI for the ratio of deaths to reported cases for the last 14 days.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
+
 x <- readr::read_csv(here::here("Team.output/summary_DeathToRepoted_14days_2020-03-29.csv"))
+x$country <- snakecase::to_any_case(x$country, case = "title")
+colnames(x) <- snakecase::to_any_case(colnames(x), case = "title")
+
 ## knitr::kable(x[, -1]) %>%
 ##     kable_styling() 
 DT::datatable(x[, -1])
-options(scipen = scipen) ## reset 
+
 ```
 
 

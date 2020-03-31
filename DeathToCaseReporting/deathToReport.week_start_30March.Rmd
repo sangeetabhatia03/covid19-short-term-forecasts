@@ -165,36 +165,24 @@ rho[rho>1] <- 1
 multi_real <- 1/rho
 
 # summary
-summary_14days <- data.frame(country = country,
-                             deaths_to_reported_ratio = paste0(round(temp[,1],digits = 3)*100,
-                                                               '% ; 95%CI [',
-                                                               round(temp[,2],digits = 3)*100,
-                                                               ';',
-                                                               round(temp[,3],digits = 3)*100,
-                                                               ']%'),
-                             estimated_reporting = paste0(round(rho[,1],digits = 3)*100,
-                                                          '% ; 95%CI [',
-                                                          round(rho[,2],digits = 3)*100,
-                                                          ';',
-                                                          round(rho[,3],digits = 3)*100,
-                                                          ']%'),
-                             factor_to_real_size = paste0(round(multi_real[,1],digits = 1),
-                                                          ' ; 95%CI [',
-                                                          round(multi_real[,2],digits = 1),
-                                                          ';',
-                                                          round(multi_real[,3],digits = 1),
-                                                          ']'),
-                             Observed_case_last_week = colSums(tail(I[,-1],7)),
-                             Predicted_True_case_last_week = paste0(
-                               round(multi_real[,1]*colSums(tail(I[,-1],7)),digits = 0),
-                               ' ; 95%CI [',
-                               
-                               round(multi_real[,2]*colSums(tail(I[,-1],7)),digits = 0),
-                               ';',
-                               
-                               round(multi_real[,3]*colSums(tail(I[,-1],7)),digits = 0),
-                               ']'))
-
+summary_14days <- data.frame(
+    country = country,
+    deaths_to_reported_ratio = glue::glue(
+        "{scales::percent(temp[,1], accuracy = 0.1)} ({scales::percent(temp[,2],accuracy = 0.1)} - {scales::percent(temp[,3],accuracy = 0.1)})",
+    ),    
+    estimated_reporting = glue::glue(
+        "{scales::percent(rho[,1], accuracy = 0.1)} ({scales::percent(rho[,2],accuracy = 0.1)} - {scales::percent(rho[,3],accuracy = 0.1)})",
+    ),   
+    factor_to_real_size = glue::glue(
+        "{round(multi_real[,1], 2)} ({round(multi_real[,2], 2)} - {round(multi_real[,3], 2)})",
+    ),   
+    Observed_case_last_week = colSums(tail(I[,-1],7)),
+    Predicted_True_case_last_week = glue::glue(
+        "{prettyNum(signif(multi_real[,1] * colSums(tail(I[,-1],7)),digits = 2), big.mark = ",")} ",
+        "({prettyNum(signif(multi_real[,2]*colSums(tail(I[,-1],7)),digits = 2), big.mark = ",")}",
+        " - {prettyNum(signif(multi_real[,3]*colSums(tail(I[,-1],7)),digits = 2), big.mark = ",")})"
+        )
+  )  
 summary_14days <- summary_14days[order(temp[,1],decreasing = TRUE),]
 
 write.csv(summary_14days,file = paste0('summary_DeathToRepoted_14days_',date_week_finishing,'.csv'))
