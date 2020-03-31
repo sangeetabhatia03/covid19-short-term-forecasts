@@ -34,13 +34,15 @@ model_rt <- model_rt[model_rt$si == "si_1", ]
 model_rt <- model_rt[ , colnames(ens_rt)]
 ens_rt <- rbind(model_rt, ens_rt)
 ens_rt <- tidyr::spread(ens_rt, quantile, out2)
-```
-Key results below are based on ensemble forecast.
 
-Transmissibility is characterised by the reproduction number, i.e. the 
+```
+Key results below are based on an ensemble forecast of two models.
+
+Transmissibility is characterised by the reproduction number $R_t$, i.e. the 
 average number of cases that one infected is likely to
 infect. Analysis of transmissibility indicates that the reproduction 
-number last week (week starting `r date_week_finishing`) was highest in:
+number last week (week starting 
+`r as.Date(date_week_finishing, format = "%d-%m-%Y")`) was highest in:
   
 * `r top2_rt$country[1]` with an estimated median Rt of 
 `r top2_rt[["50%"]][1]` (95% CrI `r top2_rt[["2.5%"]][1]` - `r top2_rt[["97.5%"]][1]`), and
@@ -57,13 +59,15 @@ and was lowest in:
 Forecast of predicted deaths in the coming week (week starting `r date_week_finishing`) is highest in:
   
 * `r top2_deaths$country[1]` with an estimated median deaths of 
-`r top2_deaths[["50%"]][1]` (95% CrI `r top2_deaths[["2.5%"]][1]` - `r top2_deaths[["97.5%"]][1]`), and
-* `r top2_deaths$country[2]` with an estimated median deaths of 
-`r top2_deaths[["50%"]][2]` (95% CrI `r top2_deaths[["2.5%"]][2]` - `r top2_deaths[["97.5%"]][2]`).
+`r prettyNum(top2_deaths[["50%"]][1])` 
+(95% CrI `r prettyNum(top2_deaths[["2.5%"]][1])` - `r prettyNum(top2_deaths[["97.5%"]][1])`), and
+* `r prettyNum(top2_deaths$country[2])` with an estimated median deaths of 
+`r prettyNum(top2_deaths[["50%"]][2])` 
+(95% CrI `r prettyNum(top2_deaths[["2.5%"]][2])` - `r prettyNum(top2_deaths[["97.5%"]][2])`).
 
 and is lowest in:
   
-* `r bottom2_deaths$country[1]` with an estimated median deaths of 
-`r bottom2_deaths[["50%"]][1]` (95% CrI `r bottom2_deaths[["2.5%"]][1]` - `r bottom2_deaths[["97.5%"]][1]`), and
+* `r prettyNum(bottom2_deaths$country[1])` with an estimated median deaths of 
+`r prettyNum(bottom2_deaths[["50%"]][1])` (95% CrI `r prettyNum(bottom2_deaths[["2.5%"]][1])` - `r prettyNum(bottom2_deaths[["97.5%"]][1])`), and
 * `r bottom2_deaths$country[2]` with an estimated median deaths of 
-`r bottom2_deaths[["50%"]][2]` (95% CrI `r bottom2_deaths[["2.5%"]][2]` - `r bottom2_deaths[["97.5%"]][2]`).
+`r prettyNum(bottom2_deaths[["50%"]][2])` (95% CrI `r prettyNum(bottom2_deaths[["2.5%"]][2])` - `r prettyNum(bottom2_deaths[["97.5%"]][2])`).
