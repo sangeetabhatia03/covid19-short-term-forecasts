@@ -283,7 +283,7 @@ projection_plot(obs, ensb_pred1) +
 ```
 
 
-```{r}
+```{r eval = FALSE}
 projection_plot(obs, ensb_pred1) +
             ggforce::facet_wrap_paginate(
             ~country,
@@ -457,7 +457,7 @@ projection_plot(obs, pred) +
 ```
 
 
-```{r}
+```{r eval = FALSE}
 projection_plot(obs, pred) +
     ggforce::facet_wrap_paginate(
             ~country,
@@ -617,7 +617,7 @@ projection_plot(obs, pred) +
 ```
 
 
-```{r}
+```{r eval = FALSE}
 projection_plot(obs, pred) +
     ggforce::facet_wrap_paginate(
             ~country,
@@ -732,7 +732,7 @@ projection_plot(obs, ensb_pred2) +
 ```
 
 
-```{r}
+```{r eval = FALSE}
 projection_plot(obs, ensb_pred2) +
     ggforce::facet_wrap_paginate(
             ~country,
