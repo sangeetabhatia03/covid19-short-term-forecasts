@@ -39,7 +39,9 @@ knitr::opts_chunk$set(
     fig.height = 15,
     warning = FALSE,
     messages = FALSE
-)
+    )
+scipen <- getOption("scipen")
+options(scipen = 999)
 ```
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
@@ -48,7 +50,7 @@ As of `r format(Sys.time(), '%B %d, %Y')`, there have more than
 deaths [@whositrep] . In this report, we use the reported number of deaths
 of COVID-19 to make short term forecasts of the trajectory of the
 epidemic and the expected number of
-COVID-19 deaths for 21 countries with sustained human-to-human
+COVID-19 deaths for 22 countries with sustained human-to-human
 transmission. We also estimate case ascertainment in each country to
 look at reporting trends over time.
 
@@ -65,7 +67,7 @@ at least five deaths were observed in the country in two previous
 consecutive weeks. In the analysis for week beginning 
 22^nd^ March 2020, 14 countries/regions were included in the analysis
 based on these thresholds. For the week beginning 29^th^ March 2020,
-the number of countries/regions included is 31.
+the number of countries/regions included is 22.
 
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -122,39 +124,8 @@ Model performance in predicting ahead was good in previous weeks  with
 of deaths across all countries included in the 95% Credible Interval (CrI) of the forecast
 intervals.
 
-### Key results on case ascertainment
-
-Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
-reported cases in the 10 days prior to that period.  Estimates of case
-ascertainment were highly variable.
-Results indicate that countries with highest case ascertainment were:
-  
-* Norway with an estimated median ascertainment of 71.9% (95% CrI 46.3% - 100.0%), and
-* South Korea with an estimated median ascertainment of 36.4% (95% CrI 29.2% - 45.9%);
-
-and countries with the lowest case ascertainment were:
-
-* Indonesia with an estimated median ascertainment of: 1.7% (95% CrI 1.5% -
-  2.0%), and
-* Turkey with an estimated median ascertainment of 1.8% (95% CrI 1.6% - 2.0%).
-
-
-Based on the estimated ascertainment, we estimated the true size of
-the epidemic in each country in the previous 7 days (week starting 22-03-2020). 
-Countries with the largest true epidemic size in this period were:
-  
-* United States of America with an estimated true epidemics size in this period of
-  2,200,000 (95% CrI 1,300,000 - 2,100,000), and
-* Spain with an estimated true epidemic size in this period of
-1,900,000 (95% CrI 1,900,000 - 1,900,000).
-
-and countries with the lowest true epidemic size in this period were:
-
-* San Marino with an estimated true epidemic size in this period of
-1,300 (95% CrI 790 - 1,900), and 
-* South Korea with an estimated true epidemic size in this period of
-  1,800 (95% CrI 1,400 - 2,300).
-
+```{r child = "case_ascertainment_summary.Rmd"}
+```
 
 <br>
 <br>
@@ -907,7 +878,8 @@ Average and 95% CI for the ratio of deaths to reported cases for the last 14 day
 x <- readr::read_csv(here::here("Team.output/summary_DeathToRepoted_14days_2020-03-29.csv"))
 ## knitr::kable(x[, -1]) %>%
 ##     kable_styling() 
-DT::datatable(x[, -1]) 
+DT::datatable(x[, -1])
+options(scipen = scipen) ## reset 
 ```
 
 

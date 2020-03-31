@@ -134,7 +134,7 @@ for (i in 1:N_geo){
         inc[,2]/max(c(inc[,1],inc[,2])), 
         type = 'p', pch=16,col='red')
   
-  if(country[i] == "Belgium"){
+  if(country[i] == "Canada"){
   legend('topleft',legend = c('ratio','death','reported cases'),bty='n',
          lwd=c(3,NA,NA),pch=c(NA,16,16),col = c(rgb(0,0,1),rgb(1,0,0),rgb(0,0,0)))
   }
@@ -145,7 +145,7 @@ for (i in 1:N_geo){
 Average and 95%CI for ratio of deaths to reported cases for the last 14 days.
 
 
-If all cases (incl. asymptomatics) and death were reported, and the delay fro reporting was exactly 10 days, then the ratio defined would be equivalent to the CFR.
+If all cases (incl. asymptomatics) and death were reported, and the delay from reporting was exactly 10 days, then the ratio defined would be equivalent to the CFR.
 
 Suprisingly, this appear to be pretty much the case for South Korea (see below).
 
@@ -201,6 +201,29 @@ write.csv(summary_14days,file = paste0('summary_DeathToRepoted_14days_',date_wee
 
 ```
 
+```{r}
+## unformatted
+unformatted_summary_14days <- data.frame(
+    country = country,
+    deaths_to_reported_ratio_50 = round(temp[,1],digits = 3),
+    deaths_to_reported_ratio_025 = round(temp[,2],digits = 3),
+    deaths_to_reported_ratio_975 = round(temp[,3],digits = 3),
+    estimated_reporting_50 = round(rho[,1],digits = 3),
+    estimated_reporting_975 = round(rho[,2],digits = 3),
+    estimated_reporting_025 = round(rho[,3],digits = 3),    
+    factor_to_real_size_50 = round(multi_real[,1],digits = 1),
+    factor_to_real_size_025 = round(multi_real[,2],digits = 1),
+    factor_to_real_size_975 = round(multi_real[,3],digits = 1),
+    Observed_case_last_week = colSums(tail(I[,-1],7)),
+    Predicted_True_case_last_week_50 = round(multi_real[,1]*colSums(tail(I[,-1],7)),digits = 0),
+    Predicted_True_case_last_week_025 = round(multi_real[,2]*colSums(tail(I[,-1],7)),digits = 0),
+    Predicted_True_case_last_week_975 = round(multi_real[,3]*colSums(tail(I[,-1],7)),digits = 0)
+)
+readr::write_csv(
+    x = unformatted_summary_14days,
+    path = paste0('unformatted_summary_DeathToRepoted_14days_',date_week_finishing,'.csv')
+)
+```
 full size of epidemic so far
 
 ```{r eval = FALSE}
