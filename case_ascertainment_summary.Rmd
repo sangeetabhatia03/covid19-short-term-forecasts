@@ -1,0 +1,76 @@
+### Key results on case ascertainment
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+case_at <- readr::read_csv(
+    "Team.output/unformatted_summary_DeathToRepoted_14days_2020-03-29.csv"
+    )
+case_at$country <- snakecase::to_any_case(case_at$country, case = "title")
+
+top2_case_at <- dplyr::top_n(
+    case_at, n = 2, wt = estimated_reporting_50
+    ) %>%
+    dplyr::mutate_if(is.numeric, ~ scales::percent(round(., 2), accuracy = 0.1))
+
+bottom2_case_at <- dplyr::top_n(
+    case_at, n = -2, wt = estimated_reporting_50
+    ) %>%
+    dplyr::mutate_if(is.numeric, ~ scales::percent(round(., 2), accuracy = 0.1))
+
+
+top2_size <- dplyr::top_n(
+    case_at, n = 2, wt = Predicted_True_case_last_week_50
+    ) %>%
+    dplyr::mutate_if(is.numeric, ~signif(., 2)) %>%
+    dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ","))
+
+bottom2_size <- dplyr::top_n(
+    case_at, n = -2, wt = Predicted_True_case_last_week_50
+    ) %>%
+    dplyr::mutate_if(is.numeric, ~signif(., 2)) %>%
+    dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ","))
+
+```
+Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
+reported cases in the 10 days prior to that period.  Estimates of case
+ascertainment were highly variable.
+Results indicate that countries with highest case ascertainment were:
+  
+* `r top2_case_at$country[2]` with an estimated median ascertainment
+  of `r top2_case_at$estimated_reporting_50[2]` 
+  (95% confidence interval (CI) `r top2_case_at$estimated_reporting_025[2]`  - `r top2_case_at$estimated_reporting_975[2]`), and
+* `r top2_case_at$country[1]` with an estimated median ascertainment
+  of `r top2_case_at$estimated_reporting_50[1]` 
+  (95% CI `r top2_case_at$estimated_reporting_025[1]`  - `r top2_case_at$estimated_reporting_975[1]`).
+
+and countries with the lowest case ascertainment were:
+
+* `r bottom2_case_at$country[2]` with an estimated median ascertainment
+  of `r bottom2_case_at$estimated_reporting_50[2]` 
+  (95% CI `r bottom2_case_at$estimated_reporting_025[2]`- `r bottom2_case_at$estimated_reporting_975[2]`), and
+* `r bottom2_case_at$country[1]` with an estimated median ascertainment
+  of `r bottom2_case_at$estimated_reporting_50[1]` 
+  (95% CI `r bottom2_case_at$estimated_reporting_025[1]`  - `r bottom2_case_at$estimated_reporting_975[1]`).
+
+
+Based on the estimated ascertainment, we estimated the true size of
+the epidemic in each country in the previous 7 days (week starting 22-03-2020). 
+Countries with the largest true epidemic size in this period were:
+  
+* `r top2_size$country[2]` with an estimated median size of
+  `r top2_size$Predicted_True_case_last_week_50[2]` 
+  (95% CrI `r top2_size$Predicted_True_case_last_week_025[2]`  - `r top2_size$Predicted_True_case_last_week_975[2]`), and
+* `r top2_size$country[1]` with an estimated median size 
+  of `r top2_size$Predicted_True_case_last_week_50[1]` 
+  (95% CrI `r top2_size$Predicted_True_case_last_week_025[1]`  - `r top2_size$Predicted_True_case_last_week_975[1]`).
+
+and countries with the lowest true epidemic size in this period were:
+  
+* `r bottom2_size$country[2]` with an estimated median size of
+  of `r bottom2_size$Predicted_True_case_last_week_50[2]` 
+  (95% CrI `r bottom2_size$Predicted_True_case_last_week_025[2]`  - `r bottom2_size$Predicted_True_case_last_week_975[2]`), and
+* `r bottom2_size$country[1]` with an estimated median size of
+  of `r bottom2_size$Predicted_True_case_last_week_50[1]` 
+  (95% CrI `r bottom2_size$Predicted_True_case_last_week_025[1]`  - `r bottom2_size$Predicted_True_case_last_week_975[1]`).
+
+

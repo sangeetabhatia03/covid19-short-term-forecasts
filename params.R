@@ -1,4 +1,4 @@
-deaths_threshold <- function(ts, Threshold_criterion_7days = 5, Threshold_criterion_prev7days = 5) {
+deaths_threshold <- function(ts, Threshold_criterion_7days = 10, Threshold_criterion_prev7days = 10) {
 
     th1 <- sum(
         ts$Deaths[ts$DateRep >= max(ts$DateRep) - 7], na.rm = TRUE
@@ -36,8 +36,8 @@ si_mean <- c(si_mean, 6.48)
 si_std <- c(si_std, 3.83)
 
 Threshold_criterion_4weeks <- 100
-Threshold_criterion_7days <- 5 ## at least 2 deaths
-Threshold_criterion_prev7days <- 5 ## at least 5 deaths in the week before last
+Threshold_criterion_7days <- 10 ## at least 2 deaths
+Threshold_criterion_prev7days <- 10 ## at least 5 deaths in the week before last
 outfile <-  paste0('Team.input/data_', date_week_finishing,'.rds')
 outfile <- here::here(outfile)
 

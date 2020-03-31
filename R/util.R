@@ -1,6 +1,5 @@
 projection_plot <- function(obs, pred) {
 
-
     ## Number of projections
     nprojs <- length(unique(pred$proj))
 
@@ -13,7 +12,12 @@ projection_plot <- function(obs, pred) {
 
     date_min <- as.Date("2020-03-01")
     date_max <- max(pred$date) + 2
-
+    dates_to_mark <- seq(
+        from = date_min,
+        to = date_max,
+        by = "1 day"
+    )
+    dates_to_mark <- dates_to_mark[weekdays(dates_to_mark) == "Monday"]
     ## Get dates of adding vlines.
     window_eps <- dplyr::group_by(pred, proj) %>%
         dplyr::summarise(date = min(date)) %>%
@@ -24,11 +28,6 @@ projection_plot <- function(obs, pred) {
     ) + 0.5
     ## To get nice labels
 
-    nice_names <- snakecase::to_any_case(
-        pred$country,
-        "title"
-    )
-    names(nice_names) <- pred$country
 
     p <- ggplot() +
     geom_point(data = obs, aes(DateRep, Deaths)) +
@@ -44,21 +43,13 @@ projection_plot <- function(obs, pred) {
                 fill = proj,
                 group = proj),
             alpha = 0.4) +
-        facet_wrap(
-            ~country,
-            scales = "free_y",
-            labeller = as_labeller(
-                nice_names
-            ),
-            ncol = 2
-        ) +
     scale_color_manual(
         values = palette,
         aesthetics = c("color", "fill")
     ) +
     theme_pubr() +
     theme(legend.position = "none") +
-        xlim(date_min, date_max) +
+        scale_x_date(breaks = dates_to_mark, limits = c(date_min, date_max)) +
     geom_vline(
         xintercept = c(
            window_eps$xintercepts
@@ -66,11 +57,14 @@ projection_plot <- function(obs, pred) {
         linetype = "dashed"
     ) + xlab("") +
         theme(
-            axis.text.y = element_text(size = 8),
+            axis.title.y = element_text(size = 20),
+            axis.text.y = element_text(size = 20),
             axis.text.x =
-                element_text(angle = -90, hjust = 0),
-            strip.text.x = element_text(margin = margin(2,0,2,0, "pt"))
-
+                element_text(angle = -90, hjust = 0, size = 20),
+            strip.text.x = element_text(
+                margin = margin(2,0,2,0, "pt"),
+                size = 20
+            )
           )
 
     p
@@ -86,25 +80,31 @@ rt_plot <- function(rt) {
     )
     names(nice_names) <- rt$country
     rt$country <- reorder(rt$country, -rt$`50%`)
+    if (length(unique(rt$model)) == 1) width <- 0.1
+    else width <- 0.7
+
     p <- ggplot() +
         geom_errorbar(
             data = rt,
             aes(x = country, ymin = `2.5%`, ymax = `97.5%`, col = model),
-            position = position_dodge(width = 0.5)
+            position = position_dodge(width = width),
+            size = 1.1
         ) +
         geom_point(
             data = rt,
             aes(x = country, y = `50%`, col = model),
-            position = position_dodge(width = 0.5)
+            position = position_dodge(width = 0.5),
+            size = 4
             ) +
         theme_pubr() +
         xlab("") +
         ylab("Effective Reproduction Number") +
-        theme(legend.position = "none") +
         scale_x_discrete(labels = nice_names) +
         theme(
+            axis.title.y = element_text(size = 20),
+            axis.text.y = element_text(size = 20),
             axis.text.x =
-                element_text(angle = -90, hjust = 0),
+                element_text(angle = -90, hjust = 0, size = 20),
             legend.position = "none"
         ) +
         geom_hline(
@@ -206,7 +206,7 @@ pool_predictions <- function(outputs, weights = 1) {
 ## x is a data.frame of weekly predictions
 format_weekly_pred <- function(x) {
 
-    x <- dplyr::mutate_if(x, is.numeric, ~ round(., 2))
+    x <- dplyr::mutate_if(x, is.numeric, ~ signif(., 2))
 
     out <- data.frame(
         Country = x$country,
@@ -230,7 +230,7 @@ format_last_rt <- function(rt) {
     rt <- dplyr::mutate_if(
         rt,
         is.numeric,
-        ~ round(., 2)
+        ~ format(round(., 2), nsmall = 1)
     )
     rt$`R_t` <- glue::glue(
         "{rt$`50%`} ({rt$`2.5%`} - {rt$`97.5%`})"
