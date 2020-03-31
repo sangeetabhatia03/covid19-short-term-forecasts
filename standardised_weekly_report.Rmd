@@ -299,7 +299,7 @@ projection_plot(obs, ensb_pred1) +
 ```
 <br><br>
 
-#### Estimates of the Effective Reproduction Numbers
+#### Estimates of the Effective Reproduction Number
 
 Below are estimates of effective reproduction numbers by country
 (median and 95% CrI).
@@ -320,7 +320,7 @@ model_rt <- model_rt[model_rt$si == "si_1", ]
 model_rt <- model_rt[ , colnames(ens_rt)]
 ens_rt <- rbind(model_rt, ens_rt)
 ens_rt <- tidyr::spread(ens_rt, quantile, out2)
-palette <- c("#7aa457", "#9e6ebd", "#cb6751")
+palette <- c("#E69F00", "#0072B2", "#D55E00")
 names(palette) <- unique(ens_rt$model)
 
 rt_plot(ens_rt) +
@@ -329,7 +329,8 @@ rt_plot(ens_rt) +
         labels = c("Ensemble", "Model 1", "Model 2")
     ) + theme(
             legend.position = "bottom",
-            legend.title = element_blank()
+            legend.title = element_blank(),
+            legend.text = element_text(size = 20)
         )
 
 
@@ -774,7 +775,8 @@ model_rt <- model_rt[model_rt$si == "si_2", ]
 model_rt <- model_rt[ , colnames(ens_rt)]
 ens_rt <- rbind(model_rt, ens_rt)
 ens_rt <- tidyr::spread(ens_rt, quantile, out2)
-palette <- c("#7aa457", "#9e6ebd", "#cb6751")
+
+palette <- c("#E69F00", "#0072B2", "#D55E00")
 names(palette) <- unique(ens_rt$model)
 
 rt_plot(ens_rt) +
@@ -783,7 +785,8 @@ rt_plot(ens_rt) +
         labels = c("Ensemble", "Model 1", "Model 2")
     ) + theme(
             legend.position = "bottom",
-            legend.title = element_blank()
+            legend.title = element_blank(),
+            legend.text = element_text(size = 20)
         )
 
 
