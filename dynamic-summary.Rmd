@@ -44,35 +44,34 @@ ens_rt <- tidyr::spread(ens_rt, quantile, out2)
 Key results below are based on an ensemble forecast of two models.
 
 Transmissibility is characterised by the reproduction number $R_t$, i.e. the 
-average number of cases that one infected is likely to
+average number of cases that one infected individual is likely to
 infect. Analysis of transmissibility indicates that the reproduction 
-number last week (week starting 
-`r as.Date(date_week_finishing, format = "%d-%m-%Y")`) was highest in:
+numbers last week (week starting 
+`r as.Date(date_week_finishing, format = "%d-%m-%Y")`) were highest in:
   
 * `r top2_rt$country[1]` with an estimated median $R_t$ of 
-`r top2_rt[["50%"]][1]` (95% CrI `r top2_rt[["2.5%"]][1]` - `r top2_rt[["97.5%"]][1]`), and
+`r top2_rt[["50%"]][1]` (95% Credible Interval - CrI - `r top2_rt[["2.5%"]][1]` - `r top2_rt[["97.5%"]][1]`), and
 * `r top2_rt$country[2]` with an estimated median $R_t$ of 
 `r top2_rt[["50%"]][2]` (95% CrI `r top2_rt[["2.5%"]][2]` - `r top2_rt[["97.5%"]][2]`).
 
-and was lowest in:
+and were lowest in:
   
 * `r bottom2_rt$country[1]` with an estimated median $R_t$ of 
 `r bottom2_rt[["50%"]][1]` (95% CrI `r bottom2_rt[["2.5%"]][1]` - `r bottom2_rt[["97.5%"]][1]`), and
 * `r bottom2_rt$country[2]` with an estimated median $R_t$ of 
 `r bottom2_rt[["50%"]][2]` (95% CrI `r bottom2_rt[["2.5%"]][2]` - `r bottom2_rt[["97.5%"]][2]`).
 
-Forecast of predicted deaths in the coming week (week starting `r date_week_finishing`) is highest in:
+Forecasts of predicted deaths in the coming week (week starting `r date_week_finishing`) are highest in:
   
 * `r top2_deaths$country[1]` with an estimated median
 `r top2_deaths[["50%"]][1]` deaths 
  (95% CrI `r top2_deaths[["2.5%"]][1]` - 
  `r top2_deaths[["97.5%"]][1]`), and
- 
 * `r top2_deaths$country[2]` with an estimated median 
 `r top2_deaths[["50%"]][2]` deaths
 (95% CrI `r top2_deaths[["2.5%"]][2]` - `r top2_deaths[["97.5%"]][2]`).
 
-and is lowest in:
+and are lowest in:
   
 * `r bottom2_deaths$country[1]` with an estimated median
 `r bottom2_deaths[["50%"]][1]` deaths (95% CrI `r bottom2_deaths[["2.5%"]][1]` - `r bottom2_deaths[["97.5%"]][1]`), and

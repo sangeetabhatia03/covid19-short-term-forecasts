@@ -34,7 +34,7 @@ bottom2_size <- dplyr::top_n(
 Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
 reported cases in the 10 days prior to that period.  Estimates of case
 ascertainment were highly variable.
-Results indicate that countries with highest case ascertainment were:
+Results indicate that the countries with the highest case ascertainment were:
   
 * `r top2_case_at$country[2]` with an estimated median ascertainment
   of `r top2_case_at$estimated_reporting_50[2]` 
@@ -43,7 +43,7 @@ Results indicate that countries with highest case ascertainment were:
   of `r top2_case_at$estimated_reporting_50[1]` 
   (95% CI `r top2_case_at$estimated_reporting_025[1]`  - `r top2_case_at$estimated_reporting_975[1]`).
 
-and countries with the lowest case ascertainment were:
+and the countries with the lowest case ascertainment were:
 
 * `r bottom2_case_at$country[2]` with an estimated median ascertainment
   of `r bottom2_case_at$estimated_reporting_50[2]` 
