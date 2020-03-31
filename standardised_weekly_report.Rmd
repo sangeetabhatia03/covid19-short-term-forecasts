@@ -144,16 +144,16 @@ the epidemic in each country in the previous 7 days (week starting 22-03-2020).
 Countries with the largest true epidemic size in this period were:
   
 * United States of America with an estimated true epidemics size in this period of
-  2,257,530 (95% CrI 1,395,862 - 2,173,824), and
+  2,200,000 (95% CrI 1,300,000 - 2,100,000), and
 * Spain with an estimated true epidemic size in this period of
-1,944,557 (95% CrI 1,905,225 - 1,984,071).
+1,900,000 (95% CrI 1,900,000 - 1,900,000).
 
 and countries with the lowest true epidemic size in this period were:
 
 * San Marino with an estimated true epidemic size in this period of
-1,320 (95% CrI 796 - 1,998), and 
+1,300 (95% CrI 790 - 1,900), and 
 * South Korea with an estimated true epidemic size in this period of
-  1,887 (95% CrI 1,493 - 2,351).
+  1,800 (95% CrI 1,400 - 2,300).
 
 
 <br>
