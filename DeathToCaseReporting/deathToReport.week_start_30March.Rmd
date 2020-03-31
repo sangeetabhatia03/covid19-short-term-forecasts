@@ -113,8 +113,10 @@ for (i in 1:N_geo){
        ylim=c(0,1),
        type='l',
        xlim = c(as.Date(c('01/03/2020'),format = '%d/%m/%Y'),date_week_finishing-delay_report_death),
-       bty ='n', main = country[i],col = rgb(0,0,1),
-       xlab = '', ylab = 'ratio D to I') 
+       bty ='n',
+       main = snakecase::to_any_case(country[i], case = "title"),
+       col = rgb(0,0,1),
+       xlab = '', ylab = 'ratio D to C') 
   
   polygon(c(a$date,rev(a$date)),
           c(a$lower,rev(a$upper)),
@@ -132,7 +134,7 @@ for (i in 1:N_geo){
         inc[,2]/max(c(inc[,1],inc[,2])), 
         type = 'p', pch=16,col='red')
   
-  if(i==3){
+  if(country[i] == "Belgium"){
   legend('topleft',legend = c('ratio','death','reported cases'),bty='n',
          lwd=c(3,NA,NA),pch=c(NA,16,16),col = c(rgb(0,0,1),rgb(1,0,0),rgb(0,0,0)))
   }
@@ -201,7 +203,7 @@ write.csv(summary_14days,file = paste0('summary_DeathToRepoted_14days_',date_wee
 
 full size of epidemic so far
 
-```{r}
+```{r eval = FALSE}
 
 # count cumulative death up to now I_true = D/CFR
 
