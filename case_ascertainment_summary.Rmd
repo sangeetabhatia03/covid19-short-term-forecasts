@@ -38,7 +38,7 @@ Results indicate that countries with highest case ascertainment were:
   
 * `r top2_case_at$country[2]` with an estimated median ascertainment
   of `r top2_case_at$estimated_reporting_50[2]` 
-  (95% CI `r top2_case_at$estimated_reporting_025[2]`  - `r top2_case_at$estimated_reporting_975[2]`), and
+  (95% confidence interval (CI) `r top2_case_at$estimated_reporting_025[2]`  - `r top2_case_at$estimated_reporting_975[2]`), and
 * `r top2_case_at$country[1]` with an estimated median ascertainment
   of `r top2_case_at$estimated_reporting_50[1]` 
   (95% CI `r top2_case_at$estimated_reporting_025[1]`  - `r top2_case_at$estimated_reporting_975[1]`).

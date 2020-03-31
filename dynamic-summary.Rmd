@@ -21,11 +21,13 @@ ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "
 ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$proj == date_week_finishing, ]
 top2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = 2, wt = `50%`) %>%
     dplyr::mutate_if(is.numeric, ~signif(., 2)) %>%
+    dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ",")) %>%
     dplyr::mutate_at(vars("country"), ~ snakecase::to_any_case(., case = "title"))
 
 bottom2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = -2, wt = `50%`) %>%
     dplyr::mutate_if(is.numeric, ~signif(., 2)) %>%
-        dplyr::mutate_at(vars("country"), ~ snakecase::to_any_case(., case = "title"))
+    dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ",")) %>%
+    dplyr::mutate_at(vars("country"), ~ snakecase::to_any_case(., case = "title"))
 
 model_rt <- drake::readd("model_rt_qntls")
 model_rt <- model_rt[grep(
@@ -62,17 +64,17 @@ and was lowest in:
 Forecast of predicted deaths in the coming week (week starting `r date_week_finishing`) is highest in:
   
 * `r top2_deaths$country[1]` with an estimated median
-`r prettyNum(top2_deaths[["50%"]][1])` deaths 
- (95% CrI `r prettyNum(top2_deaths[["2.5%"]][1])` - 
- `r prettyNum(top2_deaths[["97.5%"]][1])`), and
+`r top2_deaths[["50%"]][1]` deaths 
+ (95% CrI `r top2_deaths[["2.5%"]][1]` - 
+ `r top2_deaths[["97.5%"]][1]`), and
  
-* `r prettyNum(top2_deaths$country[2])` with an estimated median 
-`r prettyNum(top2_deaths[["50%"]][2])` deaths
-(95% CrI `r prettyNum(top2_deaths[["2.5%"]][2])` - `r prettyNum(top2_deaths[["97.5%"]][2])`).
+* `r top2_deaths$country[2]` with an estimated median 
+`r top2_deaths[["50%"]][2]` deaths
+(95% CrI `r top2_deaths[["2.5%"]][2]` - `r top2_deaths[["97.5%"]][2]`).
 
 and is lowest in:
   
-* `r prettyNum(bottom2_deaths$country[1])` with an estimated median
-`r prettyNum(bottom2_deaths[["50%"]][1])` deaths (95% CrI `r prettyNum(bottom2_deaths[["2.5%"]][1])` - `r prettyNum(bottom2_deaths[["97.5%"]][1])`), and
+* `r bottom2_deaths$country[1]` with an estimated median
+`r bottom2_deaths[["50%"]][1]` deaths (95% CrI `r bottom2_deaths[["2.5%"]][1]` - `r bottom2_deaths[["97.5%"]][1]`), and
 * `r bottom2_deaths$country[2]` with an estimated median 
-`r prettyNum(bottom2_deaths[["50%"]][2])` deaths (95% CrI `r prettyNum(bottom2_deaths[["2.5%"]][2])` - `r prettyNum(bottom2_deaths[["97.5%"]][2])`).
+`r bottom2_deaths[["50%"]][2]` deaths (95% CrI `r bottom2_deaths[["2.5%"]][2]` - `r bottom2_deaths[["97.5%"]][2]`).
