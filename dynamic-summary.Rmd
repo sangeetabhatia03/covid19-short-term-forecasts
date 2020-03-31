@@ -9,6 +9,7 @@ ens_rt <- ens_rt_both[ens_rt_both$si == "si_1", ]
 ens_rt$model <- as.Date(ens_rt$model)
 ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
 ens_rt_tall <- tidyr::spread(ens_rt, quantile, out2)
+ens_rt_tall$country <- snakecase::to_any_case(ens_rt_tall$country, case = "title")
 top2_rt <- dplyr::top_n(ens_rt_tall, n = 2, wt = `50%`) %>%
     dplyr::mutate_if(is.numeric, ~ round(., 2))
 bottom2_rt <- dplyr::top_n(ens_rt_tall, n = -2, wt = `50%`) %>%
@@ -19,10 +20,12 @@ ensemble_weekly_qntls <- drake::readd("ensemble_weekly_qntls")
 ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "si_1", ]
 ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$proj == date_week_finishing, ]
 top2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = 2, wt = `50%`) %>%
-    dplyr::mutate_if(is.numeric, round)
+    dplyr::mutate_if(is.numeric, round) %>%
+    dplyr::mutate_at(vars("country"), ~ snakecase::to_any_case(., case = "title"))
 
 bottom2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = -2, wt = `50%`) %>%
-        dplyr::mutate_if(is.numeric, round)
+        dplyr::mutate_if(is.numeric, round) %>%
+        dplyr::mutate_at(vars("country"), ~ snakecase::to_any_case(., case = "title"))
 
 model_rt <- drake::readd("model_rt_qntls")
 model_rt <- model_rt[grep(

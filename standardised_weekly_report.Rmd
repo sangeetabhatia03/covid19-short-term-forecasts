@@ -44,8 +44,8 @@ knitr::opts_chunk$set(
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
 As of `r format(Sys.time(), '%B %d, %Y')`, there have more than
-700,000 cases of COVID-19 across the world, with more than 35,000
-deaths [WHO Sitrep] . In this report, we use the reported number of deaths
+650,000 cases of COVID-19 across the world, with more than 33,000
+deaths [@whositrep] . In this report, we use the reported number of deaths
 of COVID-19 to make short term forecasts of the trajectory of the
 epidemic and the expected number of
 COVID-19 deaths for 21 countries with sustained human-to-human
@@ -63,14 +63,14 @@ number of deaths in the week ahead for each country with active transmission.
 * We define a country to have sustained local active transmission if
 at least five deaths were observed in the country in two previous
 consecutive weeks. In the analysis for week beginning 
-22^nd^ March 2020, 14 countries/regions were included in the analysis based on these
-thresholds. For the week beginning 29^th^ March 2020, the number of countries/regions 
-included is 31.
+22^nd^ March 2020, 14 countries/regions were included in the analysis
+based on these thresholds. For the week beginning 29^th^ March 2020,
+the number of countries/regions included is 31.
 
 
-* We forecast the number of potential eaths as the reporting of deaths
-is likely to be more
-reliable and stable over time than the reporting of cases. 
+* We forecast the number of potential deaths as the reporting of deaths
+is likely to be more reliable and stable over time than the reporting 
+of cases. 
 
 * As we are forecasting deaths, latest estimates of
 transmissibility reflect the epidemiological situation at the time of
@@ -89,7 +89,7 @@ deaths to delayed cases equal Case Fatality Ratio (CFR).
 
 In this analysis, key assumptions are:
 
-* The true underlying Case Fatality Ratio (CFR) is 1%,
+* The true underlying CFR is 1%,
 * The delay from a case being reported to death is 10 days.
 * All deaths due to COVID-19 have been reported in each country.
 
@@ -143,7 +143,7 @@ Based on the estimated ascertainment, we estimated the true size of
 the epidemic in each country in the previous 7 days (week starting 22-03-2020). 
 Countries with the largest true epidemic size in this period were:
   
-* USA with an estimated true epidemics size in this period of
+* United States of America with an estimated true epidemics size in this period of
   2,257,530 (95% CrI 1,395,862 - 2,173,824), and
 * Spain with an estimated true epidemic size in this period of
 1,944,557 (95% CrI 1,905,225 - 1,984,071).

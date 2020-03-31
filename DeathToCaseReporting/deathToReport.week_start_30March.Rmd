@@ -199,3 +199,59 @@ write.csv(summary_14days,file = paste0('summary_DeathToRepoted_14days_',date_wee
 
 ```
 
+full size of epidemic so far
+
+```{r}
+
+# count cumulative death up to now I_true = D/CFR
+
+colSums(D[,-1])/CFR
+
+# for the 10 days up to now, deaths not observed, so I_rep last 10 days * colSums(tail(I[,-1],7))
+True_size <- colSums(tail(I[,-1],10))*multi_real
+
+Epidemic_size <- data.frame(country = as.character(country),
+                            based_on_death = colSums(D[,-1])/CFR,
+                            True_size_last_10_days = paste0(round(True_size[,1],digits = 1),
+                                                          ' ; 95%CI [',
+                                                          round(True_size[,2],digits = 1),
+                                                          ';',
+                                                          round(True_size[,3],digits = 1),
+                                                          ']'),
+                            True_size_last_Total = paste0(round(colSums(D[,-1])/CFR+True_size[,1],digits = 1),
+                                                          ' ; 95%CI [',
+                                                          round(colSums(D[,-1])/CFR+True_size[,2],digits = 1),
+                                                          ';',
+                                                          round(colSums(D[,-1])/CFR+True_size[,3],digits = 1),
+                                                          ']'))
+
+pop_size <- read.csv(file='API_SP.POP.TOTL_DS2_en_csv_v2_866861.csv',stringsAsFactors = FALSE)
+
+pop_size$Country.Name <- as.character(pop_size$Country.Name)#clean
+n_country <- 1:length(Epidemic_size$country)
+#miss-spelled
+Epidemic_size$country[-which(as.character(Epidemic_size$country) %in% as.character(pop_size$Country.Name))]
+#corrections
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'Egypt, Arab Rep.')] <- 'Egypt'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'Iran, Islamic Rep.')] <- 'Iran'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'San Marino')] <- 'San_Marino'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'Korea, Rep.')] <- 'South_Korea'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'United Kingdom')] <- 'United_Kingdom'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'United States')] <- 'United_States_of_America'
+# check
+Epidemic_size$country[-which(Epidemic_size$country %in% pop_size$Country.Name)]
+
+f <- rep(NA,length(country))
+for (i in 1:length(country)){
+         f[i] <- which(as.character(pop_size$Country.Name) %in% as.character(Epidemic_size$country)[i])
+}
+cbind(pop_size$Country.Name[f],as.character(Epidemic_size$country))
+
+Epidemic_size$Attack_rate <- paste0(round((colSums(D[,-1])/CFR+True_size[,1])/pop_size$X2018[f]*100,digits = 1),
+                                    ' ; 95%CI [',
+                                    round((colSums(D[,-1])/CFR+True_size[,2])/pop_size$X2018[f]*100,digits = 1),
+                                    ';',
+                                    round((colSums(D[,-1])/CFR+True_size[,3])/pop_size$X2018[f]*100,digits = 1),
+                                    ']')
+
+```
