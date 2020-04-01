@@ -207,6 +207,7 @@ pool_predictions <- function(outputs, weights = 1) {
 format_weekly_pred <- function(x) {
 
     x <- dplyr::mutate_if(x, is.numeric, ~ signif(., 2))
+    x <- dplyr::mutate_if(x, is.numeric, ~prettyNum(., big.mark = ","))
 
     out <- data.frame(
         Country = x$country,

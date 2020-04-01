@@ -33,7 +33,10 @@ bottom2_size <- dplyr::top_n(
 ```
 Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
 reported cases in the 10 days prior to that period.  Estimates of case
-ascertainment were highly variable.
+ascertainment were highly variable and due to the underlying
+assumption of perfect reporting, are likely to be an underestimate. In
+particular, community deaths due to COVID-19 are likely under-reported
+[@onsreport]. 
 Results indicate that the countries with the highest case ascertainment were:
   
 * `r top2_case_at$country[2]` with an estimated median ascertainment

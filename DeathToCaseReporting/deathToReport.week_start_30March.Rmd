@@ -112,11 +112,13 @@ for (i in 1:N_geo){
        #ylim = c(0,max(a[f,2:4],na.rm=TRUE)),
        ylim=c(0,1),
        type='l',
-       xlim = c(as.Date(c('01/03/2020'),format = '%d/%m/%Y'),date_week_finishing-delay_report_death),
+       xlim = c(as.Date(c('01/03/2020'),format = '%d/%m/%Y'),
+                date_week_finishing-delay_report_death),
        bty ='n',
        main = snakecase::to_any_case(country[i], case = "title"),
        col = rgb(0,0,1),
        xlab = '', ylab = 'ratio D to C') 
+  
   
   polygon(c(a$date,rev(a$date)),
           c(a$lower,rev(a$upper)),
