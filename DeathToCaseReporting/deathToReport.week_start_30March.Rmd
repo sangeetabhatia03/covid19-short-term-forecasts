@@ -117,8 +117,9 @@ for (i in 1:N_geo){
        bty ='n',
        main = snakecase::to_any_case(country[i], case = "title"),
        col = rgb(0,0,1),
-       xlab = '', ylab = 'ratio D to C') 
-  
+       xlab = '', ylab = 'ratio D to C',
+       xaxt="n") 
+  axis(1, at=as.Date(c('2020/03/01','2020/03/15'),format = '%Y/%m/%d'),labels = c('2020/03/01','2020/03/15'),las=1)
   
   polygon(c(a$date,rev(a$date)),
           c(a$lower,rev(a$upper)),
