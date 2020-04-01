@@ -19,6 +19,7 @@ fontfamily: mathpazo
 fontsize: 11pt
 spacing: double
 biblio-style: apsr
+csl: annual-review-of-statistics-and-its-application.csl
 endnote: no
 always_allow_html: true
 bibliography: bibliography.bib
@@ -68,9 +69,11 @@ transmission.
 * We define a country as having active transmission if
 at least *ten* deaths were observed in the country in two previous
 consecutive weeks. In the analysis for week beginning 
-22^nd^ March 2020, 14 countries/regions were included in the analysis
-based on these thresholds. For the week beginning 29^th^ March 2020,
-the number of countries/regions included is 22.
+22^nd^ March 2020, 14 countries/regions were included in the
+analysis^[Note that in the analysis for previous two weeks, we
+included countries/regions that had 5 deaths each in two consecutive
+previous weeks.]. For the week beginning 29^th^ March 2020,
+the number of countries/regions included based on these thresholds is 22.
 
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -276,13 +279,16 @@ projection_plot(obs, ensb_pred1) +
 
 ```
 
-**Figure 2**: Reported daily death, current and past forecasts based on the ensemble model.
+**Figure 2**: Reported daily deaths, current and past forecasts based on the ensemble model.
 For each country with active transmission (see methods), we plot
 the observed incidence of deaths (black dots). 
 Past forecasts, where available, are shown in green (median and
-95% CrI interval), while latest forecasts are show in red (median and
+95% CrI interval), while latest forecasts are shown in red (median and
 95% CrI interval). Vertical
 dashed line show the start and end of each week (Monday to Sunday).
+Note that in the analysis for previous two weeks, we
+included countries/regions that had 5 deaths each in two consecutive
+previous weeks.
 
 
 <br><br>
@@ -459,13 +465,16 @@ projection_plot(obs, pred) +
 
 ```
 
-**Figure 4**: Reported daily death, current and past forecasts based on model 1.
+**Figure 4**: Reported daily deaths, current and past forecasts based on model 1.
 For each country with active transmission (see methods), we plot
 the observed incidence of deaths (black dots). 
 Past forecasts, where available, are shown in green (median and
-95% CrI interval), while latest forecasts are show in red (median and
+95% CrI interval), while latest forecasts are shown in red (median and
 95% CrI interval). Vertical
 dashed line show the start and end of each week (Monday to Sunday).
+Note that in the analysis for previous two weeks, we
+included countries/regions that had 5 deaths each in two consecutive
+previous weeks.
 
 <br><br>
 
@@ -618,14 +627,16 @@ projection_plot(obs, pred) +
 
 ```
 
-**Figure 6**: Reported daily death, current and past forecasts based on model 2.
+**Figure 6**: Reported daily deaths, current and past forecasts based on model 2.
 For each country with active transmission (see methods), we plot
 the observed incidence of deaths (black dots). 
 Past forecasts, where available, are shown in green (median and
-95% CrI interval), while latest forecasts are show in red (median and
+95% CrI interval), while latest forecasts are shown in red (median and
 95% CrI interval). Vertical
 dashed line show the start and end of each week (Monday to Sunday).
-
+Note that in the analysis for previous two weeks, we
+included countries/regions that had 5 deaths each in two consecutive
+previous weeks.
 
 <br><br>
 
@@ -736,14 +747,16 @@ projection_plot(obs, ensb_pred2) +
 
 ```
 
-**Figure 8**: Reported daily death, current and past forecasts based on the model ensemble.
+**Figure 8**: Reported daily deaths, current and past forecasts based on the model ensemble.
 For each country with active transmission (see methods), we plot
 the observed incidence of deaths (black dots). 
 Past forecasts, where available, are shown in green (median and
-95% CrI interval), while latest forecasts are show in red (median and
+95% CrI interval), while latest forecasts are shown in red (median and
 95% CrI interval). Vertical
 dashed line show the start and end of each week (Monday to Sunday).
-
+Note that in the analysis for previous two weeks, we
+included countries/regions that had 5 deaths each in two consecutive
+previous weeks.
 <br><br>
 
 
@@ -892,8 +905,16 @@ $$\frac{D^r}{I^r}$$
 
 **Table 4**: Results summary for repoting and case ascertainment. We present 
 (**i**) the estimated ratio of deaths to reported cases 10 days prior per country
-  (mean and 95% CI) during the last *14 days*; (**ii**) the estimated case ascertainment per country (mean and 95% CI) during the last *14 days*; (**iii**) the estimated factor to be multiplied to observed cases number to obtain
-  the true number of cases (scaling factor x observed cases). Mean and 95% CI, estimated for the last *14 days*; (**iv**) the observed and predicted number of cases in the *last week* (week starting [date]).
+  (mean and 95% CI) during the last *14 days*; (**ii**) the estimated
+  case ascertainment per country (mean and 95% CI) during the last *14
+  days*; (**iii**) the estimated factor to be multiplied to observed
+  cases number to obtain
+  the true number of cases (scaling factor x observed cases). Mean and
+  95% CI, estimated for the last *14 days*; (**iv**) the observed and
+  predicted number of cases in the *last week* (week starting
+  22-03-2020). Estimates for the number of deaths have been rounded to 
+  2 significant figures.
+  
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
