@@ -160,7 +160,7 @@ impact on the weekly forecasts produced, it results in much higher
 estimates of transmissibility.
 
 ```{r}
-sicaption <- "**Figure 1**: Serial Interval distributions used in the anlyses. Here the serial interval relates to death and characterise the time between a case dying and its infector dying. Our main analysis assumes a Gamma distribution with a mean of 4.80 days and a standard deviation of 2.70 days (shown in purple). The longer serial interval, used as sentivity analysis, with a mean of 6.48 days and a standard deviation of 3.83 days is shown in green."
+sicaption <- "**Figure 1**: Serial Interval distributions used in the analysis. Here the serial interval relates to death and characterise the time between a case dying and its infector dying. Our main analysis assumes a Gamma distribution with a mean of 4.80 days and a standard deviation of 2.70 days (shown in purple). The longer serial interval, used as sensitivity analysis, with a mean of 6.48 days and a standard deviation of 3.83 days is shown in green."
 ```
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.cap = sicaption}
@@ -207,7 +207,7 @@ posterior distribution for all estimated reproduction numbers and
 forecasted deaths by simply combining the posterior distributions of
 each model.
 
-Ensemble models, even if built with a relatively simple apprach such
+Ensemble models, even if built with a relatively simple approach such
 as adopted here, have been shown to to typically
 perform better than individual models in the context of epidemiology
 of infectious diseases [@viboud2018rapidd].
@@ -400,7 +400,7 @@ over this time period, we would predict more deaths We
 limited our projection to 7 days only as assuming constant
 transmissibility over longer time horizons seemed unrealistic in light
 of the different interventions implemented by different countries and
-potential voluntary behavior changes.
+potential voluntary behaviour changes.
 
 
  
@@ -531,7 +531,7 @@ or weeks) and uses the part of the incidence curve contained in this
 window to estimate R~t~. However, estimates of $R_t$ can depend strongly on
 the width of the time-window used for estimation. Thus
 mis-specified time-windows can bias our inference. In [@parag2019optimising]
-we use information theory to extend the approach of Cori et al. to optimize
+we use information theory to extend the approach of Cori et al. to optimise
 the choice of the time-window and refine estimates of $R_t$. 
 Specifically:
 
@@ -541,7 +541,7 @@ Specifically:
     to t. For a gamma posterior over R~t~ this is analytic and negative
     binomial ([see @parag2019optimising] for exact formulae). 
 	
--   We compute this distribution sequentially and casually across the
+-   We compute this distribution sequentially and causally across the
     existing incidence curve and then evaluate every observed case-count
     according to this posterior predictive distribution. For example at
     t = 5, we pick the true incidence value I~5~\* and evaluate the
@@ -865,11 +865,11 @@ knitr::include_graphics("figs/unnamed-chunk-4-6.png")
 **Figure 10**: Temporal trends in the ratio of reported
 deaths to reported cases 10 days prior (medians and 95% CIs, solid
 lines and bands respectively).
-Alos plotted are the reported deaths (red dots) and reported cases
+Also plotted are the reported deaths (red dots) and reported cases
 (black dots). 
 The reported number of deaths and cases have
-been rescaled so
-that the maximium recorded numbers of deaths or cases (with a 10-days
+been re-scaled so
+that the maximum recorded numbers of deaths or cases (with a 10-days
 delay) reaches 1.
 
 <!-- ```{r echo = FALSE, warning = FALSE, message = FALSE} -->
@@ -903,7 +903,7 @@ particular, community deaths due to COVID-19 are likely under-reported
 And the ratio (of deaths to reported cases 10 days prior) previously defined is 
 $$\frac{D^r}{I^r}$$
 
-**Table 4**: Results summary for repoting and case ascertainment. We present 
+**Table 4**: Results summary for reporting and case ascertainment. We present 
 (**i**) the estimated ratio of deaths to reported cases 10 days prior per country
   (mean and 95% CI) during the last *14 days*; (**ii**) the estimated
   case ascertainment per country (mean and 95% CI) during the last *14
