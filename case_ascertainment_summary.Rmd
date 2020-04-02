@@ -60,7 +60,7 @@ Based on the estimated ascertainment, we estimated the true size of
 the epidemic in each country in the previous 7 days (week starting 22-03-2020). 
 Countries with the largest true epidemic size in this period were:
   
-* `r top2_size$country[2]` with an estimated median size of
+* the `r top2_size$country[2]` with an estimated median size of
   `r top2_size$Predicted_True_case_last_week_50[2]` 
   (95% CI `r top2_size$Predicted_True_case_last_week_025[2]`  - `r top2_size$Predicted_True_case_last_week_975[2]`), and
 * `r top2_size$country[1]` with an estimated median size 
