@@ -7,7 +7,7 @@ citation_package: natbib
 keep_tex: false
 fig_caption: true
 latex_engine: pdflatex
-title: "Short-term forecasts of cases and deaths of COVID-19 in multiple countries"
+title: "Short-term forecasts of COVID-19 deaths of in multiple countries"
 author:
 - name: To be decided
 affiliation: Imperial College London
@@ -46,15 +46,14 @@ knitr::opts_chunk$set(
 ```
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
-As of `r format(Sys.time(), '%B %d, %Y')`, there have more than
+As of `r format(Sys.time(), '%d-%m-%Y')`, there have more than
 750,000 cases of COVID-19 across the world, with more than 36,000
-deaths [@whositrep] . In this report, we use the reported number of deaths
-of COVID-19 to make short term forecasts of the trajectory of the
+deaths [@whositrep]. In this report, we use the reported number of deaths
+due to COVID-19 to make short-term forecasts of the trajectory of the
 epidemic and the expected number of
 COVID-19 deaths for 22 countries with sustained human-to-human
 transmission. We also analyse reporting trends over time in each
-country and estimate case ascertainment.
-
+country and estimate case ascertainment. 
 
 
 ## Summary
@@ -69,10 +68,10 @@ transmission.
 * We define a country as having active transmission if
 at least *ten* deaths were observed in the country in two previous
 consecutive weeks. In the analysis for week beginning 
-22^nd^ March 2020, 14 countries/regions were included in the
+22-03-2020, 14 countries/regions were included in the
 analysis^[Note that in the analysis for previous two weeks, we
-included countries/regions that had 5 deaths each in two consecutive
-previous weeks.]. For the week beginning 29^th^ March 2020,
+included countries/regions that had *five* deaths each in two consecutive
+previous weeks.]. For the week beginning 29-03-2020,
 the number of countries/regions included based on these thresholds is 22.
 
 
@@ -80,24 +79,24 @@ the number of countries/regions included based on these thresholds is 22.
 is likely to be more reliable and stable over time than the reporting 
 of cases. 
 
-* As we are forecasting deaths, latest estimates of
+* As we are forecasting deaths, the latest estimates of
 transmissibility reflect the epidemiological situation at the time of
-the infection of COVID-19 fatalities. Therefore, the
-impact of current controls on estimated transmissibility will be
-quantifiable with a delay (i.e. delay between reporting and death).
+the infection of COVID-19 fatalities. Therefore, the impact of
+controls on estimated transmissibility will be quantifiable with a
+delay between transmission and death.
 
 
 A **secondary** objective of this report is to analyse case
 ascertainment per country. As well as forecasting ahead, we use the number
 of reported deaths and of cases reported 10 days prior (using a fixed
 delay) to analyse the reporting trends per
-country. If the reporting of cases and deaths was perfect, and
+country. If the reporting of cases and deaths were perfect, and
 the delay between reporting and death fixed and known, the ratio of
 deaths to delayed cases would equal the Case Fatality Ratio (CFR).
 
 In this analysis, key assumptions are:
 
-* The true underlying CFR is 1%,
+* The true underlying CFR is 1.38% [@verity2020],
 * The delay from a case being reported to death is 10 days.
 * All deaths due to COVID-19 have been reported in each country.
 
@@ -146,15 +145,15 @@ week ahead. Two different modelling teams will produce these
 forecasts which are then used to produce an ensemble forecast.
 
 Our main analysis assumes a gamma distributed serial interval with mean 4.8 days
-and standard deviation of 2.7 days following Wang and Teunis, 2020.
+and standard deviation of 2.7 days following [@wang2020strongly].
 The serial interval estimates observed from various studies thus far
 may be biased toward lower values due to observation bias whereby, in
 contact tracing studies, long serial
 intervals tend to be under-represented. To account for this, as a
 sensitivity analysis, we also use a
 longer serial interval of mean 6.48 days and standard deviation of
-3.83 days [Ferguson 2020, Report 9]. Results for this longer interval
-are presented in the section Sensitivity Analyses. While using such a
+3.83 days [@ferguson2020report]. Results using this longer interval
+are presented in the section Sensitivity Analyses. While using  a
 longer serial interval has very little
 impact on the weekly forecasts produced, it results in much higher
 estimates of transmissibility.
@@ -807,7 +806,7 @@ rt_plot(ens_rt) +
 
 The analysis relies on the following assumptions:
   
-* The true underlying Case Fatality Ratio (CFR) is 1%,
+* The true underlying Case Fatality Ratio (CFR) is 1.38% [@verity2020],
 * The delay from case being reported to death is 10 days.
 * All deaths due to COVID-19 have been reported in each country.
 
@@ -892,7 +891,7 @@ ratio defined above would be equivalent to the Case Fatality Ratio
 (CFR).
 
 
-Assuming a CFR of 1%, the ascertainment, $\rho$, can be defined as:
+Assuming a CFR of 1.38% [@verity2020], the ascertainment, $\rho$, can be defined as:
 $$\rho = \frac{I^r}{D^r} CFR$$
 with $D^r$ and $I^r$ the reported number of deaths and cases (with a 10-days delay).
 Note that since we assume that all deaths due to COVID-19 are

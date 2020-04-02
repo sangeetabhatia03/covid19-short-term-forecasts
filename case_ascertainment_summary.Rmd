@@ -10,30 +10,30 @@ case_at$country <- snakecase::to_any_case(case_at$country, case = "title")
 top2_case_at <- dplyr::top_n(
     case_at, n = 2, wt = estimated_reporting_50
     ) %>%
-    dplyr::mutate_if(is.numeric, ~ scales::percent(round(., 2), accuracy = 0.1))
+    dplyr::mutate_if(is.numeric, ~ scales::percent(round(., 3), accuracy = 0.1))
 
 bottom2_case_at <- dplyr::top_n(
     case_at, n = -2, wt = estimated_reporting_50
     ) %>%
-    dplyr::mutate_if(is.numeric, ~ scales::percent(round(., 2), accuracy = 0.1))
+    dplyr::mutate_if(is.numeric, ~ scales::percent(round(., 3), accuracy = 0.1))
 
 
 top2_size <- dplyr::top_n(
     case_at, n = 2, wt = Predicted_True_case_last_week_50
     ) %>%
-    dplyr::mutate_if(is.numeric, ~signif(., 2)) %>%
+    dplyr::mutate_if(is.numeric, ~signif(., 3)) %>%
     dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ","))
 
 bottom2_size <- dplyr::top_n(
     case_at, n = -2, wt = Predicted_True_case_last_week_50
     ) %>%
-    dplyr::mutate_if(is.numeric, ~signif(., 2)) %>%
+    dplyr::mutate_if(is.numeric, ~signif(., 3)) %>%
     dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ","))
 
 ```
 Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
 reported cases in the 10 days prior to that period.  Estimates of case
-ascertainment were highly variable and due to the underlying
+ascertainment were highly variable and, due to the underlying
 assumption of perfect reporting, are likely to be an underestimate. In
 particular, community deaths due to COVID-19 are likely under-reported
 [@onsreport]. 
@@ -62,18 +62,18 @@ Countries with the largest true epidemic size in this period were:
   
 * `r top2_size$country[2]` with an estimated median size of
   `r top2_size$Predicted_True_case_last_week_50[2]` 
-  (95% CrI `r top2_size$Predicted_True_case_last_week_025[2]`  - `r top2_size$Predicted_True_case_last_week_975[2]`), and
+  (95% CI `r top2_size$Predicted_True_case_last_week_025[2]`  - `r top2_size$Predicted_True_case_last_week_975[2]`), and
 * `r top2_size$country[1]` with an estimated median size 
   of `r top2_size$Predicted_True_case_last_week_50[1]` 
-  (95% CrI `r top2_size$Predicted_True_case_last_week_025[1]`  - `r top2_size$Predicted_True_case_last_week_975[1]`).
+  (95% CI `r top2_size$Predicted_True_case_last_week_025[1]`  - `r top2_size$Predicted_True_case_last_week_975[1]`).
 
 and countries with the lowest true epidemic size in this period were:
   
 * `r bottom2_size$country[2]` with an estimated median size of
   of `r bottom2_size$Predicted_True_case_last_week_50[2]` 
-  (95% CrI `r bottom2_size$Predicted_True_case_last_week_025[2]`  - `r bottom2_size$Predicted_True_case_last_week_975[2]`), and
+  (95% CI `r bottom2_size$Predicted_True_case_last_week_025[2]`  - `r bottom2_size$Predicted_True_case_last_week_975[2]`), and
 * `r bottom2_size$country[1]` with an estimated median size of
   of `r bottom2_size$Predicted_True_case_last_week_50[1]` 
-  (95% CrI `r bottom2_size$Predicted_True_case_last_week_025[1]`  - `r bottom2_size$Predicted_True_case_last_week_975[1]`).
+  (95% CI `r bottom2_size$Predicted_True_case_last_week_025[1]`  - `r bottom2_size$Predicted_True_case_last_week_975[1]`).
 
 

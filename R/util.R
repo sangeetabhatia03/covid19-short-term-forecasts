@@ -206,7 +206,7 @@ pool_predictions <- function(outputs, weights = 1) {
 ## x is a data.frame of weekly predictions
 format_weekly_pred <- function(x) {
 
-    x <- dplyr::mutate_if(x, is.numeric, ~ signif(., 2))
+    x <- dplyr::mutate_if(x, is.numeric, ~ signif(., 3))
     x <- dplyr::mutate_if(x, is.numeric, ~prettyNum(., big.mark = ","))
 
     out <- data.frame(

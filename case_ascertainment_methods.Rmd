@@ -1,0 +1,87 @@
+---
+output: 
+pdf_document:
+citation_package: natbib
+keep_tex: false
+fig_caption: true
+latex_engine: pdflatex
+title: Case Ascertainment
+author:
+- name: Pierre Nouvellet and Sangeeta Bhatia
+affiliation: Imperial College London
+abstract: 
+keywords: 
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+spacing: double
+bibliography: 
+biblio-style: apsr
+endnote: no
+---
+
+Objective: 
+
+* Estimate trends in case ascertainment and ratio of deaths to
+  reported cases.
+* Use these to estimate the true size of the epidemic.
+
+Assumptions. 
+
+We assume 
+
+* that deaths due to COVID-19 are perfectly reported;
+* A known distribution for delay from report to death; and,
+* A known distribution for CFR.
+
+Methods.
+
+Let $D_{i, t}$ be the number of deaths in location $i$ at time $t$.
+Let $I_{i, t}^r$ be the reported number of cases in location $i$ at
+time $t$ and $I_{i, t}^{true}$ be the true number of cases.
+We assume that the reporting to death delay $\delta$ is distributed
+according to a Gamma distribution with mean $\mu$ and standard
+deviation $\sigma$. That is,
+
+\[\delta \sim \Gamma(\mu, \sigma).\]
+
+Let $r_{i, t}$ be the ratio of deaths to reported cases in location
+$i$ at time $t$. We assume that deaths are distributed according to
+a Binomial distribution thus:
+\[
+D_{i, t} \sim Binom\left( \int\limits_0^{\infty}{\Gamma(x \mid \mu,
+\sigma)I_{i, t - x}^{r}dx} , r_{i, \mu}\right).
+\]
+
+This allows us to obtain a posterior distribution for $r_{i, t}$.
+
+Case ascertainment is defined as:
+\[ \rho_{i, t} = \frac{CFR}{r_{i, t}}.\]
+
+Thus a posterior distribution for $\rho_{i, t}$ can be obtained using
+the posterior distribution for $r_{i, t}$ and posterior distribution
+for CFR.
+
+Combining the CFR and the case ascertainment, we can estimate the true
+number of cases in the epidemic at any point. 
+
+For the period over which we have information on deaths i.e., mean
+report-to-death delay days prior, we use the posterior distribution of
+CFR to obtain:
+\[
+I_{i, t}^{true} \sim D_{i, t - \mu} + NBin(D_{i, t - \mu}, CFR).
+\]
+
+For the period over which we do not have information on deaths, we use
+the posterior distribution of case ascertainment to obtain
+
+\[
+I_{i, t}^{true} \sim I_{i, t}^{r} + NBin(I_{i, t}^{r}, \rho_{i,
+t}).
+\]
+
+
+
+
+

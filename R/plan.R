@@ -337,6 +337,41 @@ plan <- drake_plan(
         dplyr::mutate_at(vars("DateRep"), as.Date),
 
 
+    model_predictions_error = purrr::imap_dfr(
+        model_outputs,
+        function(x, model) {
+            message(model)
+            pred <- x[["Predictions"]]
+            purrr::imap_dfr(
+                pred,
+                function(y, cntry) {
+                    names(y) <- c("si_1", "si_2")
+                    out <- purrr::map_dfr(
+                        y,
+                        function(y_si) {
+                            y_si <- as.matrix(y_si)
+                            y_si <- t(y_si) ## Need T X N matrix for assessr
+                            dates <- as.Date(rownames(y_si))
+                            x <- dplyr::filter(
+                                obs,
+                                country == cntry & DateRep %in% dates
+                                ) %>% pull(Deaths)
+
+                            if (length(x) > 0){
+                                out <- assessr::rel_mse(obs = x, pred = y_si)
+                                out <- as.data.frame(out)
+                                out <- tibble::rownames_to_column(out, var = "date")
+                            } else {
+                                out <- NULL
+                            }
+                            out
+                        }, .id = "si"
+                    )
+                }, .id = "country"
+            )
+        }, .id = "model"
+     )
+
  ##    ## The full posterioris going to be too big
  ##    ## when we have more models and many countries.
  ##    ## model_predictions = purrr::map_dfr(
