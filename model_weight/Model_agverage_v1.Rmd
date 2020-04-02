@@ -1,0 +1,69 @@
+---
+title: "ccc"
+author: "Pierre Nouvellet"
+date: "2019-07"
+---
+
+```{r options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+library(knitr)
+library(Hmisc)
+
+opts_chunk$set(collapse = TRUE)
+
+opts_chunk$set(fig.path='figs/', fig.keep='high', 
+               dev=c('png'), fig.width=10, fig.height=6, cache=FALSE,
+               tidy=FALSE, warning=FALSE, fig.show="asis"
+ 	       )
+
+```
+
+# read data 
+
+```{r}
+
+d <- read.csv(file='model_predictions_error.csv',stringsAsFactors = FALSE)
+
+d$period <- substr(x = d$model, start = 27,stop = 36)
+d$model <- substr(x = d$model, start = 1,stop = 25)
+
+# add model number
+models <- unique(d$model)
+model_num <- rep(NA,nrow(d))
+for (i in 1:nrow(d)){
+  model_num[i] <- which(models %in% d$model[i])
+}
+d$model_num <- model_num
+
+#serial
+f <- which(d$si %in% 'si_1')
+d1 <- d[f,]
+
+f <- which(d$si %in% 'si_2')
+d2 <- d[f,]
+
+```
+
+
+# weights
+
+```{r}
+
+aggregate(x = d$out, by = list(d$model),sum)
+
+hist(d1$out[which(d1$model_num ==1)])
+hist(d1$out[which(d1$model_num ==2)])
+
+
+```
+
+```{r}
+weight <- seq(0,1,length.out = 100)
+res <- rep(NA,length(weight))
+for (i in 1:length(weight)){
+  weights <- c(weight[i], 1-weight[i])
+  w <- weights[d1$model_num]
+  res[i] <- sum(d$out*w)
+}
+plot(weight,res)
+
+```
