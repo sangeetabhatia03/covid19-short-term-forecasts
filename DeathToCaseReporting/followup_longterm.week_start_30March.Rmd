@@ -1,0 +1,361 @@
+---
+title: "ccc"
+author: "Pierre Nouvellet"
+date: "2019-07"
+---
+
+```{r options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+library(knitr)
+library(Hmisc)
+library(EpiEstim)
+
+opts_chunk$set(collapse = TRUE)
+
+opts_chunk$set(fig.path='figs/', fig.keep='high', 
+               dev=c('png'), fig.width=10, fig.height=5, cache=FALSE,
+               tidy=FALSE, warning=FALSE, fig.show="asis"
+ 	       )
+
+```
+
+
+# incidence total so far
+
+
+```{r}
+
+layout(matrix(1:6,3,2,byrow = TRUE))
+
+for (i in 1:N_geo){
+  
+  plot(I$dates,I[,i+1],pch=16,
+       ylim=c(0,max(I[,i+1],na.rm = TRUE)),
+       main = country[i],bty = 'n',
+       xlab ='', ylab = 'I')
+  
+
+}
+
+```
+
+```{r}
+
+layout(matrix(1:6,3,2,byrow = TRUE))
+
+for (i in 1:N_geo){
+  
+  plot(I$dates,I[,i+1],pch=16,
+       ylim=c(0,max(summary_I_true$high[,i+1],na.rm = TRUE)),
+       main = country[i],bty = 'n',
+       xlab ='', ylab = 'I')
+  
+  lines(summary_I_true$median$dates,
+        summary_I_true$median[,i+1], 
+        type = 'l',lwd=2, pch=16,col='blue')
+  
+  polygon(c(summary_I_true$median$dates,rev(summary_I_true$median$dates)),
+          c(summary_I_true$low[,i+1],rev(summary_I_true$high[,i+1])),
+          border = NA,
+          col = rgb(0,0,1,0.2))
+}
+
+```
+
+serial interval
+
+```{r}
+# serial interval
+SI_gamma_dist_EpiEstim <-function(mu,si_std,SItrunc){
+  SI_Distr <- EpiEstim::discr_si(seq(0, SItrunc), mu, si_std) # sapply(0:SItrunc, function(e) EpiEstim::DiscrSI(e,mu,mu*cv) )
+  SI_Distr <- SI_Distr / sum(SI_Distr)
+  return(list(dist = SI_Distr, SItrunc = SItrunc))
+}
+
+
+## # serial interval estimate used: mean = 3.96, sd =  4.75
+## # Teunis et al.
+SI <- SI_gamma_dist_EpiEstim(mu = d$si_mean[1], 
+                             si_std  = d$si_std[1], 
+                            SItrunc = 30)
+
+plot(seq(0, SI$SItrunc), SI$dist, type = "h",
+          lwd = 10, lend = 1, xlab = "time (days)", ylab = "frequency")
+title(main = "Discrete distribution of the serial interval of COVID-19")
+
+```
+
+Rt based on the median I_true
+
+```{r}
+N_geo <- length(country)
+layout(matrix(1:6,3,2,byrow = TRUE))
+t.window <- 7
+R_last <- data.frame(country = country,
+                     median = rep(NA,length(country)),
+                     low = rep(NA,length(country)),
+                     high = rep(NA,length(country)))
+
+for (i in 1:length(country)){
+  
+  obs <- summary_I_true$median[,c(1,i+1)]
+  obs[is.na(obs)] <- 0
+  
+  epi_res <- EpiEstim::estimate_R(obs[,2],method = 'non_parametric_si',
+                                  config = make_config(list(
+                                    mean_prior = 1,
+                                    si_distr = SI$dist, 
+                                    t_start = seq(2,length(obs$date)-t.window+1,1), 
+                                    t_end = seq(t.window+1,length(obs$date),1))))
+  
+  epi_res$R$t_end <- obs$date[epi_res$R$t_end]
+  plot(epi_res$R$t_end,epi_res$R$`Median(R)`,
+       # xlim=xlimp,
+       ylim = c(0,4),
+       type = 'l',col='black',lwd=2,bty = 'n',
+       main = paste0(names(obs)[2]), xlab = '',ylab = 'Rt')
+  
+  polygon(c(epi_res$R$t_end,rev(epi_res$R$t_end)),
+          c(epi_res$R$`Quantile.0.975(R)`,rev(epi_res$R$`Quantile.0.025(R)`)), 
+          col = rgb(0,0,0,.2), border = FALSE )
+  
+  abline(h=1,lty = 2,lwd =2,col='red')
+  
+  # save R_last
+  R_last[i,c(2,3,4)] <- c(tail(epi_res$R$`Median(R)`,1),
+                          tail(epi_res$R$`Quantile.0.025(R)`,1),
+                               tail(epi_res$R$`Quantile.0.975(R)`,1))
+}
+
+
+```
+
+# pop size
+
+```{r}
+# population size
+
+# load pop size
+#world bank
+pop_size <- read.csv(
+  file='API_SP.POP.TOTL_DS2_en_csv_v2_866861.csv',
+  stringsAsFactors = FALSE)
+
+pop_size$Country.Name <- as.character(pop_size$Country.Name)#clean
+n_country <- 1:N_geo
+#miss-spelled
+country[-which(as.character(country) %in% as.character(pop_size$Country.Name))]
+#corrections
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'Egypt, Arab Rep.')] <- 'Egypt'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'Iran, Islamic Rep.')] <- 'Iran'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'San Marino')] <- 'San_Marino'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'Korea, Rep.')] <- 'South_Korea'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'United Kingdom')] <- 'United_Kingdom'
+pop_size$Country.Name[which(pop_size$Country.Name %in% 'United States')] <- 'United_States_of_America'
+# check
+if (length(country[-which(country %in% pop_size$Country.Name)])>0){
+  print('warning')
+}
+
+f <- rep(NA,N_geo)
+for (i in 1:N_geo){
+         f[i] <- which(as.character(pop_size$Country.Name) %in% as.character(country)[i])
+}
+N_pop <- data.frame(country = country,
+                    c2 = pop_size$Country.Name[f],
+                    N = pop_size$X2018[f])
+
+
+
+
+```
+
+# attack rate
+
+```{r}
+
+summary_cumI_true <- list(median = temp,
+                    low = temp,
+                    high = temp)
+for (j in 1:N_geo){
+  x <- I_true[,j,]
+  x[is.na(x)] <- 0
+  cumI <- apply(x,2,cumsum)
+  summary_cumI_true$median[,j+1] <- apply(cumI,1,median,na.rm = TRUE)
+  summary_cumI_true$low[,j+1] <- apply(cumI,1,quantile,.025,na.rm = TRUE)
+  summary_cumI_true$high[,j+1] <- apply(cumI,1,quantile,.975,na.rm = TRUE)
+}
+
+
+```
+
+plot
+
+```{r}
+
+layout(matrix(c(1,2,2,3,4,4),3,2,byrow = FALSE))
+
+for (i in 1:N_geo){
+  # attacke rate
+  plot(summary_cumI_true$median$dates,
+       summary_cumI_true$median[,i+1]/N_pop$N[i],
+       typ='l',lwd=2,col = 'blue',
+       ylim=c(0,.1),
+       main = country[i],bty = 'n',
+       xlab ='', ylab = 'Attack rate')
+  
+  
+  polygon(c(summary_cumI_true$median$dates,rev(summary_cumI_true$median$dates)),
+          c(summary_cumI_true$low[,i+1]/N_pop$N[i],rev(summary_cumI_true$high[,i+1]/N_pop$N[i])),
+          border = NA,
+          col = rgb(0,0,1,0.2))
+  
+  # incidence
+  plot(I$dates,I[,i+1],pch=16,
+       ylim=c(0,max(summary_I_true$high[,i+1],na.rm = TRUE)),
+       # main = country[i],
+       bty = 'n',
+       xlab ='', ylab = 'I')
+  
+  lines(summary_I_true$median$dates,
+        summary_I_true$median[,i+1], 
+        type = 'l',lwd=2, pch=16,col='blue')
+  
+  polygon(c(summary_I_true$median$dates,rev(summary_I_true$median$dates)),
+          c(summary_I_true$low[,i+1],rev(summary_I_true$high[,i+1])),
+          border = NA,
+          col = rgb(0,0,1,0.2))
+  
+}
+
+```
+
+long term:
+- start from the median true I
+- take the median and 95%CrI of R
+- project determinstically
+- account for saturation
+
+```{r}
+
+N_day <- 2e2
+N_geo <- 3
+
+
+temp2 <- data.frame(dates = tail(D$dates,1) + seq(1,N_day,by=1),
+                    matrix(NA,N_day,length(country)))
+names(temp2) <- c('dates',country)
+
+Proj_lg <- list(median = temp2,
+                    low = temp2,
+                    high = temp2)
+
+sat_lg <- list(median = temp2,
+                    low = temp2,
+                    high = temp2)
+
+for(i in 1:length(country)){
+  
+  
+  Nt <- N_pop$N[i]
+  R <-as.numeric( R_last[i,c(2,3,4)])
+  
+  I0 <- summary_I_true$median[,i+1]
+  ws <- rev(SI$dist)
+  lambda <- matrix(0,N_geo,N_day+length(I0))
+  satu <- lambda
+  for (k in 1:3) lambda[k,1:length(I0)] <- I0
+  lambda[is.na(lambda)] <- 0
+  
+  for (k in (length(I0)+1):(length(I0)+N_day)){
+    f <- max(c(1,k-SItrunc))
+    omega <- ws[((SItrunc+1)-(k-f)):(SItrunc+1)]
+    sat <-  (1 - rowSums(lambda[,1:k],na.rm = TRUE) / Nt ) 
+    lambda[,k] <- (R*lambda[,f:k]%*%omega)*sat
+    satu[,k] <- sat
+  }
+  Proj_lg$median[,i+1] <- lambda[1,(length(I0)+1):(N_day+length(I0))]
+  Proj_lg$low[,i+1] <- lambda[2,(length(I0)+1):(N_day+length(I0))]
+  Proj_lg$high[,i+1] <- lambda[3,(length(I0)+1):(N_day+length(I0))]
+  
+  sat_lg$median[,i+1] <- satu[1,(length(I0)+1):(N_day+length(I0))]
+  sat_lg$low[,i+1] <- satu[2,(length(I0)+1):(N_day+length(I0))]
+  sat_lg$high[,i+1] <- satu[3,(length(I0)+1):(N_day+length(I0))]
+  
+  
+}
+
+```
+
+
+plotting results
+
+```{r}
+
+layout(matrix(c(1,2,2,3,4,4),3,2,byrow = FALSE))
+
+for (i in 1:length(country)){
+  # attacke rate
+  plot(summary_cumI_true$median$dates,
+       summary_cumI_true$median[,i+1]/N_pop$N[i],
+       typ='l',lwd=2,col = 'blue',
+       ylim=c(0,1),
+       xlim = range(c(summary_cumI_true$median$dates,sat_lg$median$dates)),
+       main = country[i],bty = 'n',
+       xlab ='', ylab = 'Attack rate')
+  
+  
+  polygon(c(summary_cumI_true$median$dates,rev(summary_cumI_true$median$dates)),
+          c(summary_cumI_true$low[,i+1]/N_pop$N[i],rev(summary_cumI_true$high[,i+1]/N_pop$N[i])),
+          border = NA,
+          col = rgb(0,0,1,0.2))
+  # forward
+   lines(sat_lg$median$dates,
+        1-sat_lg$median[,i+1], 
+        type = 'l',lwd=2, pch=16,col='red')
+   
+   polygon(c(sat_lg$median$dates,rev(sat_lg$median$dates)),
+          c(1-sat_lg$low[,i+1],rev(1-sat_lg$high[,i+1])),
+          border = NA,
+          col = rgb(1,0,0,0.2))
+  
+  # incidence
+  plot(I$dates,I[,i+1],pch=16,
+       ylim=c(0,max(c(summary_I_true$high[,i+1],Proj_lg$high[,i+1]),na.rm = TRUE)),
+       xlim = range(c(summary_cumI_true$median$dates,sat_lg$median$dates)),
+       # main = country[i],
+       bty = 'n',
+       xlab ='', ylab = 'I')
+  
+  lines(summary_I_true$median$dates,
+        summary_I_true$median[,i+1], 
+        type = 'l',lwd=2, pch=16,col='blue')
+  
+  polygon(c(summary_I_true$median$dates,rev(summary_I_true$median$dates)),
+          c(summary_I_true$low[,i+1],rev(summary_I_true$high[,i+1])),
+          border = NA,
+          col = rgb(0,0,1,0.2))
+  
+  # forward
+   # forward
+   lines(Proj_lg$median$dates,
+        Proj_lg$median[,i+1], 
+        type = 'l',lwd=2, pch=16,col='red')
+   
+   polygon(c(Proj_lg$median$dates,rev(Proj_lg$median$dates)),
+          c(Proj_lg$low[,i+1],rev(Proj_lg$high[,i+1])),
+          border = NA,
+          col = rgb(1,0,0,0.2))
+   
+}
+
+
+
+```
+
+
+```{r}
+i=11
+summary_I_true$high[,c(1,i+1)]
+R_last
+
+```
