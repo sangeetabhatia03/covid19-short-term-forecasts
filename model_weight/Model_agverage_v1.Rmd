@@ -21,7 +21,8 @@ opts_chunk$set(fig.path='figs/', fig.keep='high',
 
 ```{r}
 
-d <- read.csv(file='model_predictions_error.csv',stringsAsFactors = FALSE)
+d <- read.csv(file='../data/model_predictions_error.csv',stringsAsFactors = FALSE)
+d$out <- log(d$out)
 
 d$period <- substr(x = d$model, start = 27,stop = 36)
 d$model <- substr(x = d$model, start = 1,stop = 25)
@@ -53,11 +54,12 @@ aggregate(x = d$out, by = list(d$model),sum)
 hist(d1$out[which(d1$model_num ==1)])
 hist(d1$out[which(d1$model_num ==2)])
 
+f<-which(d1$out>5e3)
 
 ```
 
 ```{r}
-weight <- seq(0,1,length.out = 100)
+weight <- seq(0,1,by = .0100)
 res <- rep(NA,length(weight))
 for (i in 1:length(weight)){
   weights <- c(weight[i], 1-weight[i])
