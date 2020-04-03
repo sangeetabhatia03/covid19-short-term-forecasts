@@ -1,41 +1,20 @@
----
-output: 
-pdf_document:
-citation_package: natbib
-keep_tex: false
-fig_caption: true
-latex_engine: pdflatex
-title: Case Ascertainment
-author:
-- name: Pierre Nouvellet and Sangeeta Bhatia
-affiliation: Imperial College London
-abstract: 
-keywords: 
-date: "`r format(Sys.time(), '%B %d, %Y')`"
-geometry: margin=1in
-fontfamily: mathpazo
-fontsize: 11pt
-spacing: double
-bibliography: 
-biblio-style: apsr
-endnote: no
----
+### Methods
 
-Objective: 
+*Objectives*
 
-* Estimate trends in case ascertainment and ratio of deaths to
+* Estimate trends in case ascertainment and the ratio of deaths to
   reported cases.
 * Use these to estimate the true size of the epidemic.
 
-Assumptions. 
+*Assumptions*
 
 We assume 
 
 * that deaths due to COVID-19 are perfectly reported;
-* A known distribution for delay from report to death; and,
-* A known distribution for CFR.
+* a known distribution for delay from report to death (Gamma
+  distribution with mean 10 days and standard deviation 2 days); and,
+* a known distribution for CFR [@verity2020].
 
-Methods.
 
 Let $D_{i, t}$ be the number of deaths in location $i$ at time $t$.
 Let $I_{i, t}^r$ be the reported number of cases in location $i$ at
@@ -57,31 +36,30 @@ D_{i, t} \sim Binom\left( \int\limits_0^{\infty}{\Gamma(x \mid \mu,
 This allows us to obtain a posterior distribution for $r_{i, t}$.
 
 Case ascertainment is defined as:
+
 \[ \rho_{i, t} = \frac{CFR}{r_{i, t}}.\]
 
 Thus a posterior distribution for $\rho_{i, t}$ can be obtained using
-the posterior distribution for $r_{i, t}$ and posterior distribution
+the posterior distribution for $r_{i, t}$ and the posterior distribution
 for CFR.
 
 Combining the CFR and the case ascertainment, we can estimate the true
 number of cases in the epidemic at any point. 
 
-For the period over which we have information on deaths i.e., mean
-report-to-death delay days prior, we use the posterior distribution of
-CFR to obtain:
+For the period over which we have information on deaths i.e., up to
+time $t - \mu$, we use the posterior distribution of
+CFR to obtain $I_{i, t}^{true}$. The true number of cases in a
+location $i$ at time $t$ is the sum cases that did not die and the
+number of deaths. 
 \[
 I_{i, t}^{true} \sim D_{i, t - \mu} + NBin(D_{i, t - \mu}, CFR).
 \]
 
-For the period over which we do not have information on deaths, we use
+For the period over which we do not have information on deaths i.e.,
+after time $t - \mu$, we use
 the posterior distribution of case ascertainment to obtain
 
 \[
 I_{i, t}^{true} \sim I_{i, t}^{r} + NBin(I_{i, t}^{r}, \rho_{i,
 t}).
 \]
-
-
-
-
-
