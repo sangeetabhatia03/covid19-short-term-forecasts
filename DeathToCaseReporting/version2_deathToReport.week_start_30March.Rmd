@@ -100,6 +100,11 @@ w_delta <- SI_gamma_dist_EpiEstim(mu = mu_delta, si_std = s_delta, SItrunc = SIt
 
 ```
 
+```{r}
+library(ggplot2)
+ggplot() + geom_col(aes(x = 0:30, y = w_delta$dist))
+
+```
 we pre-compute for each day and location:
 $$\int_0^{+\infty} I^r_{i,t-x}  \Gamma\left(x; \mu_{\delta},\sigma_{\delta}\right) dx$$
 
@@ -135,6 +140,8 @@ r_it<-array(NA, dim = c(nrow(I), N_geo,n_post))
 summary_r <- list(median = temp,
                         low = temp,
                         high = temp)
+
+
 t.window <- 7
 
 for (i in 1:nrow(I)){
@@ -279,8 +286,8 @@ for (i in 1:nrow(I)){
     rho_it[i,j,] <- post_CFR/r_it[i,j,]
     rho_it[i,j,which(rho_it[i,j,]>1)] <- 1
     summary_rho$median[i,j+1] <- median(rho_it[i,j,],na.rm = TRUE)
-    summary_rho$low[i,j+1] <- quantile(rho_it[i,j,],.025,na.rm = TRUE)
-    summary_rho$high[i,j+1] <- median(rho_it[i,j,],.975,na.rm=TRUE)
+    summary_rho$low[i,j+1] <- quantile(rho_it[i,j,], 0.025,na.rm = TRUE)
+    summary_rho$high[i,j+1] <- quantile(rho_it[i,j,], 0.975,na.rm=TRUE)
     
   }
 }
@@ -304,7 +311,7 @@ for (i in f){
     I_true[i,j,] <- D[i+round(mu_delta),j+1] + rnbinom(n = n_post, size = D[i+round(mu_delta),j+1] , prob = post_CFR)
     summary_I_true$median[i,j+1] <- median(I_true[i,j,],na.rm = TRUE)
     summary_I_true$low[i,j+1] <- quantile(I_true[i,j,],.025,na.rm = TRUE)
-    summary_I_true$high[i,j+1] <- median(I_true[i,j,],.975,na.rm=TRUE)
+    summary_I_true$high[i,j+1] <- quantile(I_true[i,j,],.975,na.rm=TRUE)
   }
 }
 
@@ -321,7 +328,7 @@ for (i in f){
     I_true[i,j,] <- I[i,j+1] + rnbinom(n = n_post, size = I[i,j+1] , prob = rho_it[i,j,])
     summary_I_true$median[i,j+1] <- median(I_true[i,j,],na.rm = TRUE)
     summary_I_true$low[i,j+1] <- quantile(I_true[i,j,],.025,na.rm = TRUE)
-    summary_I_true$high[i,j+1] <- median(I_true[i,j,],.975,na.rm=TRUE)
+    summary_I_true$high[i,j+1] <- quantile(I_true[i,j,],.975,na.rm=TRUE)
   }
 }
 
@@ -347,52 +354,69 @@ for (i in 1:N_geo){
 summary_14days <- data.frame(
     country = country,
     deaths_to_reported_ratio = glue::glue(
-        "{scales::percent(summary_r$median[nrow(D),-1], accuracy = 0.1)}
-        ({scales::percent(summary_r$low[nrow(D),-1],accuracy = 0.1)} - {scales::percent(summary_r$high[nrow(D),-1],accuracy = 0.1)})",
+        "{round(summary_r$median[nrow(D),-1], 3) }",
+        " ({round(summary_r$low[nrow(D),-1],3)} - {round(summary_r$high[nrow(D),-1],3)})",
     ),    
     estimated_reporting = glue::glue(
-        "{scales::percent(summary_rho$median[nrow(D),-1], accuracy = 0.1)} 
-        ({scales::percent(summary_rho$low[nrow(D),-1],accuracy = 0.1)} - {scales::percent(summary_rho$high[nrow(D),-1],accuracy = 0.1)})",
+        "{scales::percent(as.numeric(round(summary_rho$median[nrow(D),-1], 3)), accuracy = 0.1)}",
+        " ({scales::percent(as.numeric(round(summary_rho$low[nrow(D),-1],3)), accuracy = 0.1)} - {scales::percent(as.numeric(round(summary_rho$high[nrow(D),-1],3)), accuracy = 0.1)})",
     ),   
     factor_to_real_size = glue::glue(
-        "{round(1/summary_rho$median[nrow(D),-1], 2)} 
-        ({round(1/summary_rho$low[nrow(D),-1], 2)} - {round(1/summary_rho$high[nrow(D),-1], 2)})",
+        "{round(1/summary_rho$median[nrow(D),-1], 2)}",
+        " ({round(1/summary_rho$high[nrow(D),-1], 2)} - {round(1/summary_rho$low[nrow(D),-1], 2)})",
     ),   
     Observed_case_last_week = colSums(tail(I[,-1],7)),
     Predicted_True_case_last_week = glue::glue(
-        "{prettyNum(signif(last_week$median,digits = 2), big.mark = ",")} ",
-        "({prettyNum(signif(last_week$low,digits = 2), big.mark = ",")}",
-        " - {prettyNum(signif(last_week$high,digits = 2), big.mark = ",")})"
+        "{prettyNum(signif(last_week$median,digits = 3), big.mark = ",")} ",
+        "({prettyNum(signif(last_week$low,digits = 3), big.mark = ",")}",
+        " - {prettyNum(signif(last_week$high,digits = 3), big.mark = ",")})"
         )
-  )  
-summary_14days <- summary_14days[order(temp[,1],decreasing = TRUE),]
+)
 
-write.csv(summary_14days,file = paste0('summary_DeathToRepoted_14days_',date_week_finishing,'.csv'))
+summary_14days <- summary_14days[order(temp[,1],decreasing = TRUE),]
+## TODO check why we have NAs
+summary_14days <- na.omit(summary_14days)
+readr::write_csv(
+    x = summary_14days,
+    path = paste0('../Team.output/summary_DeathToRepoted_14days_',date_week_finishing,'.csv')
+)
 
 ```
 
 
 ```{r}
 ## unformatted
+f <- function(df, col) {
+    
+    df <- tidyr::gather(df, country, !!col)
+    df[[col]] <- round(df[[col]], 3)
+    out <- data.frame(df[[col]])
+    colnames(out) <- col
+    out
+}
+
 unformatted_summary_14days <- data.frame(
     country = country,
-    deaths_to_reported_ratio_50 = round(summary_r$median[nrow(D),-1],digits = 3),
-    deaths_to_reported_ratio_025 = round(summary_r$low[nrow(D),-1],digits = 3),
-    deaths_to_reported_ratio_975 = round(summary_r$high[nrow(D),-1],digits = 3),
-    estimated_reporting_50 = round(summary_rho$median[nrow(D),-1],digits = 3),
-    estimated_reporting_975 = round(summary_rho$low[nrow(D),-1],digits = 3),
-    estimated_reporting_025 = round(summary_rho$high[nrow(D),-1],digits = 3),    
-    factor_to_real_size_50 = round(1/summary_rho$median[nrow(D),-1],digits = 1),
-    factor_to_real_size_025 = round(1/summary_rho$low[nrow(D),-1],digits = 1),
-    factor_to_real_size_975 = round(1/summary_rho$high[nrow(D),-1],digits = 1),
     Observed_case_last_week = colSums(tail(I[,-1],7)),
-    Predicted_True_case_last_week_50 = round(last_week$median,digits = 0),
-    Predicted_True_case_last_week_025 = round(last_week$low,digits = 0),
-    Predicted_True_case_last_week_975 = round(last_week$high,digits = 0)
+    Predicted_True_case_last_week_50 = last_week$median,
+    Predicted_True_case_last_week_025 = last_week$low,
+    Predicted_True_case_last_week_975 = last_week$high
+    )
+
+tmp <- list(
+    f(summary_r$median[nrow(D),-1], "deaths_to_reported_ratio_50"),
+    f(summary_r$low[nrow(D),-1], "deaths_to_reported_ratio_025"),
+    f(summary_r$high[nrow(D),-1], "deaths_to_reported_ratio_975"),
+    f(summary_rho$median[nrow(D),-1], "estimated_reporting_50"),
+    f(summary_rho$low[nrow(D),-1], "estimated_reporting_025"),
+    f(summary_rho$high[nrow(D),-1], "estimated_reporting_975")
 )
+
+tmp <- do.call(what = 'cbind', args = tmp)
+unformatted_summary_14days <- cbind(unformatted_summary_14days, tmp)
 readr::write_csv(
     x = unformatted_summary_14days,
-    path = paste0('unformatted_summary_DeathToRepoted_14days_',date_week_finishing,'.csv')
+    path = paste0('../Team.output/unformatted_summary_DeathToRepoted_14days_',date_week_finishing,'.csv')
 )
 ```
 
