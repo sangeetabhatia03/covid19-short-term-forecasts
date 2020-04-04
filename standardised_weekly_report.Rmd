@@ -904,7 +904,7 @@ colnames(x) <- snakecase::to_any_case(colnames(x), case = "title")
 
 ## knitr::kable(x[, -1]) %>%
 ##     kable_styling() 
-DT::datatable(x[, -1])
+DT::datatable(x)
 
 ```
 
