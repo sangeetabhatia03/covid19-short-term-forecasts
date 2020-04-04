@@ -6,7 +6,7 @@ ascertainr_plan <- drake::drake_plan(
     ),
 
     ascertainr_deaths = input_data$D_active_transmission,
-    ascertainr_cases = input_data$D_active_transmission ,
+    ascertainr_cases = input_data$I_active_transmission ,
     ## create a named list, as we use names everywhere from here on.
     countries = purrr::set_names(
         input_data$Country, input_data$Country
