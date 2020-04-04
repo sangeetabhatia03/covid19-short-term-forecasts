@@ -77,3 +77,38 @@ names(output_files) <- gsub(
 ## purrr::iwalk(si_1, function(x, y) readr::write_rds(x = x, path = glue::glue("data/{y}_pred.rds")))
 
 
+#### Checks for new thresholds using previous outpus
+## library(dplyr)
+## infile <- "Team.input/data_2020-03-29.rds"
+## x <- readr::read_rds(infile)
+## deaths <- tail(x$D_active_transmission, 14)
+## deaths$week <- cut(deaths$dates, "7 days")
+## weekly_sums <- group_by(deaths[, -1], week) %>%
+##     summarise_if(is.numeric, sum)
+
+## Week ending 2020-03-08 - keep all
+## Week ending 2020-03-15 - remove Spain and France
+## Week ending 2020-03-22
+## Remove Germany, Iraq, Philippines,
+##
+
+## infiles <- list.files("Team.output/", pattern = "*2020-03-15*")
+## remove <- c("Spain", "France")
+
+## infiles <- c("RtI0_Std_results_week_end_2020-03-22.rds",
+##              "sbkp_Std_results_week_end_2020-03-22.rds")
+
+## remove <- c("Germany", "Iraq", "Philippines")
+
+## purrr::walk(
+##     infiles,
+##     function(x2) {
+
+##         x <- readr::read_rds(here::here("Team.output/", x2))
+##         x$Country <- x$Country[! x$Country %in% remove]
+##         x$Predictions <- x$Predictions[! names(x$Predictions) %in% remove]
+##         x$R_last <- x$R_last[! names(x$R_last) %in% remove]
+##         readr::write_rds(x = x, path = here::here("Team.output/", x2))
+##     }
+## )
+
