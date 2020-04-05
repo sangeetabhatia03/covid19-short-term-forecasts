@@ -2,8 +2,9 @@ library(dplyr)
 library(tidyr)
 library(drake)
 
-source("params.R")
+##source("params.R")
 source("R/plan.R")
 source("R/util.R")
-
-drake_config(plan)
+source("R/prepare_data_plan.R")
+drake_config(prepare_data_plan)
+##drake_config(plan)

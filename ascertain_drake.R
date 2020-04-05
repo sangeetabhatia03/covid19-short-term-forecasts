@@ -4,6 +4,7 @@ library(drake)
 library(ascertainr)
 source("R/ascertainr_util.R")
 source("R/ascertainr_plan.R")
+source("R/util.R")
 ### CFR Distribution
 cfr_distr <- rbeta(
     10000, shape1 = 319.4389, shape2 = 22872.75
