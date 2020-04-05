@@ -1,75 +1,25 @@
-plan <- drake_plan(
-
-    raw_data = read.csv(
-        file_in(here::here(infile)), stringsAsFactors = FALSE
-    ) %>%
-        dplyr::mutate_at(
-            vars("DateRep"), ~ as.Date(., format = '%d/%m/%Y')
-        ) %>%
-        ## Manual fixes.
-        ## For 2020-03-17, there are two rows for Somalia
-        ## one with 0 Cases and one with 1 Cases, Delete one of them
-        dplyr::filter(
-            ! (Countries.and.territories == "Somalia" &
-               DateRep == "2020-03-17" &
-               Cases == 0)
-        ) %>%
-        dplyr::filter(DateRep <= date_week_finishing),
-
-
-    ## Apply thresholds
-    pass = split(raw_data, raw_data$`Countries.and.territories`) %>%
-        purrr::keep(deaths_threshold) %>%
-        dplyr::bind_rows(),
-##         dplyr::filter(`Countries.and.territories`
-##                       %in% c("China", "France", "Germany", "Iran", "Iraq", "Italy",
-## "Japan", "Netherlands", "Philippines", "South_Korea", "Spain",
-## "Switzerland", "United_Kingdom", "United_States_of_America")),
-
-
-     by_country_deaths = dplyr::select(
-        pass, DateRep, Deaths, Countries.and.territories
-        ) %>%
-         tidyr::spread(
-            key = Countries.and.territories, value = Deaths, fill = 0
-            ),
-
-    ## No lines means no cases for that day. That is why fill is 0.
-    by_country_cases = dplyr::select(
-        pass, DateRep, Cases, Countries.and.territories
-    ) %>%
-        tidyr::spread(
-            key = Countries.and.territories, value = Cases, fill = 0
-     ) %>% dplyr::filter(DateRep <= date_week_finishing),
-
-
-    ## For consistency with Pierre's code, rename DateRep to dates
-    cases_to_use = dplyr::rename(by_country_cases, dates = "DateRep"),
-
-    deaths_to_use = dplyr::rename(by_country_deaths, dates = "DateRep"),
-
-    Country = colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"],
-
-
-    out = saveRDS(
-        object = list(
-            date_week_finishing = date_week_finishing,
-            Threshold_criterion_4weeks = Threshold_criterion_4weeks,
-            Threshold_criterion_7days = Threshold_criterion_7days,
-            I_active_transmission = cases_to_use,
-            D_active_transmission = deaths_to_use,
-            Country = Country,
-            si_mean = si_mean,
-            si_std = si_std
-        ),
-        file = file_out(outfile)
-    ),
+plan <- drake::drake_plan(
 
 ####################################################################
 ####################################################################
 ####### Part 2, when we have the model outputs #####################
 ####### check that model outputs have the expected components ######
 ####### Only keep the ones that have expected components ###########
+    input = readr::read_rds(parameters("2020-03-29")$outfile),
+
+    unnamed_output_files = list.files(
+        path = "Team.output", pattern = "*rds"
+    ),
+
+    output_file_names = gsub(
+        x = basename(unnamed_output_files),  ".rds", replacement = ""
+    ),
+
+    output_files = purrr::set_names(
+        x = here::here("Team.output", unnamed_output_files),
+        nm = output_file_names
+    ),
+
     model_outputs = purrr::map(output_files, readRDS),
 
     model_predictions_qntls = purrr::map(
@@ -78,7 +28,7 @@ plan <- drake_plan(
             pred <- x[["Predictions"]]
             purrr::map_dfr(
                 pred, extract_predictions_qntls, .id = "country"
-            )
+          )
         }
      ),
 
@@ -89,18 +39,15 @@ plan <- drake_plan(
             purrr::imap_dfr(pred, function(y, country) {
 
                 dates <- as.Date(colnames(y[[1]]))
-                obs_deaths <- dplyr::filter(
-                    pass,
-                    `Countries.and.territories` == country &
-                    DateRep %in% as.Date(dates)
-                    )
+                obs_deaths <- input[["D_active_transmission"]][ c("dates", country)]
+                obs_deaths <- obs_deaths[obs_deaths$dates %in% dates, ]
                 if (nrow(obs_deaths) == 0) {
                     message(
                         "No observations for dates ", dates, " in ", country
                     )
                     obs_deaths <- NA
                 } else {
-                    obs_deaths <- sum(obs_deaths$Deaths)
+                    obs_deaths <- sum(obs_deaths[[country]])
                 }
 
                 weekly_df <- daily_to_weekly(y)
@@ -331,46 +278,45 @@ plan <- drake_plan(
     dplyr::mutate_at(vars("date"), as.Date),
 
 
-    obs = dplyr::rename(
-        pass, country = "Countries.and.territories"
-    ) %>%
-        dplyr::mutate_at(vars("DateRep"), as.Date),
+    obs = tidyr::gather(
+        input[["D_active_transmission"]], country, Deaths, -dates
+    ) %>% dplyr::mutate_at(vars("dates"), as.Date),
 
 
-    model_predictions_error = purrr::imap_dfr(
-        model_outputs,
-        function(x, model) {
-            message(model)
-            pred <- x[["Predictions"]]
-            purrr::imap_dfr(
-                pred,
-                function(y, cntry) {
-                    names(y) <- c("si_1", "si_2")
-                    out <- purrr::map_dfr(
-                        y,
-                        function(y_si) {
-                            y_si <- as.matrix(y_si)
-                            y_si <- t(y_si) ## Need T X N matrix for assessr
-                            dates <- as.Date(rownames(y_si))
-                            x <- dplyr::filter(
-                                obs,
-                                country == cntry & DateRep %in% dates
-                                ) %>% pull(Deaths)
+    ## model_predictions_error = purrr::imap_dfr(
+    ##     model_outputs,
+    ##     function(x, model) {
+    ##         message(model)
+    ##         pred <- x[["Predictions"]]
+    ##         purrr::imap_dfr(
+    ##             pred,
+    ##             function(y, cntry) {
+    ##                 names(y) <- c("si_1", "si_2")
+    ##                 out <- purrr::map_dfr(
+    ##                     y,
+    ##                     function(y_si) {
+    ##                         y_si <- as.matrix(y_si)
+    ##                         y_si <- t(y_si) ## Need T X N matrix for assessr
+    ##                         dates <- as.Date(rownames(y_si))
+    ##                         x <- dplyr::filter(
+    ##                             obs,
+    ##                             country == cntry & DateRep %in% dates
+    ##                             ) %>% pull(Deaths)
 
-                            if (length(x) > 0){
-                                out <- assessr::rel_mse(obs = x, pred = y_si)
-                                out <- as.data.frame(out)
-                                out <- tibble::rownames_to_column(out, var = "date")
-                            } else {
-                                out <- NULL
-                            }
-                            out
-                        }, .id = "si"
-                    )
-                }, .id = "country"
-            )
-        }, .id = "model"
-     )
+    ##                         if (length(x) > 0){
+    ##                             out <- assessr::rel_mse(obs = x, pred = y_si)
+    ##                             out <- as.data.frame(out)
+    ##                             out <- tibble::rownames_to_column(out, var = "date")
+    ##                         } else {
+    ##                             out <- NULL
+    ##                         }
+    ##                         out
+    ##                     }, .id = "si"
+    ##                 )
+    ##             }, .id = "country"
+    ##         )
+    ##     }, .id = "model"
+    ##  )
 
  ##    ## The full posterioris going to be too big
  ##    ## when we have more models and many countries.
