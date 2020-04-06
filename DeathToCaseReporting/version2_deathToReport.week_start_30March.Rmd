@@ -429,7 +429,7 @@ readr::write_csv(
 I_lastweek <- colSums(tail(I[,-1],7))/7
 sd_lastweek <- (apply(tail(I[,-1],7),2,sd))
 
-cbind(I_lastweek,var_lastweek)
+cbind(I_lastweek,sd_lastweek)
 Predictions <- list()
 date_pre <- date_week_finishing + seq(1,7,by=1) 
 
@@ -477,7 +477,7 @@ Std_results <- list(I_active_transmission = d$I_active_transmission,
                     Rt_last = NA,
                     Predictions = Predictions)
 
-saveRDS(object = d,
+saveRDS(object = Std_results,
         file = paste0('RData/DeCa_Std_results_week_end_',date_week_finishing,'.rds' ))
 
 ```
