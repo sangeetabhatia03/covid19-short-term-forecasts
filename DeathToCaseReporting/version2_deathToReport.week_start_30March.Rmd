@@ -26,7 +26,9 @@ NEED to do:
 ```{r}
 
 date_week_finishing <-  as.Date('29/03/2020',format = '%d/%m/%Y')
-delay_report_death <- 10 # need checking!!
+# delay_report_death <- 10 # need checking!!
+mu_delta <- 10
+s_delta <- 2
 
 day.project <- 7
 t.window.range <- 7
@@ -92,8 +94,7 @@ SI_gamma_dist_EpiEstim <- function(mu,si_std,SItrunc){
   return(list(dist = SI_Distr, SItrunc = SItrunc))
 }
 
-mu_delta <- 10
-s_delta <- 2
+
 SItrunc <- 30
 
 w_delta <- SI_gamma_dist_EpiEstim(mu = mu_delta, si_std = s_delta, SItrunc = SItrunc)
@@ -425,6 +426,58 @@ readr::write_csv(
 ```{r}
 
 
+I_lastweek <- colSums(tail(I[,-1],7))/7
+sd_lastweek <- (apply(tail(I[,-1],7),2,sd))
 
+cbind(I_lastweek,var_lastweek)
+Predictions <- list()
+date_pre <- date_week_finishing + seq(1,7,by=1) 
+
+for( i in 1:length(country)){
+  
+  
+  repo <- matrix(sample(x = r_it[nrow(I),i,],size = 7*n_post,replace = TRUE),nrow = n_post, ncol = 7)
+  I_aug <- matrix(rpois(n = 7*n_post, lambda = I_lastweek[i]),nrow = n_post, ncol = 7)
+  
+  param <- epitrix::gamma_mucv2shapescale(mu = I_lastweek[i], cv = sd_lastweek[i]/I_lastweek[i])
+  # I_aug <- matrix(rpois(n = 7*n_post, lambda = I_lastweek[i]),nrow = n_post, ncol = 7)
+  I_aug <- matrix(rgamma(n = 7*n_post, shape = param$shape, scale = param$scale),nrow = n_post, ncol = 7)
+  
+  
+  I_old <- matrix( tail(I[,i+1],w_delta$SItrunc), nrow = n_post, ncol = w_delta$SItrunc, byrow = TRUE )
+  I_augm <- cbind(I_old,I_aug)
+  
+  weighted_I_augm <- matrix(NA, nrow = n_post, ncol = ncol(I_augm))
+  ws <- rev(w_delta$dist)
+  
+  for (j in 2:ncol(I_augm)){
+    f <- max(c(1,(j-w_delta$SItrunc)))
+    weighted_I_augm[,j] <- ((I_augm[,f:j])%*%ws[((SItrunc+1)-(j-f)):(SItrunc+1)])
+    
+  }
+  weighted_I_augm <- weighted_I_augm[,(ncol(weighted_I_augm)-7+1) : (ncol(weighted_I_augm))]
+  d_exp <- data.frame(matrix(NA,nrow = n_post,7))
+  for (k in 1:7){
+    d_exp[,k] <- rbinom(n = n_post, size = round(weighted_I_augm[,k]), prob = repo[,k])
+  }
+  names(d_exp) <- as.character(date_pre)
+  Predictions[[as.character(country[i])]][[1]] <- d_exp
+  Predictions[[as.character(country[i])]][[2]] <- d_exp
+  
+}
 ```
 
+Combine results:
+
+```{r}
+
+Std_results <- list(I_active_transmission = d$I_active_transmission,
+                    D_active_transmission = d$D_active_transmission,
+                    Country = d$Country,
+                    Rt_last = NA,
+                    Predictions = Predictions)
+
+saveRDS(object = d,
+        file = paste0('RData/DeCa_Std_results_week_end_',date_week_finishing,'.rds' ))
+
+```
