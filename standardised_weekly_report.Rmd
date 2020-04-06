@@ -47,7 +47,7 @@ knitr::opts_chunk$set(
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
 As of `r format(Sys.time(), '%d-%m-%Y')`, there have more than
-750,000 cases of COVID-19 across the world, with more than 36,000
+1,133,000 cases of COVID-19 across the world, with more than 62,000
 deaths [@whositrep]. In this report, we use the reported number of deaths
 due to COVID-19 to make short-term forecasts of the trajectory of the
 epidemic and the expected number of
