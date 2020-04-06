@@ -48,7 +48,7 @@ date_week_finishing <- as.Date('05/04/2020', format = '%d/%m/%Y')
 # Introduction {.tabset .tabset-fade .tabset-pills}
 
 As of `r format(Sys.time(), '%d-%m-%Y')`, there have more than
-750,000 cases of COVID-19 across the world, with more than 36,000
+1,133,000 cases of COVID-19 across the world, with more than 62,000
 deaths [@whositrep]. In this report, we use the reported number of deaths
 due to COVID-19 to make short-term forecasts of the trajectory of the
 epidemic and the expected number of
@@ -87,16 +87,16 @@ delay between transmission and death.
 
 A **secondary** objective of this report is to analyse case
 ascertainment per country. As well as forecasting ahead, we use the number
-of reported deaths and of cases reported 10 days prior (using a fixed
-delay) to analyse the reporting trends per
+of reported deaths and of cases reported with a delay (delay from reporting to deaths,
+see Case Ascertainment method) to analyse the reporting trends per
 country. If the reporting of cases and deaths were perfect, and
-the delay between reporting and death fixed and known, the ratio of
+the delay between reporting and death is known, the ratio of
 deaths to delayed cases would equal the Case Fatality Ratio (CFR).
 
 In this analysis, key assumptions are:
 
-* The mean underlying CFR is 1.38% [@verity2020],
-* The mean delay from a case being reported to death is 10 days.
+* The mean underlying CFR is 1.38% 95%CrI[1.23; 1.53] [@verity2020],
+* The delay from a case being reported to death follows a Gamma distribution with mean 10 days, and standard deviation 2 days.
 * All deaths due to COVID-19 have been reported in each country.
 
 ```{r child = "dynamic-summary.Rmd"}
@@ -221,6 +221,11 @@ of infectious diseases [@viboud2018rapidd].
 
 **Current and past forecasts**
 
+*Caution note*: We note that in France, reported a large increase 
+in deaths toward the end of the week starting 30-03-2020. This 
+is largely due to back-reporting of deaths outside hospital settings, 
+and therefore, this is likely to have inflated our estimated $R_t$ and makes our 
+forecasts an over-estimate of future deaths.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -458,6 +463,11 @@ potential voluntary behaviour changes.
 
 **Current and past forecasts**
 
+*Caution note*: We note that in France, reported a large increase 
+in deaths toward the end of the week starting 30-03-2020. This 
+is largely due to back-reporting of deaths outside hospital settings, 
+and therefore, this is likely to have inflated our estimated $R_t$ and makes our 
+forecasts an over-estimate of future deaths.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -636,6 +646,11 @@ branching process model using a Poisson offspring distribution.
 
 **Current and past forecasts**
 
+*Caution note*: We note that in France, reported a large increase 
+in deaths toward the end of the week starting 30-03-2020. This 
+is largely due to back-reporting of deaths outside hospital settings, 
+and therefore, this is likely to have inflated our estimated $R_t$ and makes our 
+forecasts an over-estimate of future deaths.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 pred <- drake::readd("model_2") 
@@ -768,6 +783,11 @@ presented here.
 
 ### Projections
 
+*Caution note*: We note that in France, reported a large increase 
+in deaths toward the end of the week starting 30-03-2020. This 
+is largely due to back-reporting of deaths outside hospital settings, 
+and therefore, this is likely to have inflated our estimated $R_t$ and makes our 
+forecasts an over-estimate of future deaths.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
