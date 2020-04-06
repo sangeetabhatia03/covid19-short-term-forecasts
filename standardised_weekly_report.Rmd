@@ -33,7 +33,7 @@ library(drake)
 library(kableExtra)
 library(DT)
 source("R/util.R")
-source("params.R")
+##source("params.R")
 knitr::opts_chunk$set(
     echo = FALSE, 
     fig.width = 21, 
@@ -42,6 +42,7 @@ knitr::opts_chunk$set(
     messages = FALSE
     )
 
+date_week_finishing <- as.Date('05/04/2020', format = '%d/%m/%Y')
 
 ```
 # Introduction {.tabset .tabset-fade .tabset-pills}
@@ -68,7 +69,7 @@ transmission.
 * We define a country as having active transmission if
 at least *ten* deaths were observed in the country in each of the past
 two weeks. In the analysis for week beginning 
-22-03-2020, 22 countries/regions were included in the
+29-03-2020, 22 countries/regions were included in the
 analysis. For the week beginning 05-04-2020,
 the number of countries/regions included based on these thresholds is 42.
 
@@ -268,7 +269,7 @@ projection_plot(obs, ensb_pred1) +
 ```
 
 
-```{r eval = FALSE}
+```{r eval = TRUE}
 projection_plot(obs, ensb_pred1) +
             ggforce::facet_wrap_paginate(
             ~country,
@@ -279,6 +280,23 @@ projection_plot(obs, ensb_pred1) +
             ncol = 2,
             nrow = 6,
             page = 3
+        ) 
+
+```
+
+
+
+```{r eval = TRUE}
+projection_plot(obs, ensb_pred1) +
+            ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 6,
+            page = 4
         ) 
 
 ```
@@ -482,7 +500,7 @@ projection_plot(obs, pred) +
 ```
 
 
-```{r eval = FALSE}
+```{r eval = TRUE}
 projection_plot(obs, pred) +
     ggforce::facet_wrap_paginate(
             ~country,
@@ -493,6 +511,22 @@ projection_plot(obs, pred) +
             ncol = 2,
             nrow = 6,
             page = 3
+        ) 
+
+```
+
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 6,
+            page = 4
         ) 
 
 ```
@@ -642,7 +676,7 @@ projection_plot(obs, pred) +
 ```
 
 
-```{r eval = FALSE}
+```{r eval = TRUE}
 projection_plot(obs, pred) +
     ggforce::facet_wrap_paginate(
             ~country,
@@ -653,6 +687,22 @@ projection_plot(obs, pred) +
             ncol = 2,
             nrow = 6,
             page = 3
+        ) 
+
+```
+
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 6,
+            page = 4
         ) 
 
 ```
@@ -761,7 +811,7 @@ projection_plot(obs, ensb_pred2) +
 ```
 
 
-```{r eval = FALSE}
+```{r eval = TRUE}
 projection_plot(obs, ensb_pred2) +
     ggforce::facet_wrap_paginate(
             ~country,
@@ -772,6 +822,22 @@ projection_plot(obs, ensb_pred2) +
             ncol = 2,
             nrow = 6,
             page = 3
+        ) 
+
+```
+
+
+```{r eval = TRUE}
+projection_plot(obs, ensb_pred2) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 6,
+            page = 4
         ) 
 
 ```
@@ -875,6 +941,36 @@ knitr::include_graphics("figs/plotRatioCD-5.png")
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figs/plotRatioCD-6.png")
+```
+
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/plotRatioCD-7.png")
+```
+
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/plotRatioCD-8.png")
+```
+
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/plotRatioCD-9.png")
+```
+
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/plotRatioCD-10.png")
+```
+
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/plotRatioCD-11.png")
 ```
 
 **Figure 10**: Temporal trends in the ratio of reported

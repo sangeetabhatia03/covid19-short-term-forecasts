@@ -30,7 +30,7 @@ projection_plot <- function(obs, pred) {
 
 
     p <- ggplot() +
-    geom_point(data = obs, aes(DateRep, Deaths)) +
+    geom_point(data = obs, aes(dates, deaths)) +
         geom_line(
             data = pred,
             aes(date, `50%`, col = proj, group = proj)

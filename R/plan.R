@@ -5,7 +5,7 @@ plan <- drake::drake_plan(
 ####### Part 2, when we have the model outputs #####################
 ####### check that model outputs have the expected components ######
 ####### Only keep the ones that have expected components ###########
-    input = readr::read_rds(parameters("2020-03-29")$outfile),
+    input = readr::read_rds(parameters("2020-04-05")$outfile),
 
     unnamed_output_files = list.files(
         path = "Team.output", pattern = "*rds"
@@ -129,8 +129,8 @@ plan <- drake::drake_plan(
         "2020-03-08" = "2020-03-08",
         "2020-03-15" = "2020-03-15",
         "2020-03-22" = "2020-03-22",
-        "2020-03-29" = "2020-03-29"
-
+        "2020-03-29" = "2020-03-29",
+        "2020-04-05" = "2020-04-05"
     ),
     ## For each, for each country, pool projections from diff models
     ## In the output, the first level is week, 2nd is country and 3rd
@@ -164,10 +164,13 @@ plan <- drake::drake_plan(
     ensemble_model_rt = purrr::map_dfr(
         weeks_ending,
         function(week) {
+            message("Week is ", week)
             idx <- grep(x = names(model_outputs), pattern = week)
+            message("Working on models ", names(model_outputs)[idx])
             outputs <- purrr::map(model_outputs[idx], ~ .[["R_last"]])
             ## First Level is model, 2nd is country, 3rd is SI.
-            countries <- names(outputs[[1]])
+            ## TODO pick countries from inout
+            countries <- names(outputs[[2]])
             names(countries) <- countries
             purrr::map_dfr(
                 countries,
