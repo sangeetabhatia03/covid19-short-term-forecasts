@@ -25,7 +25,7 @@ NEED to do:
 
 ```{r}
 
-date_week_finishing <-  as.Date('29/03/2020',format = '%d/%m/%Y')
+date_week_finishing <-  as.Date('05/04/2020',format = '%d/%m/%Y')
 # delay_report_death <- 10 # need checking!!
 mu_delta <- 10
 s_delta <- 2
@@ -429,7 +429,7 @@ readr::write_csv(
 I_lastweek <- colSums(tail(I[,-1],7))/7
 sd_lastweek <- (apply(tail(I[,-1],7),2,sd))
 
-cbind(I_lastweek,var_lastweek)
+cbind(I_lastweek,sd_lastweek)
 Predictions <- list()
 date_pre <- date_week_finishing + seq(1,7,by=1) 
 
