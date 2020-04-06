@@ -72,12 +72,12 @@ To obtain forecast of deaths, we rely on reported cases to obtain
 $\int\limits_0^{\infty}{\Gamma(x \mid \mu,\sigma)I_{i, t - x}^{r}dx}$.
 As cases reported in the coming week may die within the same week (
 i.e. for $x \in \{0,7\}$, $\Gamma(x \mid \mu,\sigma) > 0$), we estimate
-the estimate the new cases in the coming week by sampling from a gamma
-distribution with mean and sdandard deviation equal estimated from
+new reporting cases in the coming week by sampling from a gamma
+distribution with mean and standard deviation estimated from
 the number of observed cases in the last week. 
 
-While this assume no growth or decline in the coming week, this baseline assumtpion
-is justfiable as a null-hypthesis scenario which does not influence 
+While this assumes no growth or decline in the coming week, this baseline assumtpion
+is justfiable as a null-hypthesis scenario as it does not influence 
 our results dramatically given the contribution to deaths due to those being
 very small (i.e. less than 2%).
 
@@ -89,5 +89,5 @@ D_{i, t} \sim Binom\left( \int\limits_0^{\infty}{\Gamma(x \mid \mu,
 
 where $r_{i, \mu}$ is the estimated ratio of deaths to reported cases for the last week 
 of data, and $ \int\limits_0^{\infty}{\Gamma(x \mid \mu,\sigma)I_{i, t - x}^{r}dx}$
-rely on observed reported cases up to the last day with available and 
-estimated cases as described above.
+relies on observed reported cases up to the last day with available and 
+estimated reported cases as described above.
