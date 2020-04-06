@@ -281,6 +281,14 @@ plan <- drake::drake_plan(
     dplyr::mutate_at(vars("date"), as.Date),
 
 
+    model_3 =  model_predictions_qntls[grep(
+        pattern = "DeCa",
+        x = names(model_predictions_qntls)
+    )] %>%
+        dplyr::bind_rows(.id = "proj") %>%
+    dplyr::mutate_at(vars("date"), as.Date),
+
+
     obs = tidyr::gather(
         input[["D_active_transmission"]], country, Deaths, -dates
     ) %>% dplyr::mutate_at(vars("dates"), as.Date),

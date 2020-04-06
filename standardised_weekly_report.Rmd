@@ -1,7 +1,8 @@
 ---
 output: 
 html_document:
-  css: style.css
+  includes:
+    after_body: footer.html
 word_document: default
 citation_package: natbib
 keep_tex: false
@@ -95,8 +96,8 @@ deaths to delayed cases would equal the Case Fatality Ratio (CFR).
 
 In this analysis, key assumptions are:
 
-* The mean underlying CFR is 1.38% 95%CrI[1.23; 1.53] [@verity2020],
-* The delay from a case being reported to death follows a Gamma distribution with mean 10 days, and standard deviation 2 days.
+* The mean underlying CFR is 1.38% (95% Credible Interval (1.23 - 1.53)) [@verity2020],
+* The delay from a case being reported to death follows a gamma distribution with mean 10 days, and standard deviation 2 days.
 * All deaths due to COVID-19 have been reported in each country.
 
 ```{r child = "dynamic-summary.Rmd"}
@@ -144,7 +145,6 @@ consecutive weeks. We intend to produce forecasts every
 week, for the week ahead. Ensemble forecasts are produced from the
 outputs of three different models.
 
-
 Our main analysis assumes a gamma distributed serial interval with mean 6.48 days
 and standard deviation of 3.83 days following [@wang2020strongly].
 The serial interval estimates observed from various studies thus far
@@ -152,8 +152,8 @@ may be biased toward lower values due to observation bias whereby, in
 contact tracing studies, long serial
 intervals tend to be under-represented. To account for this, as a
 sensitivity analysis, we also use a
-shorter serial interval of mean 4.8 days and standard deviation of
-2.7 days [@ferguson2020report]. Results using this shorter interval
+shorter serial interval of mean 4.80 days and standard deviation of
+2.70 days [@ferguson2020report]. Results using this shorter interval
 are presented in the section Sensitivity Analyses. While using  a
 longer serial interval has very little
 impact on the weekly forecasts produced, it results in much higher
@@ -191,7 +191,7 @@ ggplot(df, aes(x, val, fill = cat)) +
 ```
 *Figure 1* Serial Interval distributions used in the analysis. Here
 the serial interval relates to death and characterise the time between
-the deaths of an infector their infectee. Our main analysis assumes a Gamma
+the deaths of an infector their infectee. Our main analysis assumes a gamma
 distribution with a mean of 6.48 days and a standard deviation of 3.83
 days (shown in green). The shorter serial interval, used for
 sensitivity analysis, with a mean of 4.80 days and a standard
@@ -221,11 +221,12 @@ of infectious diseases [@viboud2018rapidd].
 
 **Current and past forecasts**
 
-*Caution note*: We note that in France, reported a large increase 
-in deaths toward the end of the week starting 30-03-2020. This 
+*Caution note*: We note that in France, a large increase 
+in deaths was reported towards the end of the week starting 30-03-2020. This 
 is largely due to back-reporting of deaths outside hospital settings, 
-and therefore, this is likely to have inflated our estimated $R_t$ and makes our 
-forecasts an over-estimate of future deaths.
+and therefore, this is likely to have inflated the estimates
+$R_t$. The forecasts of deaths for the coming week are thefore likely
+to be over-estimated.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -305,13 +306,12 @@ projection_plot(obs, ensb_pred1) +
         ) 
 
 ```
-
-**Figure 2**: Reported daily deaths, current and past forecasts based on the ensemble model.
+*Figure 2*: Reported daily deaths, current and past forecasts based on the ensemble model.
 For each country with active transmission (see methods), we plot
 the observed incidence of deaths (black dots). 
 Past forecasts, where available, are shown in green (median and
-95% CrI interval), while latest forecasts are shown in red (median and
-95% CrI interval). Vertical
+95% CrI), while latest forecasts are shown in red (median and
+95% CrI). Vertical
 dashed lines show the start and end of each week (Monday to Sunday).
 
 
@@ -351,8 +351,7 @@ rt_plot(ens_rt) +
 
 
 ```
-
-**Figure 3**: Latest estimates of effective reproduction numbers by country
+*Figure 3*: Latest estimates of effective reproduction numbers by country
 (median and 95% CrI). We present the estimates of current
 transmissibility estimated from each method as well as the ensemble
 estimates.
@@ -371,8 +370,8 @@ produced. The number of deaths has been rounded to 3 significant figures.
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-x <- drake::readd("fmtd_ensemble_weekly_qntls")[[1]]
+## Longer serial interval
+x <- drake::readd("fmtd_ensemble_weekly_qntls")[[2]]
 x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
 ## knitr::kable(
 ##     x,
@@ -463,11 +462,12 @@ potential voluntary behaviour changes.
 
 **Current and past forecasts**
 
-*Caution note*: We note that in France, reported a large increase 
-in deaths toward the end of the week starting 30-03-2020. This 
+*Caution note*: We note that in France, a large increase 
+in deaths was reported towards the end of the week starting 30-03-2020. This 
 is largely due to back-reporting of deaths outside hospital settings, 
-and therefore, this is likely to have inflated our estimated $R_t$ and makes our 
-forecasts an over-estimate of future deaths.
+and therefore, this is likely to have inflated the estimates
+$R_t$. The forecasts of deaths for the coming week are thefore likely
+to be over-estimated.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -540,8 +540,7 @@ projection_plot(obs, pred) +
         ) 
 
 ```
-
-**Figure 4**: Reported daily deaths, current and past forecasts based on model 1.
+*Figure 4*: Reported daily deaths, current and past forecasts based on model 1.
 For each country with active transmission (see Methods), we plot
 the observed incidence of deaths (black dots). 
 Past forecasts, where available, are shown in green (median and
@@ -561,8 +560,7 @@ rt$model <- rt$proj
 rt_plot(rt)
 
 ```
-
-**Figure 5**: Latest estimates of effective reproduction numbers by country
+*Figure 5*: Latest estimates of effective reproduction numbers by country
 (median and 95% CrI). We present the estimates of current
 transmissibility estimated from model 1.
 
@@ -578,7 +576,7 @@ The number of deaths has been rounded to 3 significant figures.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
+x <- drake::readd("formatted_weekly_predictions_qntls")[[2]]
 x <- x[grep("RtI0", x$model), ]
 x <- dplyr::select(x, -model)
 x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
@@ -646,11 +644,12 @@ branching process model using a Poisson offspring distribution.
 
 **Current and past forecasts**
 
-*Caution note*: We note that in France, reported a large increase 
-in deaths toward the end of the week starting 30-03-2020. This 
+*Caution note*: We note that in France, a large increase 
+in deaths was reported towards the end of the week starting 30-03-2020. This 
 is largely due to back-reporting of deaths outside hospital settings, 
-and therefore, this is likely to have inflated our estimated $R_t$ and makes our 
-forecasts an over-estimate of future deaths.
+and therefore, this is likely to have inflated the estimates
+$R_t$. The forecasts of deaths for the coming week are thefore likely
+to be over-estimated.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 pred <- drake::readd("model_2") 
@@ -721,8 +720,7 @@ projection_plot(obs, pred) +
         ) 
 
 ```
-
-**Figure 6**: Reported daily deaths, current and past forecasts based on model 2.
+*Figure 6*: Reported daily deaths, current and past forecasts based on model 2.
 For each country with active transmission (see Methods), we plot
 the observed incidence of deaths (black dots). 
 Past forecasts, where available, are shown in green (median and
@@ -743,8 +741,7 @@ rt$model <- rt$proj
 rt_plot(rt)
 
 ```
-
-**Figure 7**: Latest estimates of effective reproduction numbers by country
+*Figure 7*: Latest estimates of effective reproduction numbers by country
 (median and 95% CrI). We present the estimates of current
 transmissibility from model 2.
 
@@ -761,7 +758,7 @@ The number of deaths has been rounded to 3 significant figures.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-x <- drake::readd("formatted_weekly_predictions_qntls")[[1]]
+x <- drake::readd("formatted_weekly_predictions_qntls")[[2]]
 x <- x[grep("sbkp", x$model), ]
 x <- dplyr::select(x, -model)
 x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
@@ -773,21 +770,137 @@ DT::datatable(x)
 <br><br>
 
 
+### Model 3 {.tabset .tabset-fade .tabset-pills} 
+
+#### Methods
+
+The methods for this model are presented in detail in the section
+"Case Ascertainment". Please note that for this model, we do no
+estimate the effective reproduction number to forecast ahead.
+
+
+#### Projections
+
+*Current and Past Forecasts*
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+pred <- drake::readd("model_3") 
+pred <- pred[pred$si == "si_2", ]
+pred$date <- as.Date(pred$date)
+
+```
+
+```{r}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 6,
+            page = 1
+        ) 
+
+```
+
+
+```{r}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 6,
+            page = 2
+        ) 
+
+```
+
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 6,
+            page = 3
+        ) 
+
+```
+
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 6,
+            page = 4
+        ) 
+
+```
+*Figure 8*: Reported daily deaths, current and past forecasts based on model 3.
+For each country with active transmission (see Methods), we plot
+the observed incidence of deaths (black dots). 
+Past forecasts, where available, are shown in green (median and
+95% CrI), while latest forecasts are shown in red (median and
+95% CrI). Vertical
+dashed lines show the start and end of each week (Monday to Sunday).
+
+<br><br>
+
+
+#### Summary of results
+
+**Table 3**: Observed
+(where available) and forecasted weekly death counts and the estimated
+levels of transmissibility from Model 2 for each country with active transmission
+(see methods) and for each period for which forecasts were produced.
+The number of deaths has been rounded to 3 significant figures.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+x <- drake::readd("formatted_weekly_predictions_qntls")[[2]]
+x <- x[grep("DeCa", x$model), ]
+x <- dplyr::select(x, -model)
+x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
+DT::datatable(x[ ,-5])
+
+```
+
+
+<br><br>
+
 ## Sensitivity Analyses {.tabset .tabset-fade .tabset-pills} 
 
 
-Results below use a longer serial interval distribution (mean 6.48
-days, SD 3.83 days). Only results from the ensemble model are
+Results below use a shorter serial interval distribution (mean 4.80
+days, SD 2.70 days). Only results from the ensemble model are
 presented here.
 
 
 ### Projections
 
-*Caution note*: We note that in France, reported a large increase 
-in deaths toward the end of the week starting 30-03-2020. This 
+*Caution note*: We note that in France, a large increase 
+in deaths was reported towards the end of the week starting 30-03-2020. This 
 is largely due to back-reporting of deaths outside hospital settings, 
-and therefore, this is likely to have inflated our estimated $R_t$ and makes our 
-forecasts an over-estimate of future deaths.
+and therefore, this is likely to have inflated the estimates
+$R_t$. The forecasts of deaths for the coming week are thefore likely
+to be over-estimated.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -861,13 +974,12 @@ projection_plot(obs, ensb_pred2) +
         ) 
 
 ```
-
-**Figure 8**: Reported daily deaths, current and past forecasts based on the model ensemble.
+*Figure 9*: Reported daily deaths, current and past forecasts based on the model ensemble.
 For each country with active transmission (see methods), we plot
 the observed incidence of deaths (black dots). 
 Past forecasts, where available, are shown in green (median and
-95% CrI interval), while latest forecasts are shown in red (median and
-95% CrI interval). Vertical
+95% CrI), while latest forecasts are shown in red (median and
+95% CrI). Vertical
 dashed lines show the start and end of each week (Monday to Sunday).
 
 <br><br>
@@ -908,9 +1020,7 @@ rt_plot(ens_rt) +
 
 
 ```
-
-
-**Figure 9**: Latest estimates of effective reproduction numbers by country
+*Figure 10*: Latest estimates of effective reproduction numbers by country
 (median and 95% CrI). We present the estimates of current
 transmissibility estimated from each method as well as the ensemble
 estimates.
@@ -992,8 +1102,7 @@ knitr::include_graphics("figs/plotRatioCD-10.png")
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figs/plotRatioCD-11.png")
 ```
-
-**Figure 10**: Temporal trends in the ratio of reported
+*Figure 11*: Temporal trends in the ratio of reported
 deaths to reported cases 10 days prior (medians and 95% CIs, solid
 lines and bands respectively).
 Also plotted are the reported deaths (red dots) and reported cases

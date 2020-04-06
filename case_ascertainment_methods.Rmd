@@ -12,7 +12,7 @@
 We assume 
 
 * that deaths due to COVID-19 are perfectly reported;
-* a known distribution for delay from report to death (Gamma
+* a known distribution for delay from report to death (gamma
   distribution with mean 10 days and standard deviation 2 days); and,
 * a known distribution for CFR [@verity2020].
 
@@ -72,7 +72,7 @@ To obtain forecast of deaths, we rely on reported cases to obtain
 $\int\limits_0^{\infty}{\Gamma(x \mid \mu,\sigma)I_{i, t - x}^{r}dx}$.
 As cases reported in the coming week may die within the same week (
 i.e. for $x \in \{0,7\}$, $\Gamma(x \mid \mu,\sigma) > 0$), we estimate
-new reporting cases in the coming week by sampling from a gamma
+new reporting cases in the coming week by sampling from a Gamma
 distribution with mean and standard deviation estimated from
 the number of observed cases in the last week. 
 
@@ -88,6 +88,6 @@ D_{i, t} \sim Binom\left( \int\limits_0^{\infty}{\Gamma(x \mid \mu,
 \]
 
 where $r_{i, \mu}$ is the estimated ratio of deaths to reported cases for the last week 
-of data, and $ \int\limits_0^{\infty}{\Gamma(x \mid \mu,\sigma)I_{i, t - x}^{r}dx}$
+of data, and $\int\limits_0^{\infty}{\Gamma(x \mid \mu,\sigma)I_{i, t - x}^{r}dx}$
 relies on observed reported cases up to the last day with available and 
 estimated reported cases as described above.
