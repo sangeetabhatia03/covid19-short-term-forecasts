@@ -51,7 +51,7 @@ As of `r format(Sys.time(), '%d-%m-%Y')`, there have more than
 deaths [@whositrep]. In this report, we use the reported number of deaths
 due to COVID-19 to make short-term forecasts of the trajectory of the
 epidemic and the expected number of
-COVID-19 deaths for 22 countries with sustained human-to-human
+COVID-19 deaths for 42 countries with sustained human-to-human
 transmission. We also analyse reporting trends over time in each
 country and estimate case ascertainment. 
 
@@ -68,9 +68,9 @@ transmission.
 * We define a country as having active transmission if
 at least *ten* deaths were observed in the country in each of the past
 two weeks. In the analysis for week beginning 
-22-03-2020, 11 countries/regions were included in the
+22-03-2020, 22 countries/regions were included in the
 analysis. For the week beginning 05-04-2020,
-the number of countries/regions included based on these thresholds is 22.
+the number of countries/regions included based on these thresholds is 42.
 
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -140,19 +140,19 @@ intervals.
 We define a country to have active transmission if
 at least ten deaths were observed in the country in the last two
 consecutive weeks. We intend to produce forecasts every
-week, for the
-week ahead. Two different modelling teams will produce these
-forecasts which are then used to produce an ensemble forecast.
+week, for the week ahead. Ensemble forecasts are produced from the
+outputs of three different models.
 
-Our main analysis assumes a gamma distributed serial interval with mean 4.8 days
-and standard deviation of 2.7 days following [@wang2020strongly].
+
+Our main analysis assumes a gamma distributed serial interval with mean 6.48 days
+and standard deviation of 3.83 days following [@wang2020strongly].
 The serial interval estimates observed from various studies thus far
 may be biased toward lower values due to observation bias whereby, in
 contact tracing studies, long serial
 intervals tend to be under-represented. To account for this, as a
 sensitivity analysis, we also use a
-longer serial interval of mean 6.48 days and standard deviation of
-3.83 days [@ferguson2020report]. Results using this longer interval
+shorter serial interval of mean 4.8 days and standard deviation of
+2.7 days [@ferguson2020report]. Results using this shorter interval
 are presented in the section Sensitivity Analyses. While using  a
 longer serial interval has very little
 impact on the weekly forecasts produced, it results in much higher
@@ -191,10 +191,10 @@ ggplot(df, aes(x, val, fill = cat)) +
 *Figure 1* Serial Interval distributions used in the analysis. Here
 the serial interval relates to death and characterise the time between
 the deaths of an infector their infectee. Our main analysis assumes a Gamma
-distribution with a mean of 4.80 days and a standard deviation of 2.70
-days (shown in purple). The longer serial interval, used for
-sensitivity analysis, with a mean of 6.48 days and a standard
-deviation of 3.83 days is shown in green.
+distribution with a mean of 6.48 days and a standard deviation of 3.83
+days (shown in green). The shorter serial interval, used for
+sensitivity analysis, with a mean of 4.80 days and a standard
+deviation of 2.70 days is shown in purple.
 
 <br><br>
 
@@ -205,7 +205,7 @@ deviation of 3.83 days is shown in green.
 
 #### Methods
 
-This is an unweighted ensemble of Models 1 and 2. We obtained
+This is an unweighted ensemble of Models 1, 2 and 3. We obtained
 posterior distribution for all estimated reproduction numbers and
 forecasted deaths by simply combining the posterior distributions of
 each model.
@@ -300,7 +300,7 @@ dashed lines show the start and end of each week (Monday to Sunday).
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 ens_rt_both <- drake::readd("ensemble_model_rt")
-ens_rt <- ens_rt_both[ens_rt_both$si == "si_1", ]
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
 ens_rt$model <- as.Date(ens_rt$model)
 ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
 model_rt <- drake::readd("model_rt_qntls")
@@ -308,7 +308,7 @@ model_rt <- model_rt[grep(
     pattern = max(ens_rt$model), names(model_rt)
 )]
 model_rt <- dplyr::bind_rows(model_rt, .id = "model")
-model_rt <- model_rt[model_rt$si == "si_1", ]
+model_rt <- model_rt[model_rt$si == "si_2", ]
 ## re-arrange columns so that we can rbind.
 model_rt <- model_rt[ , colnames(ens_rt)]
 ens_rt <- rbind(model_rt, ens_rt)
@@ -341,7 +341,8 @@ estimates.
 
 **Table 1**: Observed
 (where available) and forecasted weekly death counts and the estimated
-levels of transmissibility from the ensemble model for each country with active transmission
+levels of transmissibility from the ensemble model for each country
+with active transmission
 (see Methods) and for each period for which forecasts were
 produced. The number of deaths has been rounded to 3 significant figures.
 
@@ -366,11 +367,21 @@ DT::datatable(x)
 
 #### Methods
 
-The approach, similar to model 2, was to estimate the current reproduction number (the average number of secondary cases generated by a typical infected individual, $R_t$) and to use that to forecast future incidence of death. The current reproduction number was estimated assuming constant transmissibility during a chosen time-window (i.e. one week).
+The approach, similar to model 2, was to estimate the current
+reproduction number (the average number of secondary cases generated
+by a typical infected individual, $R_t$) and to use that to forecast
+future incidence of death. The current reproduction number was
+estimated assuming constant transmissibility during a chosen
+time-window (i.e. one week).
+
 
 **Estimating current transmissibility**
 
-Here we relied on a well-established and simple method [@nouvellet2018simple] that assumed the daily incidence, I~t~ (here representing deaths), could be approximated with a Poisson process following the renewal equation [@fraser2007estimating]:
+Here we relied on a well-established and simple method
+[@nouvellet2018simple] that assumed the daily incidence, I~t~ (here
+representing deaths), could be approximated with a Poisson process
+following the renewal equation [@fraser2007estimating]:
+
 $$I_t \sim Pois\left( R_t \sum_{s=0}^tI_{t-s}w_s\right)$$
 
 where $R_t$ is the instantaneous reproduction number and $w$ is the
@@ -433,7 +444,7 @@ potential voluntary behaviour changes.
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 pred <- drake::readd("model_1")
-pred <- pred[pred$si == "si_1", ]
+pred <- pred[pred$si == "si_2", ]
 pred$date <- as.Date(pred$date)
 
 
@@ -500,7 +511,7 @@ dashed lines show the start and end of each week (Monday to Sunday).
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 rt <- drake::readd("model_1_rt")
-rt <- rt[rt$si == "si_1", ]
+rt <- rt[rt$si == "si_2", ]
 rt <- rt[rt$proj == "RtI0_Std_results_week_end_2020-04-05", ]
 rt$model <- rt$proj
 rt_plot(rt)
@@ -594,7 +605,7 @@ branching process model using a Poisson offspring distribution.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 pred <- drake::readd("model_2") 
-pred <- pred[pred$si == "si_1", ]
+pred <- pred[pred$si == "si_2", ]
 pred$date <- as.Date(pred$date)
 
 ```
@@ -661,7 +672,7 @@ dashed lines show the start and end of each week (Monday to Sunday).
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 rt <- drake::readd("model_2_rt")
-rt <- rt[rt$si == "si_1", ]
+rt <- rt[rt$si == "si_2", ]
 rt <- rt[rt$proj == "sbkp_Std_results_week_end_2020-04-05", ]
 rt$model <- rt$proj
 rt_plot(rt)
@@ -710,7 +721,7 @@ presented here.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-ensb_pred2 <- ensb_pred[ensb_pred$si == "si_2", ]
+ensb_pred2 <- ensb_pred[ensb_pred$si == "si_1", ]
 ensb_pred2$date <- as.Date(ensb_pred2$date)
 
 
@@ -781,7 +792,7 @@ dashed lines show the start and end of each week (Monday to Sunday).
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 
-ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_1", ]
 ens_rt$model <- as.Date(ens_rt$model)
 ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
 
@@ -790,7 +801,7 @@ model_rt <- model_rt[grep(
     pattern = max(ens_rt$model), names(model_rt)
 )]
 model_rt <- dplyr::bind_rows(model_rt, .id = "model")
-model_rt <- model_rt[model_rt$si == "si_2", ]
+model_rt <- model_rt[model_rt$si == "si_1", ]
 ## re-arrange columns so that we can rbind.
 model_rt <- model_rt[ , colnames(ens_rt)]
 ens_rt <- rbind(model_rt, ens_rt)
