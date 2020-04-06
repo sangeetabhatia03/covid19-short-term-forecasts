@@ -480,4 +480,6 @@ Std_results <- list(I_active_transmission = d$I_active_transmission,
 saveRDS(object = Std_results,
         file = paste0('RData/DeCa_Std_results_week_end_',date_week_finishing,'.rds' ))
 
+save.image(file = paste0('RData/Full_results_week_end_',date_week_finishing,'.rds')
+
 ```
