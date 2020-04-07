@@ -1347,7 +1347,9 @@ before, we set the ratio at 1 (95% CI 1-1)*
   95% CI, estimated for the last *14 days*; (**iv**) the observed and
   predicted number of cases in the *last week* (week starting
   22-03-2020). Estimates for the number of deaths have been rounded to 
-  3 significant figures.
+  3 significant figures. Estimated case ascertainment, factors to real
+  size and predicted true number of cases assume perfect reporting of
+  deaths.
   
 
 

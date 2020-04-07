@@ -31,7 +31,12 @@ The main objective in this report is to produce forecasts of the
 number of deaths in the week ahead for each country with active
 transmission. Since we forecast the reported number of deaths in each
 country, the forecasts are likely to be an under-estimate in countries
-with poor reporting of deaths.
+with poor reporting of deaths. Our estimates of transmissibility reflect
+the epidemiological situation at the time of the infection of COVID-19
+fatalities. Therefore, the impact of controls on estimated
+transmissibility will be quantifiable with a delay between
+transmission and death.
+
 
 Based on our best estimates of transmissibility, the COVID-19 epidemic
 is:
@@ -42,7 +47,7 @@ is:
 	 
 
 Based on the central trends in the forecasts, the total number of
-deaths in the coming week is expected to be:
+reported deaths in the coming week is expected to be:
 
 -	relatively small (<100) in `r nrow(small)` countries (`r small$country`);
 -	relatively large (100 to 1000) in `r nrow(rel_large)` countries
