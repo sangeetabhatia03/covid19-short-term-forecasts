@@ -9,8 +9,6 @@ keep_tex: false
 fig_caption: true
 latex_engine: pdflatex
 title: "Short-term forecasts of COVID-19 deaths in multiple countries"
-author:
-- name: To be decided
 affiliation: Imperial College London
 abstract: 
 keywords: 
@@ -57,8 +55,19 @@ COVID-19 deaths for 42 countries with sustained human-to-human
 transmission. We also analyse reporting trends over time in each
 country and estimate case ascertainment. 
 
+Note that we produce forecasts for *reported* deaths in each
+country. Further, in
+countries with relatively few number of deaths, the forecasts may be
+unreliable. The quality of forecasts will vary with the quality of
+surveillance and reporting in each country.
 
-## Summary
+## Executive Summary 
+
+
+```{r child = "executive_summary.Rmd"}
+```
+
+## Detailed Summary
 
 ### Objectives and caveats
 
@@ -253,7 +262,7 @@ projection_plot(obs, ensb_pred1) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 1
         ) 
 
@@ -268,7 +277,7 @@ projection_plot(obs, ensb_pred1) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 2
         ) 
 
@@ -284,14 +293,11 @@ projection_plot(obs, ensb_pred1) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 3
         ) 
 
 ```
-
-
-
 ```{r eval = TRUE}
 projection_plot(obs, ensb_pred1) +
             ggforce::facet_wrap_paginate(
@@ -301,8 +307,50 @@ projection_plot(obs, ensb_pred1) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 4
+        ) 
+
+```
+```{r eval = TRUE}
+projection_plot(obs, ensb_pred1) +
+            ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 5
+        ) 
+
+```
+```{r eval = TRUE}
+projection_plot(obs, ensb_pred1) +
+            ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 6
+        ) 
+
+```
+```{r eval = TRUE}
+projection_plot(obs, ensb_pred1) +
+            ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 7
         ) 
 
 ```
@@ -487,7 +535,7 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 1
         ) 
 
@@ -503,7 +551,7 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 2
         ) 
 
@@ -519,12 +567,11 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 3
         ) 
 
 ```
-
 
 ```{r eval = TRUE}
 projection_plot(obs, pred) +
@@ -535,8 +582,50 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 4
+        ) 
+
+```
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 5
+        ) 
+
+```
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 6
+        ) 
+
+```
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 7
         ) 
 
 ```
@@ -667,12 +756,11 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 1
         ) 
 
 ```
-
 
 ```{r}
 projection_plot(obs, pred) +
@@ -683,7 +771,7 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 2
         ) 
 
@@ -699,12 +787,11 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 3
         ) 
 
 ```
-
 
 ```{r eval = TRUE}
 projection_plot(obs, pred) +
@@ -715,8 +802,53 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 4
+        ) 
+
+```
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 5
+        ) 
+
+```
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 6
+        ) 
+
+```
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 7
         ) 
 
 ```
@@ -800,12 +932,11 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 1
         ) 
 
 ```
-
 
 ```{r}
 projection_plot(obs, pred) +
@@ -816,13 +947,12 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 2
         ) 
 
 ```
 
-
 ```{r eval = TRUE}
 projection_plot(obs, pred) +
     ggforce::facet_wrap_paginate(
@@ -832,12 +962,26 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 3
         ) 
 
 ```
 
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 4
+        ) 
+
+```
 
 ```{r eval = TRUE}
 projection_plot(obs, pred) +
@@ -848,8 +992,38 @@ projection_plot(obs, pred) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
-            page = 4
+            nrow = 3,
+            page = 5
+        ) 
+
+```
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 6
+        ) 
+
+```
+
+```{r eval = TRUE}
+projection_plot(obs, pred) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 7
         ) 
 
 ```
@@ -920,13 +1094,11 @@ projection_plot(obs, ensb_pred2) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 1
         ) 
 
 ```
-
-
 
 ```{r}
 projection_plot(obs, ensb_pred2) +
@@ -937,7 +1109,7 @@ projection_plot(obs, ensb_pred2) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 2
         ) 
 
@@ -953,12 +1125,11 @@ projection_plot(obs, ensb_pred2) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 3
         ) 
 
 ```
-
 
 ```{r eval = TRUE}
 projection_plot(obs, ensb_pred2) +
@@ -969,8 +1140,53 @@ projection_plot(obs, ensb_pred2) +
                 nice_names
             ),
             ncol = 2,
-            nrow = 6,
+            nrow = 3,
             page = 4
+        ) 
+
+```
+
+```{r eval = TRUE}
+projection_plot(obs, ensb_pred2) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 5
+        ) 
+
+```
+
+```{r eval = TRUE}
+projection_plot(obs, ensb_pred2) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 6
+        ) 
+
+```
+
+```{r eval = TRUE}
+projection_plot(obs, ensb_pred2) +
+    ggforce::facet_wrap_paginate(
+            ~country,
+            scales = "free_y",
+            labeller = as_labeller(
+                nice_names
+            ),
+            ncol = 2,
+            nrow = 3,
+            page = 7
         ) 
 
 ```
@@ -1147,12 +1363,32 @@ DT::datatable(x)
 
 ```
 
+## Authors
+
+Sangeeta Bhatia, Anne Cori, Kris Parag,
+Kylie E C Ainslie, Marc Baguelin, Samir Bhatt, Adhiratha Boonyasiri,
+Olivia Boyd, Lorenzo Cattarino, Zulma Cucunubá, Gina Cuomo-Dannenburg,
+Amy Dighe, Ilaria Dorigatti, Sabine van Elsland,
+Rich FitzJohn, Seth Flaxman, Han Fu, Katy Gaythorpe, Lily Geidelberg,
+Nicholas Grassly, Will Green, Arran Hamlet, Katharina Hauck, David
+Haw, Sarah Hayes, Wes Hinsley, Natsuko Imai, David Jorgensen, Edward
+Knock, Daniel Laydon, Swapnil Mishra, Gemma Nedjati-Gilani, Lucy C
+Okell, Steven Riley, Hayley Thompson, Juliette Unwin, Robert Verity,
+Michaela Vollmer, Caroline Walters, Hao Wei Wang, Patrick GT Walker,
+Charles Whittaker, Oliver Watson, Yuanrong Wang, Peter
+Winskill, Xiaoyue Xi, Azra C Ghani, Christl A Donnelly, Neil M
+Ferguson, Pierre Nouvellet
+
 
 ## References
 
 The forecasts produced use the reported daily counts of deaths per country available on the ECDC website:
 
 https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
+
+
+
+
 
 
 

@@ -1,0 +1,61 @@
+
+
+```{r}
+ens_rt_both <- drake::readd("ensemble_model_rt")
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
+ens_rt$model <- as.Date(ens_rt$model)
+ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
+x <- tidyr::spread(ens_rt, quantile, out2)
+x$country <- snakecase::to_title_case(x$country)
+stable <- x[x$`2.5%` < 1 & x$`97.5%` > 1, ]
+declining <- x[x$`97.5%` < 1, ]
+growing_slow <- x[x$`2.5%` > 1 & x$`97.5%` < 2, ]
+growing_fast <- x[x$`2.5%` > 1 & x$`97.5%` > 2, ]
+
+#### Deaths
+ensemble_weekly_qntls <- drake::readd("ensemble_weekly_qntls")
+ensemble_weekly_qntls$country <- snakecase::to_title_case(ensemble_weekly_qntls$country)
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "si_2", ]
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$proj == date_week_finishing, ]
+small <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$`50%` < 100, ]
+rel_large <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$`50%` > 100 &
+                                       ensemble_weekly_qntls_si1$`50%` < 1000, ]
+large <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$`50%` > 1000 &
+                                   ensemble_weekly_qntls_si1$`50%` < 5000, ]
+
+very_large <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$`50%` > 5000, ]
+
+                                       
+```
+The main objective in this report is to produce forecasts of the
+number of deaths in the week ahead for each country with active
+transmission. Since we forecast the reported number of deaths in each
+country, the forecasts are likely to be an under-estimate in countries
+with poor reporting of deaths.
+
+Based on our best estimates of transmissibility, the COVID-19 epidemic
+is:
+
+-	stabilising^1^ ($R_t < 1$) in `r nrow(stable)` countries (`r stable$country`);
+-	growing slowly^2^ ($1 < R_t < 2$)  in `r nrow(growing_slow)` countries (`r growing_slow$country`);
+-	growing rapidly^3^ ($R_t > 2$)  in `r nrow(growing_fast)` countries (`r growing_fast$country`).
+	 
+
+Based on the central trends in the forecasts, the total number of
+deaths in the coming week is expected to be:
+
+-	relatively small (<100) in `r nrow(small)` countries (`r small$country`);
+-	relatively large (100 to 1000) in `r nrow(rel_large)` countries
+     (`r rel_large$country`),
+-	large (1,000 to 5,000) in `r nrow(large)` countries (`r large$country`),
+-	very large (> 5,000) in `r nrow(very_large)` countries (`r very_large$country`),
+
+
+<br>
+<br>
+<br>
+<br>
+
+1. if the 95% Credible Interval (CrI) of $R_t$ spans 1
+2. based on the lower and upper limits respectively of the 95% CrI of $R_t$
+3. based on the upper limit of the 95% CrI of $R_t$

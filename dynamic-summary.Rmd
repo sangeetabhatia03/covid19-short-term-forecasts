@@ -5,7 +5,7 @@
 ```{r}
 
 ens_rt_both <- drake::readd("ensemble_model_rt")
-ens_rt <- ens_rt_both[ens_rt_both$si == "si_1", ]
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
 ens_rt$model <- as.Date(ens_rt$model)
 ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
 ens_rt_tall <- tidyr::spread(ens_rt, quantile, out2)
@@ -17,7 +17,7 @@ bottom2_rt <- dplyr::top_n(ens_rt_tall, n = -2, wt = `50%`) %>%
 
 
 ensemble_weekly_qntls <- drake::readd("ensemble_weekly_qntls")
-ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "si_1", ]
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "si_2", ]
 ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$proj == date_week_finishing, ]
 top2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = 2, wt = `50%`) %>%
     dplyr::mutate_if(is.numeric, ~signif(., 3)) %>%
@@ -34,7 +34,7 @@ model_rt <- model_rt[grep(
     pattern = max(ens_rt$model), names(model_rt)
 )]
 model_rt <- dplyr::bind_rows(model_rt, .id = "model")
-model_rt <- model_rt[model_rt$si == "si_1", ]
+model_rt <- model_rt[model_rt$si == "si_2", ]
 ## re-arrange columns so that we can rbind.
 model_rt <- model_rt[ , colnames(ens_rt)]
 ens_rt <- rbind(model_rt, ens_rt)
@@ -50,7 +50,7 @@ numbers last week (week starting
 `r format(as.Date(date_week_finishing, format = "%d-%m-%Y"), format = "%d-%m-%Y")`) were highest in:
   
 * `r top2_rt$country[1]` with an estimated median $R_t$ of 
-`r top2_rt[["50%"]][1]` (95% Credible Interval (CrI) - `r top2_rt[["2.5%"]][1]` - `r top2_rt[["97.5%"]][1]`), and
+`r top2_rt[["50%"]][1]` (95% CrI - `r top2_rt[["2.5%"]][1]` - `r top2_rt[["97.5%"]][1]`), and
 * `r top2_rt$country[2]` with an estimated median $R_t$ of 
 `r top2_rt[["50%"]][2]` (95% CrI `r top2_rt[["2.5%"]][2]` - `r top2_rt[["97.5%"]][2]`).
 

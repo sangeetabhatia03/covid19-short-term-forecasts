@@ -27,7 +27,15 @@ projection_plot <- function(obs, pred) {
         window_eps$date - 1
     ) + 0.5
     ## To get nice labels
-
+    ## https://joshuacook.netlify.com/post/integer-values-ggplot-axis/
+    integer_breaks <- function(n = 5, ...) {
+        fxn <- function(x) {
+            breaks <- floor(pretty(x, n, ...))
+            names(breaks) <- attr(breaks, "labels")
+            breaks
+        }
+        return(fxn)
+    }
 
     p <- ggplot() +
     geom_point(data = obs, aes(dates, deaths)) +
@@ -50,12 +58,14 @@ projection_plot <- function(obs, pred) {
     theme_pubr() +
     theme(legend.position = "none") +
         scale_x_date(breaks = dates_to_mark, limits = c(date_min, date_max)) +
+        scale_y_continuous(breaks = integer_breaks()) +
     geom_vline(
         xintercept = c(
            window_eps$xintercepts
         ),
         linetype = "dashed"
     ) + xlab("") +
+        ylab("Deaths") +
         theme(
             axis.title.y = element_text(size = 20),
             axis.text.y = element_text(size = 20),
