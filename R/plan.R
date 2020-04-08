@@ -108,8 +108,9 @@ plan <- drake::drake_plan(
                 out$model <- x$model
                 out$`Observed Deaths` <- x$observed
                 ## Get Rt Estimates for this SI and this country
+                model_rt_qntls2 <- model_rt_qntls[!grepl(pattern = "DeCa", x = names(model_rt_qntls))]
                 rt <- purrr::map_dfr(
-                    model_rt_qntls,
+                    model_rt_qntls2,
                     function(y) y[(y$si == si_name), ],
                     .id = "model"
                 )
