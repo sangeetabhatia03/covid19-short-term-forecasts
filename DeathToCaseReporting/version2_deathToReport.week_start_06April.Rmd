@@ -471,15 +471,24 @@ Combine results:
 
 ```{r}
 
+temp <- list(rep(NA, n_post),rep(NA, n_post))
+Rt_last <-list()
+for (i in 1:N_geo){
+  Rt_last[[as.character(country[i])]] <- temp
+}
+
+
 Std_results <- list(I_active_transmission = d$I_active_transmission,
                     D_active_transmission = d$D_active_transmission,
                     Country = d$Country,
-                    Rt_last = NA,
+                    Rt_last = Rt_last,
                     Predictions = Predictions)
+
+
 
 saveRDS(object = Std_results,
         file = paste0('RData/DeCa_Std_results_week_end_',date_week_finishing,'.rds' ))
 
-save.image(file = paste0('RData/Full_results_week_end_',date_week_finishing,'.RData'))
+# save.image(file = paste0('RData/Full_results_week_end_',date_week_finishing,'.RData'))
 
 ```

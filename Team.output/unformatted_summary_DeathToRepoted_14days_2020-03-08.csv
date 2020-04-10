@@ -1,0 +1,5 @@
+country,Observed_case_last_week,Predicted_True_case_last_week_50,Predicted_True_case_last_week_025,Predicted_True_case_last_week_975,deaths_to_reported_ratio_50,deaths_to_reported_ratio_025,deaths_to_reported_ratio_975,estimated_reporting_50,estimated_reporting_025,estimated_reporting_975
+China,885,2160,1894,2470,0.054,0.048,0.061,0.254,0.215,0.301
+Iran,5230,303820.5,270953.425,342820.05000000005,0.47,0.405,0.538,0.029,0.025,0.035
+Italy,4755,193304.5,171525.875,218578.15000000002,0.389,0.349,0.433,0.035,0.03,0.041
+South_Korea,3608,10175,8118.9749999999995,12604.074999999999,0.02,0.014,0.028,0.681,0.488,0.992
