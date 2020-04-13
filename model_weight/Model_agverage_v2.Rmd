@@ -66,7 +66,8 @@ d2 <- d[f,]
 
 ```{r}
 
-aggregate(x = d$out, by = list(d$model),sum)
+E <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num),sum)
+names(E) <- c('model','period','E')
 
 hist(d1$out[which(d1$model_num ==1)])
 hist(d1$out[which(d1$model_num ==2)])
@@ -75,12 +76,32 @@ hist(d1$out[which(d1$model_num ==3)])
 f<-which(d1$out>5e3)
 
 table(d1$model_num,d1$country)
-f <- which(d1$country == 'Spain')
-x <- d1[f,]
+# f <- which(d1$country == 'Spain')
+# x <- d1[f,]
 
+ensemble_best <- rep(NA,length(periods))
+ensemble <- rep(NA,length(periods))
+model_av <- rep(NA,length(periods))
+weight <- rep(NA,nrow(E))
+for (i in 1:length(periods)){
+  f <- which(E$period %in% i)
+  w <- min(E$E[f])/E$E[f]
+  weight[f] <- w/sum(w)
+  ensemble_best[i] <- sum(weight[f]*E$E[f])
+  ensemble[i] <- sum(1/3*E$E[f])
+  f2 <- which(E$period %in% (i+1))
+  if (i<4) model_av[i+1] <- sum(weight[f]*E$E[f2])
+  
+}
+w <- min(aa$x) / (aa$x) 
+w <- w/sum(w)
 
 
 ```
+
+
+
+
 
 ```{r}
 
