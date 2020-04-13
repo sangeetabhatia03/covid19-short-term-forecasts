@@ -58,14 +58,20 @@ d1 <- d[f,]
 
 f <- which(d$si %in% 'si_2')
 d2 <- d[f,]
+```
 
+```{r}
+E <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num),mean)
+names(E) <- c('model','period','mean')
+temp <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num),sum)
+names(temp) <- c('model','period','sum')
+E <- merge(E,temp)
 
-
-E1 <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num,d2$country),sum)
+E1 <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num,d2$country),mean)
 names(E1) <- c('model','period','country','E')
 
 
-E2 <- aggregate(x = d2$out, by = list(d2$period_num,d2$country),sum)
+E2 <- aggregate(x = d2$out, by = list(d2$period_num,d2$country),mean)
 names(E2) <- c('period','country','E')
 
 ```
@@ -75,15 +81,29 @@ names(E2) <- c('period','country','E')
 
 ```{r}
 
-weights <- rep(1,nrow(d1))
-for (i in 1:nrow(d1)){
-  f <- which(E$period %in% i)
-  w <- min(E$E[f])/E$E[f]
-  weight[f] <- w/sum(w)
+E$weights <- rep(1,nrow(E))
+for (i in 1:length(periods)){
+  f <- which(E$period <= i)
+  temp <- aggregate(x = E$sum[f], by = list(E$model[f]),sum)
+  if (i < length(periods)) {
+    f2 <- which(E$period %in% (i+1))
+    # w <- min(E$E[f])/E$E[f]
+    w <- -2*temp[,2]
+    w <- exp((min(w)-w)/2)
+    E$weight[f2] <- w/sum(w)
+  }
 }
 
 
+```
 
+
+
+
+
+
+
+```{r}
 
 
 E <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num),sum)
@@ -304,7 +324,7 @@ rel_mse <- function(obs, pred) {
 
 rel_mse2 <- function(obs, pred) {
     nsims <- ncol(pred)
-    log_l <- rowSums(dpois(x = matrix(obs,7,3,byrow = FALSE),lambda = pred+.5,log = TRUE))
+    log_l <- rowSums(dpois(x = matrix(obs,7,nsims,byrow = FALSE),lambda = pred+.5,log = TRUE))
     log_l <- log_l / nsims# (nsims * (obs^2 + 1))
     log_l
 }
