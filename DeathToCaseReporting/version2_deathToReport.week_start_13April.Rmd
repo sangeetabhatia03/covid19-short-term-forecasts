@@ -175,9 +175,11 @@ for (i in 1:nrow(I)){
 
 f <- which(summary_r$median$dates >= as.Date(c('01/03/2020'),format = '%d/%m/%Y'))
 
+results_plot_death_case <- list()
 
 layout(matrix(1:4,2,2))
 for (i in 1:N_geo){
+  
   plot(summary_r$median$dates,summary_r$median[,i+1],lwd = 2,
        #ylim = c(0,max(a[f,2:4],na.rm=TRUE)),
        ylim=c(0,1),
@@ -212,9 +214,20 @@ for (i in 1:N_geo){
     legend('topleft',legend = c('ratio','death','reported cases'),bty='n',
            lwd=c(3,NA,NA),pch=c(NA,16,16),col = c(rgb(0,0,1),rgb(1,0,0),rgb(0,0,0)))
   }
+  
+  temp1 <- data.frame(dates = summary_r$median$dates,
+                     median_ratio = summary_r$median[,i+1],
+                     low_ratio = summary_r$low[,i+1],
+                     up_ratio = summary_r$high[,i+1])
+  temp2 <- data.frame(dates = summary_r$median$dates[f],
+                     I_t_minus_meanDelay = inc[,1],
+                     D_t = inc[,2])
+  temp <- merge(temp1,temp2)
+  results_plot_death_case[[country[i]]] <- temp
 }
 
-
+saveRDS(object = results_plot_death_case,
+        file =  paste0('RData/DeCa_Std_Ratio_plot_',date_week_finishing,'.rds' ))
 ```
 
 # ascertainment
