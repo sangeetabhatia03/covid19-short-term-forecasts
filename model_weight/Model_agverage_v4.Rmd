@@ -7,6 +7,7 @@ date: "2019-07"
 ```{r options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE}
 library(knitr)
 library(Hmisc)
+library(dplyr )
 
 opts_chunk$set(collapse = TRUE)
 
@@ -19,9 +20,112 @@ opts_chunk$set(fig.path='figs/', fig.keep='high',
 
 # read data 
 
-```{r}
 
-d <- read.csv(file='model_predictions_error.csv',stringsAsFactors = FALSE)
+
+```{r}
+rel_mse3 <- function(obs, pred,cv) {
+    nsims <- ncol(pred)
+    # log_l <- rowSums(dpois(x = matrix(obs,7,nsims,byrow = FALSE),lambda = pred+.5,log = TRUE))
+    param <- epitrix::gamma_mucv2shapescale(mu = pred+.5, cv =  cv)
+    log_l <- rowSums(dgamma(x = matrix(obs+.5,7,nsims,byrow = FALSE),
+                            shape = param$shape,
+                            scale = param$scale,
+                            log = TRUE))
+    log_l <- log_l / nsims# (nsims * (obs^2 + 1))
+    sum(log_l)
+}
+
+```
+
+
+```{r}
+rel_mse2 <- function(obs, pred) {
+  nsims <- ncol(pred)
+  log_l <- rowSums(
+    dpois(
+      x = matrix(obs, nrow = 7, ncol = nsims,  byrow = FALSE),
+      lambda = pred + .5,
+      log = TRUE
+    )
+  )
+  log_l <- log_l / nsims# (nsims * (obs^2 + 1))
+  log_l
+}
+
+output_files <- list(
+  "../DeathToCaseReporting/RData/DeCa_Std_results_week_end_2020-03-08.rds",
+  "../DeathToCaseReporting/RData/DeCa_Std_results_week_end_2020-03-15.rds",
+  "../DeathToCaseReporting/RData/DeCa_Std_results_week_end_2020-03-22.rds",
+  "../DeathToCaseReporting/RData/DeCa_Std_results_week_end_2020-03-29.rds",
+  "../DeathToCaseReporting/RData/DeCa_Std_results_week_end_2020-04-05.rds",
+  "../Team.output/RtI0_Std_results_week_end_2020-03-08.rds",
+  "../Team.output/RtI0_Std_results_week_end_2020-03-15.rds",
+  "../Team.output/RtI0_Std_results_week_end_2020-03-22.rds",
+  "../Team.output/RtI0_Std_results_week_end_2020-03-29.rds",
+  "../Team.output/RtI0_Std_results_week_end_2020-04-05.rds",
+  "../Team.output/sbkp_Std_results_week_end_2020-03-08.rds",
+  "../Team.output/sbkp_Std_results_week_end_2020-03-15.rds",
+  "../Team.output/sbkp_Std_results_week_end_2020-03-22.rds",
+  "../Team.output/sbkp_Std_results_week_end_2020-03-29.rds",
+  "../Team.output/sbkp_Std_results_week_end_2020-04-05.rds"
+)
+
+names(output_files) <- gsub(
+  pattern = ".rds", replacement = "", x = output_files
+)
+
+
+
+model_outputs <- purrr::map(output_files, readRDS)
+
+model_input <- readRDS("../Team.input/data_2020-04-12.rds")
+
+model_predictions_error <- purrr::imap_dfr(
+  model_outputs,
+  function(x, model) {
+    message(model)
+    pred <- x[["Predictions"]]
+    f <- which(names(pred) %in% model_input$Country)
+    pred <- pred[names(pred)[f]]
+    purrr::imap_dfr(
+      pred,
+      function(y, cntry) {
+        names(y) <- c("si_1", "si_2")
+        out <- purrr::map_dfr(
+          y,
+          function(y_si) {
+            y_si <- as.matrix(y_si)
+            y_si <- t(y_si) ## Need T X N matrix for assessr
+            dates2 <- as.Date(rownames(y_si))
+            x <- dplyr::filter(
+              model_input[["D_active_transmission"]],
+              dates %in% dates2
+            ) %>% pull(cntry)
+
+            if (length(x) > 0) {
+              out <- rel_mse2(obs = x, pred = y_si)
+              out <- as.data.frame(cbind(out,dates2,dates2[1]))
+              out <- tibble::rownames_to_column(out, var = "date")
+            } else {
+              out <- NULL
+            }
+            out
+          },
+          .id = "si"
+        )
+      },
+      .id = "country"
+    )
+  },
+  .id = "model"
+  )
+
+
+d <- model_predictions_error
+
+```
+
+```{r}
 
 country <- sort(unique(as.character(d$country)))
 # d$out <- log(d$out)
@@ -58,413 +162,4 @@ d1 <- d[f,]
 
 f <- which(d$si %in% 'si_2')
 d2 <- d[f,]
-```
-
-```{r}
-E <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num),mean)
-names(E) <- c('model','period','mean')
-temp <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num),sum)
-names(temp) <- c('model','period','sum')
-E <- merge(E,temp)
-
-E1 <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num,d2$country),mean)
-names(E1) <- c('model','period','country','E')
-
-
-E2 <- aggregate(x = d2$out, by = list(d2$period_num,d2$country),mean)
-names(E2) <- c('period','country','E')
-
-```
-
-
-# weights
-
-```{r}
-
-E$weights <- rep(1,nrow(E))
-for (i in 1:length(periods)){
-  # f <- which(E$period <= i)
-  # temp <- aggregate(x = E$mean[f], by = list(E$model[f]),mean)
-  f <- which(E$period == i)
-  temp <- cbind(1:3,E$mean[f])
-  if (i < length(periods)) {
-    f2 <- which(E$period %in% (i+1))
-    # w <- min(E$E[f])/E$E[f]
-    w <- -2*temp[,2]
-    w <- exp((min(w)-w)/2)
-    E$weight[f2] <- w/sum(w)
-  }
-}
-
-
-```
-
-
-
-
-
-
-
-```{r}
-
-
-E <- aggregate(x = d2$out, by = list(d2$model_num,d2$period_num),sum)
-names(E) <- c('model','period','E')
-
-hist(d1$out[which(d1$model_num ==1)])
-hist(d1$out[which(d1$model_num ==2)])
-hist(d1$out[which(d1$model_num ==3)])
-
-f<-which(d1$out>5e3)
-
-table(d1$model_num,d1$country)
-# f <- which(d1$country == 'Spain')
-# x <- d1[f,]
-
-ensemble_best <- rep(NA,length(periods))
-ensemble <- rep(NA,length(periods))
-model_av <- rep(NA,length(periods))
-weight <- rep(NA,nrow(E))
-for (i in 1:length(periods)){
-  f <- which(E$period %in% i)
-  w <- min(E$E[f])/E$E[f]
-  weight[f] <- w/sum(w)
-  ensemble_best[i] <- sum(weight[f]*E$E[f])
-  ensemble[i] <- sum(1/3*E$E[f])
-  f2 <- which(E$period %in% (i+1))
-  if (i<4) model_av[i+1] <- sum(weight[f]*E$E[f2])
-  
-}
-w <- min(aa$x) / (aa$x) 
-w <- w/sum(w)
-
-
-```
-
-
-
-
-
-```{r}
-
-aa <- aggregate(x = d$out, by = list(d$model),sum)
-dat_country <- paste0(d1$date,' - ',d1$country)
-x <- unique(paste0(d1$date,' - ',d1$country))
-
-data <- data.frame(date_country = unique(paste0(d1$date,' - ',d1$country)),
-                   date = substr(x,start = 1,stop = 10),
-                   country = substr(x,start = 14,stop = 40),
-                   week_day = rep(NA,length(x)),
-                   period = rep(NA,length(x)),
-                   matrix(NA,length(x),length(models)))
-
-for (i in 1:nrow(data)){
-  for (j in 1:length(models)){
-    f <- which( (d1$model_num == j) & (dat_country == data$date_country[i]))
-    if (length(f)>0){
-      data$week_day[i] <- d1$day_week[f]
-      data$period[i] <- d1$period_num[f]
-      data[i,j+5] <- d1$out[f]
-    }
-    
-  }
-}
-
-
-w <- min(aa$x) / (aa$x) 
-w <- w/sum(w)
-
-```
-resample 
-
-```{r}
-p_sample <- c(.1,.5,.9)
-
-rep <- 1e3
-
-W <- list(W1 = data.frame(matrix(0,rep,length(models))) )
-
-layout(matrix(1:4,2,2))
-
-for (i in 1:length(p_sample)){
-  for (k in 1:rep){
-    f <-sample(nrow(data),size = round(nrow(data)*p_sample[i]),replace = FALSE)
-    x <- apply(data[f,5+(1:length(models))],2,sum)/
-      apply(!is.na(data[f,5+(1:length(models))]),2,sum)
-    W$W1[k, which(x == min(x))] <- 1
-  }
-  # layout(matrix(1:4,2,2))
-  plot(apply(W$W1,2,cumsum)[,1]/c(1:rep),ylim=c(0,1),type='l',col='black',main=p_sample[i])
-  lines(apply(W$W1,2,cumsum)[,2]/c(1:rep),col='red')
-  lines(apply(W$W1,2,cumsum)[,3]/c(1:rep),col='blue')
-}
-
-
-
-```
-
-
-# preferentially latest forecast
-
-resample 
-
-```{r}
-weight_last <- rep(1,nrow(data))
-weight_last[which(data$period %in% max(data$period))] <- 1.5
-data <- cbind(data,weight_last)
-
-p_sample <- c(.1,.5,.9)
-
-rep <- 1e3
-
-W <- list(W1 = data.frame(matrix(0,rep,length(models))) )
-
-layout(matrix(1:4,2,2))
-
-for (i in 1:length(p_sample)){
-  for (k in 1:rep){
-    f <-sample(nrow(data),size = round(nrow(data)*p_sample[i]),replace = TRUE,prob = weight_last)
-    x <- apply(data[f,5+(1:length(models))],2,sum)/
-      apply(!is.na(data[f,5+(1:length(models))]),2,sum)
-    W$W1[k, which(x == min(x))] <- 1
-  }
-  # layout(matrix(1:4,2,2))
-  plot(apply(W$W1,2,cumsum)[,1]/c(1:rep),ylim=c(0,1),type='l',col='black',main=p_sample[i])
-  lines(apply(W$W1,2,cumsum)[,2]/c(1:rep),col='red')
-  lines(apply(W$W1,2,cumsum)[,3]/c(1:rep),col='blue')
-}
-
-
-
-```
-
-
-
-# preferentially ealry week
-
-resample 
-
-```{r}
-weight_last <- rep(1,nrow(data))
-weight_last[which(data$week_day %in% c(1,2,3))] <- 2
-data$weight_last <- weight_last
-
-p_sample <- c(.1,.5,.9)
-
-rep <- 1e3
-
-W <- list(W1 = data.frame(matrix(0,rep,length(models))) )
-
-layout(matrix(1:4,2,2))
-
-for (i in 1:length(p_sample)){
-  for (k in 1:rep){
-    f <-sample(nrow(data),size = round(nrow(data)*p_sample[i]),replace = TRUE,prob = weight_last)
-    x <- apply(data[f,5+(1:length(models))],2,sum)/
-      apply(!is.na(data[f,5+(1:length(models))]),2,sum)
-    W$W1[k, which(x == min(x))] <- 1
-  }
-  # layout(matrix(1:4,2,2))
-  plot(apply(W$W1,2,cumsum)[,1]/c(1:rep),ylim=c(0,1),type='l',col='black',main=p_sample[i])
-  lines(apply(W$W1,2,cumsum)[,2]/c(1:rep),col='red')
-  lines(apply(W$W1,2,cumsum)[,3]/c(1:rep),col='blue')
-}
-
-
-
-```
-
-
-
-
-# preferentially late week
-
-resample 
-
-```{r}
-weight_last <- rep(1,nrow(data))
-weight_last[which(data$week_day %in% c(5,6,7))] <- 2
-data$weight_last <- weight_last
-
-p_sample <- c(.1,.5,.9)
-
-rep <- 1e3
-
-W <- list(W1 = data.frame(matrix(0,rep,length(models))) )
-
-layout(matrix(1:4,2,2))
-
-for (i in 1:length(p_sample)){
-  for (k in 1:rep){
-    f <-sample(nrow(data),size = round(nrow(data)*p_sample[i]),replace = TRUE,prob = weight_last)
-    x <- apply(data[f,5+(1:length(models))],2,sum)/
-      apply(!is.na(data[f,5+(1:length(models))]),2,sum)
-    W$W1[k, which(x == min(x))] <- 1
-  }
-  # layout(matrix(1:4,2,2))
-  plot(apply(W$W1,2,cumsum)[,1]/c(1:rep),ylim=c(0,1),type='l',col='black',main=p_sample[i])
-  lines(apply(W$W1,2,cumsum)[,2]/c(1:rep),col='red')
-  lines(apply(W$W1,2,cumsum)[,3]/c(1:rep),col='blue')
-}
-
-
-
-```
-
-
-
-
-
-```{r}
-
-rel_mse <- function(obs, pred) {
-    nsims <- ncol(pred)
-    res_sq <- rowSums((obs - pred) ^ 2)
-    avg_res_sq <- res_sq / (nsims * (obs^2 + 1))
-    avg_res_sq
-}
-
-rel_mse2 <- function(obs, pred) {
-    nsims <- ncol(pred)
-    log_l <- rowSums(dpois(x = matrix(obs,7,nsims,byrow = FALSE),lambda = pred+.5,log = TRUE))
-    log_l <- log_l / nsims# (nsims * (obs^2 + 1))
-    log_l
-}
-
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-03-29.rds')
-f <- which(d$Country == 'Philippines')
-pred <- t(d$Predictions[[f]][[2]])
-
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-04-05.rds')
-f <- which(d$Country == 'Philippines')
-obs <- tail(d$D_active_transmission[,f+1],7)
-
-a <- rel_mse(obs, pred)
-a
-
-b <- rel_mse2(obs, pred)
-b
-
-
-##
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-03-29.rds')
-f <- which(d$Country == 'Portugal')
-pred <- t(d$Predictions[[f]][[2]])
-
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-04-05.rds')
-f <- which(d$Country == 'Portugal')
-obs <- tail(d$D_active_transmission[,f+1],7)
-
-a <- rel_mse(obs, pred)
-a
-
-b <- rel_mse2(obs, pred)
-b
-
-
-##
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-03-29.rds')
-f <- which(d$Country == 'South_Korea')
-pred <- t(d$Predictions[[f]][[2]])
-
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-04-05.rds')
-f <- which(d$Country == 'South_Korea')
-obs <- tail(d$D_active_transmission[,f+1],7)
-
-a <- rel_mse(obs, pred)
-a
-
-b <- rel_mse2(obs, pred)
-b
-
-##
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-03-29.rds')
-f <- which(d$Country == 'Italy')
-pred <- t(d$Predictions[[f]][[2]])
-
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-04-05.rds')
-f <- which(d$Country == 'Italy')
-obs <- tail(d$D_active_transmission[,f+1],7)
-
-a <- rel_mse(obs, pred)
-a
-
-b <- rel_mse2(obs, pred)
-b
-
-##
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-03-29.rds')
-f <- which(d$Country == 'Spain')
-pred <- t(d$Predictions[[f]][[2]])
-
-d <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-04-05.rds')
-f <- which(d$Country == 'Spain')
-obs <- tail(d$D_active_transmission[,f+1],7)
-
-a <- rel_mse(obs, pred)
-a
-
-b <- rel_mse2(obs, pred)
-b
-
-```
-
-#
-
-```{r}
-rel_mse3 <- function(obs, pred,cv) {
-    nsims <- ncol(pred)
-    # log_l <- rowSums(dpois(x = matrix(obs,7,nsims,byrow = FALSE),lambda = pred+.5,log = TRUE))
-    param <- epitrix::gamma_mucv2shapescale(mu = pred+.5, cv =  cv)
-    log_l <- rowSums(dgamma(x = matrix(obs+.5,7,nsims,byrow = FALSE),
-                            shape = param$shape,
-                            scale = param$scale,
-                            log = TRUE))
-    log_l <- log_l / nsims# (nsims * (obs^2 + 1))
-    sum(log_l)
-}
-
-d1 <- readRDS(file = '../DeathToCaseReporting/RData/DeCa_Std_results_week_end_2020-03-29.rds')
-# f <- which(d$Country == 'Philippines')
-# pred <- t(d1$Predictions[[f]][[2]])
-
-d2 <- readRDS(file = '../Team.output/RtI0_Std_results_week_end_2020-03-29.rds')
-# f <- which(d$Country == 'Philippines')
-# pred <- t(d1$Predictions[[f]][[2]])
-
-d3 <- readRDS(file = '../Team.output/sbkp_Std_results_week_end_2020-03-29.rds')
-# f <- which(d$Country == 'Philippines')
-# pred <- t(d1$Predictions[[f]][[2]])
-
-
-
-w <- c(1,1,1)/3
-Err <- data.frame(c = d1$Country,
-                  m1 = rep(NA,length(d1$Country)),
-                  m2 = rep(NA,length(d1$Country)),
-                  m3 = rep(NA,length(d1$Country)),
-                  mE = rep(NA,length(d1$Country)))
-
-
-get_logL <- function(w,cv){
-  for (i in 1:length(d1$Country)){
-    
-    obs <- d1$D_active_transmission[(nrow(d1$D_active_transmission)-14+1):
-                                      (nrow(d1$D_active_transmission)-7),f+1]
-    pred1 <- t(d1$Predictions[[i]][[2]])
-    Err$m1[i] <- rel_mse3(obs,pred1,cv)
-    pred2 <- t(d2$Predictions[[i]][[2]])
-    Err$m2[i] <- rel_mse3(obs,pred2,cv)
-    pred3 <- t(d3$Predictions[[i]][[2]])
-    Err$m3[i] <- rel_mse3(obs,pred3,cv)
-    
-    Err$mE[i] <- sum(w*Err[i,2:4])
-  }
-  res <- sum(Err$mE)
-  return(res)
-}
-res <- get_logL(w,cv=2)
-
-
-
 ```
